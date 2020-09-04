@@ -1,0 +1,17 @@
+[package]
+name = "cri"
+version = "0.1.0"
+authors = ["Mrunal Patel <mrunalp@gmail.com>"]
+edition = "2018"
+
+[[bin]] # Bin to run the HelloWorld gRPC server
+name = "criserver"
+path = "src/server.rs"
+
+[dependencies]
+tonic = "0.3"
+prost = "0.6"
+tokio = { version = "0.2", features = ["macros"] }
+
+[build-dependencies]
+tonic-build = "0.3"
