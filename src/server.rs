@@ -1,4 +1,5 @@
 use tonic::{transport::Server, Request, Response, Status};
+use std::vec::Vec;
 
 pub mod criapi {
     tonic::include_proto!("criapi");
@@ -70,6 +71,44 @@ impl RuntimeService for MyRuntime {
             containers: Vec::new()
         };
         Ok(Response::new(resp))
+    }
+    async fn run_pod_sandbox(
+        &self,
+        request: Request<criapi::RunPodSandboxRequest>,
+    ) -> Result<Response<criapi::RunPodSandboxResponse>, Status> {
+        let reply = criapi::RunPodSandboxResponse {
+            pod_sandbox_id: String::from("1234567890"),
+        };
+        Ok(Response::new(reply))
+    }
+    async fn stop_pod_sandbox(
+        &self,
+        request: Request<criapi::StopPodSandboxRequest>,
+    ) -> Result<Response<criapi::StopPodSandboxResponse>, Status> {
+        let reply = criapi::StopPodSandboxResponse {};
+        Ok(Response::new(reply))
+    }
+    async fn remove_pod_sandbox(
+        &self,
+        request: Request<criapi::RemovePodSandboxRequest>,
+    ) -> Result<Response<criapi::RemovePodSandboxResponse>, Status> {
+        let reply = criapi::RemovePodSandboxResponse {};
+        Ok(Response::new(reply))
+    }
+    async fn list_pod_sandbox(
+        &self,
+        request: Request<criapi::ListPodSandboxRequest>,
+    ) -> Result<Response<criapi::ListPodSandboxResponse>, Status> {
+        let reply = criapi::ListPodSandboxResponse {
+            items: Vec::new(),
+        };
+        Ok(Response::new(reply))
+    }
+    async fn pod_sandbox_status(
+        &self,
+        request: Request<criapi::PodSandboxStatusRequest>,
+    ) -> Result<Response<criapi::PodSandboxStatusResponse>, Status> {
+        Err(Status::unimplemented("not implemented"))
     }
 }
 
