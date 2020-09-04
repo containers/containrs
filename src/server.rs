@@ -1,5 +1,5 @@
 use tonic::{transport::Server, Request, Response, Status};
-use std::vec::Vec;
+use std::collections::HashMap;
 
 pub mod criapi {
     tonic::include_proto!("criapi");
@@ -72,6 +72,18 @@ impl RuntimeService for MyRuntime {
         };
         Ok(Response::new(resp))
     }
+
+    async fn container_status(
+        &self,
+        request: Request<criapi::ContainerStatusRequest>,
+    ) -> Result<Response<criapi::ContainerStatusResponse>, Status> {
+        let resp = criapi::ContainerStatusResponse {
+            info: HashMap::new(),
+            status: None,
+        };
+        Ok(Response::new(resp))
+    }
+
     async fn run_pod_sandbox(
         &self,
         request: Request<criapi::RunPodSandboxRequest>,
