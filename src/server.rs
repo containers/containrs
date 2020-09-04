@@ -5,6 +5,7 @@ pub mod criapi {
     tonic::include_proto!("criapi");
 }
 use criapi::runtime_service_server::{RuntimeService,RuntimeServiceServer};
+use criapi::image_service_server::{ImageService,ImageServiceServer};
 
 #[derive(Default)]
 pub struct MyRuntime {}
@@ -124,15 +125,70 @@ impl RuntimeService for MyRuntime {
     }
 }
 
+#[tonic::async_trait]
+impl ImageService for MyRuntime {
+    async fn list_images(
+        &self,
+        request: Request<criapi::ListImagesRequest>,
+    ) -> Result<Response<criapi::ListImagesResponse>, Status> {
+        let resp = criapi::ListImagesResponse {
+            images: Vec::new(),
+        };
+        Ok(Response::new(resp))
+    }
+
+    async fn pull_image(
+        &self,
+        request: Request<criapi::PullImageRequest>,
+    ) -> Result<Response<criapi::PullImageResponse>, Status> {
+        let resp = criapi::PullImageResponse {
+            image_ref: String::from("some_image")
+        };
+        Ok(Response::new(resp))
+    }
+
+    async fn image_status(
+        &self,
+        request: Request<criapi::ImageStatusRequest>,
+    ) -> Result<Response<criapi::ImageStatusResponse>, Status> {
+        let resp = criapi::ImageStatusResponse {
+            image: None,
+            info: HashMap::new(),
+        };
+        Ok(Response::new(resp))
+    }
+
+    async fn remove_image(
+        &self,
+        request: Request<criapi::RemoveImageRequest>,
+    ) -> Result<Response<criapi::RemoveImageResponse>, Status> {
+        let resp = criapi::RemoveImageResponse {
+        };
+        Ok(Response::new(resp))
+    }
+
+    async fn image_fs_info(
+        &self,
+        request: Request<criapi::ImageFsInfoRequest>,
+    ) -> Result<Response<criapi::ImageFsInfoResponse>, Status> {
+        let resp = criapi::ImageFsInfoResponse {
+            image_filesystems: Vec::new(),
+        };
+        Ok(Response::new(resp))
+    }
+
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let addr = "[::1]:50051".parse().unwrap();
     let rt = MyRuntime::default();
 
-    println!("GreeterServer listening on {}", addr);
+    println!("Runtime server listening on {}", addr);
 
     Server::builder()
         .add_service(RuntimeServiceServer::new(rt))
+        .add_service(ImageServiceServer::new(rt))
         .serve(addr)
         .await?;
 
