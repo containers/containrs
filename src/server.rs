@@ -125,8 +125,11 @@ impl RuntimeService for MyRuntime {
     }
 }
 
+#[derive(Default)]
+pub struct MyImage {}
+
 #[tonic::async_trait]
-impl ImageService for MyRuntime {
+impl ImageService for MyImage {
     async fn list_images(
         &self,
         request: Request<criapi::ListImagesRequest>,
@@ -183,12 +186,13 @@ impl ImageService for MyRuntime {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let addr = "[::1]:50051".parse().unwrap();
     let rt = MyRuntime::default();
+    let img = MyImage::default();
 
     println!("Runtime server listening on {}", addr);
 
     Server::builder()
         .add_service(RuntimeServiceServer::new(rt))
-        .add_service(ImageServiceServer::new(rt))
+        .add_service(ImageServiceServer::new(img))
         .serve(addr)
         .await?;
 
