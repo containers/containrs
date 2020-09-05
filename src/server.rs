@@ -85,6 +85,85 @@ impl RuntimeService for MyRuntime {
         Ok(Response::new(resp))
     }
 
+    async fn container_stats(
+        &self,
+        request: Request<criapi::ContainerStatsRequest>,
+    ) -> Result<Response<criapi::ContainerStatsResponse>, Status> {
+        let resp = criapi::ContainerStatsResponse {
+            stats: None,
+        };
+        Ok(Response::new(resp))
+    }
+
+    async fn list_container_stats(
+        &self,
+        request: Request<criapi::ListContainerStatsRequest>,
+    ) -> Result<Response<criapi::ListContainerStatsResponse>, Status> {
+        let resp = criapi::ListContainerStatsResponse {
+            stats: Vec::new(),
+        };
+        Ok(Response::new(resp))
+    }
+
+    async fn update_container_resources(
+        &self,
+        request: Request<criapi::UpdateContainerResourcesRequest>,
+    ) -> Result<Response<criapi::UpdateContainerResourcesResponse>, Status> {
+        let resp = criapi::UpdateContainerResourcesResponse {
+        };
+        Ok(Response::new(resp))
+    }
+
+    async fn reopen_container_log(
+        &self,
+        request: Request<criapi::ReopenContainerLogRequest>,
+    ) -> Result<Response<criapi::ReopenContainerLogResponse>, Status> {
+        let resp = criapi::ReopenContainerLogResponse {
+        };
+        Ok(Response::new(resp))
+    }
+
+    async fn exec_sync(
+        &self,
+        request: Request<criapi::ExecSyncRequest>,
+    ) -> Result<Response<criapi::ExecSyncResponse>, Status> {
+        let resp = criapi::ExecSyncResponse {
+            exit_code: -1,
+            stderr: Vec::new(),
+            stdout: Vec::new(),
+        };
+        Ok(Response::new(resp))
+    }
+
+    async fn exec(
+        &self,
+        request: Request<criapi::ExecRequest>,
+    ) -> Result<Response<criapi::ExecResponse>, Status> {
+        let resp = criapi::ExecResponse {
+            url: String::from("url"),
+        };
+        Ok(Response::new(resp))
+    }
+
+    async fn attach(
+        &self,
+        request: Request<criapi::AttachRequest>,
+    ) -> Result<Response<criapi::AttachResponse>, Status> {
+        let resp = criapi::AttachResponse {
+            url: String::from("url"),
+        };
+        Ok(Response::new(resp))
+    }
+    async fn port_forward(
+        &self,
+        request: Request<criapi::PortForwardRequest>,
+    ) -> Result<Response<criapi::PortForwardResponse>, Status> {
+        let resp = criapi::PortForwardResponse {
+            url: String::from("url"),
+        };
+        Ok(Response::new(resp))
+    }
+
     async fn run_pod_sandbox(
         &self,
         request: Request<criapi::RunPodSandboxRequest>,
@@ -94,6 +173,7 @@ impl RuntimeService for MyRuntime {
         };
         Ok(Response::new(reply))
     }
+
     async fn stop_pod_sandbox(
         &self,
         request: Request<criapi::StopPodSandboxRequest>,
@@ -101,6 +181,7 @@ impl RuntimeService for MyRuntime {
         let reply = criapi::StopPodSandboxResponse {};
         Ok(Response::new(reply))
     }
+
     async fn remove_pod_sandbox(
         &self,
         request: Request<criapi::RemovePodSandboxRequest>,
@@ -108,6 +189,7 @@ impl RuntimeService for MyRuntime {
         let reply = criapi::RemovePodSandboxResponse {};
         Ok(Response::new(reply))
     }
+
     async fn list_pod_sandbox(
         &self,
         request: Request<criapi::ListPodSandboxRequest>,
@@ -117,11 +199,32 @@ impl RuntimeService for MyRuntime {
         };
         Ok(Response::new(reply))
     }
+
     async fn pod_sandbox_status(
         &self,
         request: Request<criapi::PodSandboxStatusRequest>,
     ) -> Result<Response<criapi::PodSandboxStatusResponse>, Status> {
         Err(Status::unimplemented("not implemented"))
+    }
+
+    async fn status(
+        &self,
+        request: Request<criapi::StatusRequest>,
+    ) -> Result<Response<criapi::StatusResponse>, Status> {
+        let resp = criapi::StatusResponse {
+            status: None,
+            info: HashMap::new(),
+        };
+        Ok(Response::new(resp))
+    }
+
+    async fn update_runtime_config(
+        &self,
+        request: Request<criapi::UpdateRuntimeConfigRequest>,
+    ) -> Result<Response<criapi::UpdateRuntimeConfigResponse>, Status> {
+        let resp = criapi::UpdateRuntimeConfigResponse {
+        };
+        Ok(Response::new(resp))
     }
 }
 
