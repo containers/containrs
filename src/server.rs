@@ -29,7 +29,7 @@ impl RuntimeService for MyRuntime {
 
     async fn create_container(
         &self,
-        request: Request<criapi::CreateContainerRequest>,
+        _request: Request<criapi::CreateContainerRequest>,
     ) -> Result<Response<criapi::CreateContainerResponse>, Status> {
         let resp = criapi::CreateContainerResponse {
             container_id: String::from("stub"),
@@ -39,7 +39,7 @@ impl RuntimeService for MyRuntime {
 
     async fn start_container(
         &self,
-        request: Request<criapi::StartContainerRequest>,
+        _request: Request<criapi::StartContainerRequest>,
     ) -> Result<Response<criapi::StartContainerResponse>, Status> {
         let resp = criapi::StartContainerResponse {
         };
@@ -48,7 +48,7 @@ impl RuntimeService for MyRuntime {
 
     async fn stop_container(
         &self,
-        request: Request<criapi::StopContainerRequest>,
+        _request: Request<criapi::StopContainerRequest>,
     ) -> Result<Response<criapi::StopContainerResponse>, Status> {
         let resp = criapi::StopContainerResponse {
         };
@@ -57,7 +57,7 @@ impl RuntimeService for MyRuntime {
 
     async fn remove_container(
         &self,
-        request: Request<criapi::RemoveContainerRequest>,
+        _request: Request<criapi::RemoveContainerRequest>,
     ) -> Result<Response<criapi::RemoveContainerResponse>, Status> {
         let resp = criapi::RemoveContainerResponse {
         };
@@ -66,7 +66,7 @@ impl RuntimeService for MyRuntime {
 
     async fn list_containers(
         &self,
-        request: Request<criapi::ListContainersRequest>,
+        _request: Request<criapi::ListContainersRequest>,
     ) -> Result<Response<criapi::ListContainersResponse>, Status> {
         let resp = criapi::ListContainersResponse {
             containers: Vec::new()
@@ -76,7 +76,7 @@ impl RuntimeService for MyRuntime {
 
     async fn container_status(
         &self,
-        request: Request<criapi::ContainerStatusRequest>,
+        _request: Request<criapi::ContainerStatusRequest>,
     ) -> Result<Response<criapi::ContainerStatusResponse>, Status> {
         let resp = criapi::ContainerStatusResponse {
             info: HashMap::new(),
@@ -87,7 +87,7 @@ impl RuntimeService for MyRuntime {
 
     async fn container_stats(
         &self,
-        request: Request<criapi::ContainerStatsRequest>,
+        _request: Request<criapi::ContainerStatsRequest>,
     ) -> Result<Response<criapi::ContainerStatsResponse>, Status> {
         let resp = criapi::ContainerStatsResponse {
             stats: None,
@@ -97,7 +97,7 @@ impl RuntimeService for MyRuntime {
 
     async fn list_container_stats(
         &self,
-        request: Request<criapi::ListContainerStatsRequest>,
+        _request: Request<criapi::ListContainerStatsRequest>,
     ) -> Result<Response<criapi::ListContainerStatsResponse>, Status> {
         let resp = criapi::ListContainerStatsResponse {
             stats: Vec::new(),
@@ -107,7 +107,7 @@ impl RuntimeService for MyRuntime {
 
     async fn update_container_resources(
         &self,
-        request: Request<criapi::UpdateContainerResourcesRequest>,
+        _request: Request<criapi::UpdateContainerResourcesRequest>,
     ) -> Result<Response<criapi::UpdateContainerResourcesResponse>, Status> {
         let resp = criapi::UpdateContainerResourcesResponse {
         };
@@ -116,7 +116,7 @@ impl RuntimeService for MyRuntime {
 
     async fn reopen_container_log(
         &self,
-        request: Request<criapi::ReopenContainerLogRequest>,
+        _request: Request<criapi::ReopenContainerLogRequest>,
     ) -> Result<Response<criapi::ReopenContainerLogResponse>, Status> {
         let resp = criapi::ReopenContainerLogResponse {
         };
@@ -125,7 +125,7 @@ impl RuntimeService for MyRuntime {
 
     async fn exec_sync(
         &self,
-        request: Request<criapi::ExecSyncRequest>,
+        _request: Request<criapi::ExecSyncRequest>,
     ) -> Result<Response<criapi::ExecSyncResponse>, Status> {
         let resp = criapi::ExecSyncResponse {
             exit_code: -1,
@@ -137,7 +137,7 @@ impl RuntimeService for MyRuntime {
 
     async fn exec(
         &self,
-        request: Request<criapi::ExecRequest>,
+        _request: Request<criapi::ExecRequest>,
     ) -> Result<Response<criapi::ExecResponse>, Status> {
         let resp = criapi::ExecResponse {
             url: String::from("url"),
@@ -147,7 +147,7 @@ impl RuntimeService for MyRuntime {
 
     async fn attach(
         &self,
-        request: Request<criapi::AttachRequest>,
+        _request: Request<criapi::AttachRequest>,
     ) -> Result<Response<criapi::AttachResponse>, Status> {
         let resp = criapi::AttachResponse {
             url: String::from("url"),
@@ -156,7 +156,7 @@ impl RuntimeService for MyRuntime {
     }
     async fn port_forward(
         &self,
-        request: Request<criapi::PortForwardRequest>,
+        _request: Request<criapi::PortForwardRequest>,
     ) -> Result<Response<criapi::PortForwardResponse>, Status> {
         let resp = criapi::PortForwardResponse {
             url: String::from("url"),
@@ -166,7 +166,7 @@ impl RuntimeService for MyRuntime {
 
     async fn run_pod_sandbox(
         &self,
-        request: Request<criapi::RunPodSandboxRequest>,
+        _request: Request<criapi::RunPodSandboxRequest>,
     ) -> Result<Response<criapi::RunPodSandboxResponse>, Status> {
         let reply = criapi::RunPodSandboxResponse {
             pod_sandbox_id: String::from("1234567890"),
@@ -176,7 +176,7 @@ impl RuntimeService for MyRuntime {
 
     async fn stop_pod_sandbox(
         &self,
-        request: Request<criapi::StopPodSandboxRequest>,
+        _request: Request<criapi::StopPodSandboxRequest>,
     ) -> Result<Response<criapi::StopPodSandboxResponse>, Status> {
         let reply = criapi::StopPodSandboxResponse {};
         Ok(Response::new(reply))
@@ -184,7 +184,7 @@ impl RuntimeService for MyRuntime {
 
     async fn remove_pod_sandbox(
         &self,
-        request: Request<criapi::RemovePodSandboxRequest>,
+        _request: Request<criapi::RemovePodSandboxRequest>,
     ) -> Result<Response<criapi::RemovePodSandboxResponse>, Status> {
         let reply = criapi::RemovePodSandboxResponse {};
         Ok(Response::new(reply))
@@ -192,7 +192,7 @@ impl RuntimeService for MyRuntime {
 
     async fn list_pod_sandbox(
         &self,
-        request: Request<criapi::ListPodSandboxRequest>,
+        _request: Request<criapi::ListPodSandboxRequest>,
     ) -> Result<Response<criapi::ListPodSandboxResponse>, Status> {
         let reply = criapi::ListPodSandboxResponse {
             items: Vec::new(),
@@ -202,14 +202,14 @@ impl RuntimeService for MyRuntime {
 
     async fn pod_sandbox_status(
         &self,
-        request: Request<criapi::PodSandboxStatusRequest>,
+        _request: Request<criapi::PodSandboxStatusRequest>,
     ) -> Result<Response<criapi::PodSandboxStatusResponse>, Status> {
         Err(Status::unimplemented("not implemented"))
     }
 
     async fn status(
         &self,
-        request: Request<criapi::StatusRequest>,
+        _request: Request<criapi::StatusRequest>,
     ) -> Result<Response<criapi::StatusResponse>, Status> {
         let resp = criapi::StatusResponse {
             status: None,
@@ -220,7 +220,7 @@ impl RuntimeService for MyRuntime {
 
     async fn update_runtime_config(
         &self,
-        request: Request<criapi::UpdateRuntimeConfigRequest>,
+        _request: Request<criapi::UpdateRuntimeConfigRequest>,
     ) -> Result<Response<criapi::UpdateRuntimeConfigResponse>, Status> {
         let resp = criapi::UpdateRuntimeConfigResponse {
         };
@@ -235,7 +235,7 @@ pub struct MyImage {}
 impl ImageService for MyImage {
     async fn list_images(
         &self,
-        request: Request<criapi::ListImagesRequest>,
+        _request: Request<criapi::ListImagesRequest>,
     ) -> Result<Response<criapi::ListImagesResponse>, Status> {
         let resp = criapi::ListImagesResponse {
             images: Vec::new(),
@@ -245,7 +245,7 @@ impl ImageService for MyImage {
 
     async fn pull_image(
         &self,
-        request: Request<criapi::PullImageRequest>,
+        _request: Request<criapi::PullImageRequest>,
     ) -> Result<Response<criapi::PullImageResponse>, Status> {
         let resp = criapi::PullImageResponse {
             image_ref: String::from("some_image")
@@ -255,7 +255,7 @@ impl ImageService for MyImage {
 
     async fn image_status(
         &self,
-        request: Request<criapi::ImageStatusRequest>,
+        _request: Request<criapi::ImageStatusRequest>,
     ) -> Result<Response<criapi::ImageStatusResponse>, Status> {
         let resp = criapi::ImageStatusResponse {
             image: None,
@@ -266,7 +266,7 @@ impl ImageService for MyImage {
 
     async fn remove_image(
         &self,
-        request: Request<criapi::RemoveImageRequest>,
+        _request: Request<criapi::RemoveImageRequest>,
     ) -> Result<Response<criapi::RemoveImageResponse>, Status> {
         let resp = criapi::RemoveImageResponse {
         };
@@ -275,7 +275,7 @@ impl ImageService for MyImage {
 
     async fn image_fs_info(
         &self,
-        request: Request<criapi::ImageFsInfoRequest>,
+        _request: Request<criapi::ImageFsInfoRequest>,
     ) -> Result<Response<criapi::ImageFsInfoResponse>, Status> {
         let resp = criapi::ImageFsInfoResponse {
             image_filesystems: Vec::new(),
