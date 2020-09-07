@@ -15,16 +15,20 @@ license = "Apache-2.0"
 keywords = ["kubernetes", "cri"]
 categories = ["network-programming", "api-bindings"]
 
-
 [[bin]] # Bin to run the HelloWorld gRPC server
 name = "criserver"
 path = "src/main.rs"
 
 [dependencies]
 anyhow = "1.0.32"
-tonic = "0.3"
+clap = { git = "https://github.com/clap-rs/clap", features = ["wrap_help"] }
+env_logger = "0.7.1"
+getset = "0.1.1"
+log = { version = "0.4.11", features = ["serde", "std"] }
 prost = "0.6"
+serde = { version = "1.0.115", features = ["derive"] }
 tokio = { version = "0.2", features = ["macros"] }
+tonic = "0.3"
 
 [build-dependencies]
 anyhow = "1.0.32"
