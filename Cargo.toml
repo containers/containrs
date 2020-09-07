@@ -9,9 +9,11 @@ name = "criserver"
 path = "src/server.rs"
 
 [dependencies]
+anyhow = "1.0.32"
 tonic = "0.3"
 prost = "0.6"
 tokio = { version = "0.2", features = ["macros"] }
 
 [build-dependencies]
+anyhow = "1.0.32"
 tonic-build = "0.3"

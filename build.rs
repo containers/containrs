@@ -1,6 +1,6 @@
-use tonic_build;
+use anyhow::{Context, Result};
+use tonic_build::compile_protos;
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    tonic_build::compile_protos("proto/criapi.proto")?;
-    Ok(())
+fn main() -> Result<()> {
+    compile_protos("proto/criapi.proto").context("compile CRI protocol buffers")
 }
