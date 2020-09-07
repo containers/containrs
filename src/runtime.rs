@@ -1,6 +1,5 @@
 use crate::criapi::{
-    self, image_service_server::ImageService,
-    runtime_service_server::RuntimeService,
+    self, image_service_server::ImageService, runtime_service_server::RuntimeService,
 };
 use std::collections::HashMap;
 use tonic::{Request, Response, Status};
@@ -99,8 +98,7 @@ impl RuntimeService for MyRuntime {
     async fn update_container_resources(
         &self,
         _request: Request<criapi::UpdateContainerResourcesRequest>,
-    ) -> Result<Response<criapi::UpdateContainerResourcesResponse>, Status>
-    {
+    ) -> Result<Response<criapi::UpdateContainerResourcesResponse>, Status> {
         let resp = criapi::UpdateContainerResourcesResponse {};
         Ok(Response::new(resp))
     }
