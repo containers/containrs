@@ -1,8 +1,20 @@
 [package]
 name = "cri"
 version = "0.1.0"
-authors = ["Mrunal Patel <mrunalp@gmail.com>"]
+authors = [
+    "Mrunal Patel <mrunalp@gmail.com>",
+    "Sascha Grunert <mail@saschagrunert.de>",
+]
 edition = "2018"
+description = "Kubernetes Container Runtime Interface implementation"
+documentation = "https://docs.rs/cri"
+readme = "README.md"
+homepage = "https://github.com/cri-o/cri"
+repository = "https://github.com/cri-o/cri"
+license = "Apache-2.0"
+keywords = ["kubernetes", "cri"]
+categories = ["network-programming", "api-bindings"]
+
 
 [[bin]] # Bin to run the HelloWorld gRPC server
 name = "criserver"
