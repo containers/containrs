@@ -317,3 +317,24 @@ impl ImageService for MyImage {
         Ok(Response::new(resp))
     }
 }
+
+#[cfg(test)]
+pub mod tests {
+    use super::MyImage;
+    use anyhow::{Context, Result};
+
+    fn create_tmp_image_service() -> Result<(tempfile::TempDir, MyImage)> {
+        let tempdir = tempfile::tempdir().context("tempdir")?;
+        let image_service = MyImage::open(tempdir.path()).context("image service open")?;
+        Ok((tempdir, image_service))
+    }
+
+    #[tokio::test]
+    pub async fn list_images() -> Result<()> {
+        let (_tempdir, image_service) = create_tmp_image_service()?;
+
+        assert!(image_service.list_images(None)?.is_empty());
+
+        Ok(())
+    }
+}
