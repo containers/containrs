@@ -220,7 +220,7 @@ impl RuntimeService for MyRuntime {
 pub enum ImageError {
     #[error("image database error: {0}")]
     DatabaseError(#[from] sled::Error),
-    #[error("decode error (should not occur, probally database is corrupted?): {0}")]
+    #[error("decode error, database likely corrupted: {0}")]
     DecodeError(#[from] prost::DecodeError),
 }
 
