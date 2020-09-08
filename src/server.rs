@@ -27,7 +27,7 @@ impl Server {
 
         let addr = "[::1]:50051".parse().context("parse server address")?;
         let rt = MyRuntime::default();
-        let img = MyImage::open(&self.config.data_dir())?;
+        let img = MyImage::open(&self.config.data_dir()).await?;
 
         info!("Runtime server listening on {}", addr);
 
