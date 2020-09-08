@@ -1,4 +1,5 @@
 //! This is the main library interface for this project
+#![deny(missing_docs)]
 
 mod config;
 mod criapi;
