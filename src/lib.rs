@@ -5,6 +5,7 @@ mod config;
 mod criapi;
 mod image_service;
 mod runtime_service;
+mod sandbox;
 mod server;
 
 pub use config::Config;
