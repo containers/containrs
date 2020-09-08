@@ -231,7 +231,7 @@ impl From<ImageError> for Status {
 }
 
 pub struct MyImage {
-    sled: Db,
+    database: Db,
     images: PathBuf,
 }
 
@@ -243,7 +243,7 @@ impl MyImage {
         let mut images = image_storage.to_owned();
         images.push("images");
         Ok(MyImage {
-            sled: sled::open(db_path)?,
+            database: sled::open(db_path)?,
             images,
         })
     }
@@ -258,7 +258,7 @@ impl MyImage {
 
         let mut k = sled::IVec::default();
         let mut out = vec![];
-        while let Some((ik, v)) = self.sled.get_gt(&k)? {
+        while let Some((ik, v)) = self.database.get_gt(&k)? {
             k = ik.clone();
             out.push(criapi::Image::decode(&mut Cursor::new(&k))?);
         }
