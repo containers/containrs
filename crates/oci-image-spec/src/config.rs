@@ -6,9 +6,9 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, PartialEq, Debug, Default, Deserialize, Serialize)]
 pub struct Config {
     #[serde(rename = "Cmd")]
-    pub cmd: Option<serde_json::Value>,
+    pub cmd: Option<Vec<String>>,
     #[serde(rename = "Entrypoint")]
-    pub entrypoint: Option<serde_json::Value>,
+    pub entrypoint: Option<Vec<String>>,
     #[serde(rename = "Env")]
     pub env: Option<Vec<String>>,
     /// TODO: in original spec this is a map from string to object
@@ -16,13 +16,13 @@ pub struct Config {
     #[serde(rename = "ExposedPorts")]
     pub exposed_ports: Option<HashMap<String, serde_json::Value>>,
     #[serde(rename = "Labels")]
-    pub labels: Option<serde_json::Value>,
+    pub labels: Option<HashMap<String, String>>,
     #[serde(rename = "StopSignal")]
     pub stop_signal: Option<String>,
     #[serde(rename = "User")]
     pub user: Option<String>,
     #[serde(rename = "Volumes")]
-    pub volumes: Option<serde_json::Value>,
+    pub volumes: Option<HashMap<String, serde_json::Value>>,
     #[serde(rename = "WorkingDir")]
     pub working_dir: Option<String>,
 }
