@@ -37,7 +37,6 @@ define test
 	$(CARGO) test \
 		--test $(1) $(ARGS) \
 		-- \
-		--test-threads 1 \
 		--nocapture
 endef
 

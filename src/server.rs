@@ -11,7 +11,7 @@ use anyhow::{bail, Context, Result};
 use clap::crate_name;
 use futures_util::stream::TryStreamExt;
 use log::{debug, info};
-use std::{env, path::Path};
+use std::env;
 use tokio::fs;
 #[cfg(unix)]
 use tokio::net::UnixListener;
@@ -33,7 +33,7 @@ impl Server {
         self.set_logging_verbosity()
             .context("set logging verbosity")?;
 
-        let sock_path = Path::new(self.config.sock_path());
+        let sock_path = self.config.sock_path();
         if !sock_path.is_absolute() {
             bail!(
                 "specified socket path {} is not absolute",
@@ -51,9 +51,12 @@ impl Server {
                 .with_context(|| format!("create socket dir {}", sock_dir.display()))?;
         }
 
-        let mut uds = UnixListener::bind(&self.config.sock_path())?;
+        let mut uds = UnixListener::bind(self.config.sock_path())?;
 
-        info!("Runtime server listening on {}", self.config.sock_path());
+        info!(
+            "Runtime server listening on {}",
+            self.config.sock_path().display()
+        );
 
         let rt = MyRuntime::default();
         let img = MyImage::default();
