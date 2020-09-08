@@ -1,6 +1,4 @@
-use crate::criapi::{
-    self, image_service_server::ImageService, runtime_service_server::RuntimeService,
-};
+use crate::criapi::{self, runtime_service_server::RuntimeService};
 use std::collections::HashMap;
 use tonic::{Request, Response, Status};
 
@@ -16,10 +14,10 @@ impl RuntimeService for MyRuntime {
         println!("Got a request from {:?}", request.remote_addr());
 
         let resp = criapi::VersionResponse {
-            version: String::from("0.1.0"),
-            runtime_api_version: String::from("v1alpha1"),
-            runtime_name: String::from("crust"),
-            runtime_version: String::from("0.0.1"),
+            version: "0.1.0".into(),
+            runtime_api_version: "v1alpha1".into(),
+            runtime_name: "crust".into(),
+            runtime_version: "0.0.1".into(),
         };
         Ok(Response::new(resp))
     }
@@ -29,7 +27,7 @@ impl RuntimeService for MyRuntime {
         _request: Request<criapi::CreateContainerRequest>,
     ) -> Result<Response<criapi::CreateContainerResponse>, Status> {
         let resp = criapi::CreateContainerResponse {
-            container_id: String::from("stub"),
+            container_id: "stub".into(),
         };
         Ok(Response::new(resp))
     }
@@ -127,9 +125,7 @@ impl RuntimeService for MyRuntime {
         &self,
         _request: Request<criapi::ExecRequest>,
     ) -> Result<Response<criapi::ExecResponse>, Status> {
-        let resp = criapi::ExecResponse {
-            url: String::from("url"),
-        };
+        let resp = criapi::ExecResponse { url: "url".into() };
         Ok(Response::new(resp))
     }
 
@@ -137,18 +133,14 @@ impl RuntimeService for MyRuntime {
         &self,
         _request: Request<criapi::AttachRequest>,
     ) -> Result<Response<criapi::AttachResponse>, Status> {
-        let resp = criapi::AttachResponse {
-            url: String::from("url"),
-        };
+        let resp = criapi::AttachResponse { url: "url".into() };
         Ok(Response::new(resp))
     }
     async fn port_forward(
         &self,
         _request: Request<criapi::PortForwardRequest>,
     ) -> Result<Response<criapi::PortForwardResponse>, Status> {
-        let resp = criapi::PortForwardResponse {
-            url: String::from("url"),
-        };
+        let resp = criapi::PortForwardResponse { url: "url".into() };
         Ok(Response::new(resp))
     }
 
@@ -157,7 +149,7 @@ impl RuntimeService for MyRuntime {
         _request: Request<criapi::RunPodSandboxRequest>,
     ) -> Result<Response<criapi::RunPodSandboxResponse>, Status> {
         let reply = criapi::RunPodSandboxResponse {
-            pod_sandbox_id: String::from("1234567890"),
+            pod_sandbox_id: "1234567890".into(),
         };
         Ok(Response::new(reply))
     }
@@ -209,59 +201,6 @@ impl RuntimeService for MyRuntime {
         _request: Request<criapi::UpdateRuntimeConfigRequest>,
     ) -> Result<Response<criapi::UpdateRuntimeConfigResponse>, Status> {
         let resp = criapi::UpdateRuntimeConfigResponse {};
-        Ok(Response::new(resp))
-    }
-}
-
-#[derive(Default)]
-pub struct MyImage {}
-
-#[tonic::async_trait]
-impl ImageService for MyImage {
-    async fn list_images(
-        &self,
-        _request: Request<criapi::ListImagesRequest>,
-    ) -> Result<Response<criapi::ListImagesResponse>, Status> {
-        let resp = criapi::ListImagesResponse { images: Vec::new() };
-        Ok(Response::new(resp))
-    }
-
-    async fn pull_image(
-        &self,
-        _request: Request<criapi::PullImageRequest>,
-    ) -> Result<Response<criapi::PullImageResponse>, Status> {
-        let resp = criapi::PullImageResponse {
-            image_ref: String::from("some_image"),
-        };
-        Ok(Response::new(resp))
-    }
-
-    async fn image_status(
-        &self,
-        _request: Request<criapi::ImageStatusRequest>,
-    ) -> Result<Response<criapi::ImageStatusResponse>, Status> {
-        let resp = criapi::ImageStatusResponse {
-            image: None,
-            info: HashMap::new(),
-        };
-        Ok(Response::new(resp))
-    }
-
-    async fn remove_image(
-        &self,
-        _request: Request<criapi::RemoveImageRequest>,
-    ) -> Result<Response<criapi::RemoveImageResponse>, Status> {
-        let resp = criapi::RemoveImageResponse {};
-        Ok(Response::new(resp))
-    }
-
-    async fn image_fs_info(
-        &self,
-        _request: Request<criapi::ImageFsInfoRequest>,
-    ) -> Result<Response<criapi::ImageFsInfoResponse>, Status> {
-        let resp = criapi::ImageFsInfoResponse {
-            image_filesystems: Vec::new(),
-        };
         Ok(Response::new(resp))
     }
 }

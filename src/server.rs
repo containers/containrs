@@ -1,8 +1,7 @@
 use crate::{
-    config::Config,
-    criapi::image_service_server::ImageServiceServer,
-    criapi::runtime_service_server::RuntimeServiceServer,
-    runtime::{MyImage, MyRuntime},
+    config::Config, criapi::image_service_server::ImageServiceServer,
+    criapi::runtime_service_server::RuntimeServiceServer, image_service::MyImage,
+    runtime_service::MyRuntime,
 };
 use anyhow::{Context, Result};
 use clap::crate_name;

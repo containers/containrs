@@ -3,7 +3,8 @@
 
 mod config;
 mod criapi;
-mod runtime;
+mod image_service;
+mod runtime_service;
 mod server;
 
 pub use config::Config;
