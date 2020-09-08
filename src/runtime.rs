@@ -270,9 +270,11 @@ impl MyImage {
 impl ImageService for MyImage {
     async fn list_images(
         &self,
-        _request: Request<criapi::ListImagesRequest>,
+        request: Request<criapi::ListImagesRequest>,
     ) -> Result<Response<criapi::ListImagesResponse>, Status> {
-        let resp = criapi::ListImagesResponse { images: Vec::new() };
+        let request = request.into_inner();
+        let images = self.list_images(request.filter.as_ref().and_then(|f| f.image.as_ref()))?;
+        let resp = criapi::ListImagesResponse { images };
         Ok(Response::new(resp))
     }
 
