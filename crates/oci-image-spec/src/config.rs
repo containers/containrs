@@ -28,7 +28,7 @@ pub struct Config {
 }
 
 #[derive(Clone, PartialEq, Debug, Default, Deserialize, Serialize)]
-pub struct ItemHistory {
+pub struct History {
     pub author: Option<String>,
     pub comment: Option<String>,
     pub created: Option<String>,
@@ -37,7 +37,7 @@ pub struct ItemHistory {
 }
 
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
-pub struct ItemHistoryRootfs {
+pub struct HistoryRootfs {
     pub diff_ids: Vec<String>,
     #[serde(rename = "type")]
     pub item_type: String,
@@ -49,7 +49,7 @@ pub struct RootConfig {
     pub author: Option<String>,
     pub config: Option<Config>,
     pub created: Option<String>,
-    pub history: Option<Vec<ItemHistory>>,
+    pub history: Option<Vec<History>>,
     pub os: String,
-    pub rootfs: ItemHistoryRootfs,
+    pub rootfs: HistoryRootfs,
 }
