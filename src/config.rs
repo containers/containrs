@@ -23,6 +23,15 @@ pub struct Config {
     )]
     /// The logging level of the application
     log_level: LevelFilter,
+
+    #[get = "pub"]
+    #[clap(
+        default_value("/var/run/cri/cri.sock"),
+        env("CRI_SOCK_PATH"),
+        long("sock-path")
+    )]
+    /// The path to the unix socket for the server
+    sock_path: String,
 }
 
 impl Default for Config {
