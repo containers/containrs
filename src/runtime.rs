@@ -1,7 +1,10 @@
 use crate::criapi::{
     self, image_service_server::ImageService, runtime_service_server::RuntimeService,
 };
-use std::collections::HashMap;
+use anyhow::Result;
+use prost::Message;
+use sled::Db;
+use std::{collections::HashMap, path::Path, path::PathBuf};
 use tonic::{Request, Response, Status};
 
 #[derive(Default)]
@@ -213,8 +216,55 @@ impl RuntimeService for MyRuntime {
     }
 }
 
-#[derive(Default)]
-pub struct MyImage {}
+#[derive(thiserror::Error, Debug)]
+pub enum ImageError {
+    #[error("image database error: {0}")]
+    DatabaseError(#[from] sled::Error),
+    #[error("decode error (should not occur, probally database is corrupted?): {0}")]
+    DecodeError(#[from] prost::DecodeError),
+}
+
+impl From<ImageError> for Status {
+    fn from(_: ImageError) -> Self {
+        todo!()
+    }
+}
+
+pub struct MyImage {
+    sled: Db,
+    images: PathBuf,
+}
+
+impl MyImage {
+    /// Open directory as image storage
+    pub fn open(image_storage: &Path) -> Result<Self> {
+        let mut db_path = image_storage.to_owned();
+        db_path.push("images.db");
+        let mut images = image_storage.to_owned();
+        images.push("images");
+        Ok(MyImage {
+            sled: sled::open(db_path)?,
+            images,
+        })
+    }
+
+    /// List already pulled images
+    /// TODO: use passed spec
+    pub fn list_images(
+        &self,
+        spec: Option<&criapi::ImageSpec>,
+    ) -> Result<Vec<criapi::Image>, ImageError> {
+        use std::io::Cursor;
+
+        let mut k = sled::IVec::default();
+        let mut out = vec![];
+        while let Some((ik, v)) = self.sled.get_gt(&k)? {
+            k = ik.clone();
+            out.push(criapi::Image::decode(&mut Cursor::new(&k))?);
+        }
+        Ok(out)
+    }
+}
 
 #[tonic::async_trait]
 impl ImageService for MyImage {

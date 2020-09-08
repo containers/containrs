@@ -21,6 +21,7 @@ path = "src/main.rs"
 
 [dependencies]
 anyhow = "1.0.32"
+thiserror = "1.0.20"
 clap = { git = "https://github.com/clap-rs/clap", features = ["wrap_help"] }
 env_logger = "0.7.1"
 getset = "0.1.1"
@@ -29,6 +30,10 @@ prost = "0.6.1"
 serde = { version = "1.0.115", features = ["derive"] }
 tokio = { version = "0.2.22", features = ["macros"] }
 tonic = "0.3.1"
+sled = "0.34.3"
+
+[dev-dependencies]
+tempfile = "3.1.0"
 
 [build-dependencies]
 anyhow = "1.0.32"

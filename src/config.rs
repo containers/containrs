@@ -3,6 +3,7 @@ use clap::{AppSettings, Clap};
 use getset::{CopyGetters, Getters};
 use log::LevelFilter;
 use serde::{Deserialize, Serialize};
+use std::path::PathBuf;
 
 #[derive(Clap, CopyGetters, Getters, Deserialize, Serialize)]
 #[serde(rename_all = "kebab-case")]
@@ -23,6 +24,11 @@ pub struct Config {
     )]
     /// The logging level of the application
     log_level: LevelFilter,
+
+    #[get = "pub"]
+    #[clap(default_value("/var/lib/cri"), env("CRI_DATA_DIR"), long("data-dir"))]
+    /// Directory to store CRI data
+    data_dir: PathBuf,
 }
 
 impl Default for Config {
