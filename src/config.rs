@@ -29,6 +29,14 @@ pub struct Config {
     #[clap(default_value("/var/lib/cri"), env("CRI_DATA_DIR"), long("data-dir"))]
     /// Directory to store CRI data
     data_dir: PathBuf,
+    #[get = "pub"]
+    #[clap(
+        default_value("/var/run/cri/cri.sock"),
+        env("CRI_SOCK_PATH"),
+        long("sock-path")
+    )]
+    /// The path to the unix socket for the server
+    sock_path: String,
 }
 
 impl Default for Config {

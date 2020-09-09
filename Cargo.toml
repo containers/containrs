@@ -24,11 +24,12 @@ anyhow = "1.0.32"
 thiserror = "1.0.20"
 clap = { git = "https://github.com/clap-rs/clap", features = ["wrap_help"] }
 env_logger = "0.7.1"
+futures-util = "0.3.5"
 getset = "0.1.1"
 log = { version = "0.4.11", features = ["serde", "std"] }
 prost = "0.6.1"
 serde = { version = "1.0.115", features = ["derive"] }
-tokio = { version = "0.2.22", features = ["macros", "fs", "stream", "io-util", "rt-core", "rt-util"] }
+tokio = { version = "0.2.22", features = ["macros", "fs", "stream", "uds", "io-util", "rt-core", "rt-util"] }
 tonic = "0.3.1"
 sled = "0.34.3"
 
