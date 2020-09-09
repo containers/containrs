@@ -1,18 +1,17 @@
 use crate::{
     config::Config, criapi::image_service_server::ImageServiceServer,
     criapi::runtime_service_server::RuntimeServiceServer, image_service::MyImage,
-    runtime_service::MyRuntime,
-    unix_stream,
+    runtime_service::MyRuntime, unix_stream,
 };
 use anyhow::{anyhow, Context, Result};
 use clap::crate_name;
+use futures_util::stream::TryStreamExt;
 use log::info;
 use std::env;
 use std::path::Path;
+use tokio::fs;
 #[cfg(unix)]
 use tokio::net::UnixListener;
-use futures_util::stream::TryStreamExt;
-use tokio::fs;
 use tonic::transport;
 
 /// Server is the main instance to run the Container Runtime Interface
@@ -36,7 +35,10 @@ impl Server {
 
         let sock_path = Path::new(self.config.sock_path());
         if !sock_path.is_absolute() {
-            return Err(anyhow!("specified socket path {} is not absolute", sock_path.display()));
+            return Err(anyhow!(
+                "specified socket path {} is not absolute",
+                sock_path.display()
+            ));
         }
         if sock_path.exists() {
             fs::remove_file(sock_path).await?;
