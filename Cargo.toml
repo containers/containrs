@@ -22,6 +22,7 @@ path = "src/main.rs"
 [dependencies]
 anyhow = "1.0.32"
 clap = { git = "https://github.com/clap-rs/clap", features = ["wrap_help"] }
+derive_builder = "0.9.0"
 env_logger = "0.7.1"
 futures-util = "0.3.5"
 getset = "0.1.1"
@@ -34,3 +35,6 @@ tonic = "0.3.1"
 [build-dependencies]
 anyhow = "1.0.32"
 tonic-build = "0.3.1"
+
+[dev-dependencies]
+tokio-test = "0.2.1"
