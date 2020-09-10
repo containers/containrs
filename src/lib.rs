@@ -4,6 +4,7 @@
 mod config;
 mod criapi;
 mod image_service;
+mod lock_map;
 mod runtime_service;
 mod server;
 mod unix_stream;

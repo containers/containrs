@@ -31,7 +31,7 @@ impl Server {
             .context("set logging verbosity")?;
 
         let rt = MyRuntime::default();
-        let img = MyImage::default();
+        let img = MyImage::open(&self.config.data_dir()).await?;
 
         let sock_path = Path::new(self.config.sock_path());
         if !sock_path.is_absolute() {
