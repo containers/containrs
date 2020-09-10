@@ -1,14 +1,17 @@
 use crate::{
-    config::Config, criapi::image_service_server::ImageServiceServer,
-    criapi::runtime_service_server::RuntimeServiceServer, image_service::MyImage,
-    runtime_service::MyRuntime, unix_stream,
+    config::Config,
+    criapi::{
+        image_service_server::ImageServiceServer, runtime_service_server::RuntimeServiceServer,
+    },
+    image_service::MyImage,
+    runtime_service::MyRuntime,
+    unix_stream,
 };
 use anyhow::{bail, Context, Result};
 use clap::crate_name;
 use futures_util::stream::TryStreamExt;
 use log::{debug, info};
-use std::env;
-use std::path::Path;
+use std::{env, path::Path};
 use tokio::fs;
 #[cfg(unix)]
 use tokio::net::UnixListener;
