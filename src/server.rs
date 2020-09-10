@@ -3,16 +3,16 @@ use crate::{
     criapi::runtime_service_server::RuntimeServiceServer, image_service::MyImage,
     runtime_service::MyRuntime, unix_stream,
 };
-use anyhow::{anyhow, Context, Result};
+use anyhow::{bail, Context, Result};
 use clap::crate_name;
 use futures_util::stream::TryStreamExt;
-use log::info;
+use log::{debug, info};
 use std::env;
 use std::path::Path;
 use tokio::fs;
 #[cfg(unix)]
 use tokio::net::UnixListener;
-use tonic::transport;
+use tonic::{transport, Request, Status};
 
 /// Server is the main instance to run the Container Runtime Interface
 pub struct Server {
@@ -30,15 +30,12 @@ impl Server {
         self.set_logging_verbosity()
             .context("set logging verbosity")?;
 
-        let rt = MyRuntime::default();
-        let img = MyImage::default();
-
         let sock_path = Path::new(self.config.sock_path());
         if !sock_path.is_absolute() {
-            return Err(anyhow!(
+            bail!(
                 "specified socket path {} is not absolute",
                 sock_path.display()
-            ));
+            )
         }
         if sock_path.exists() {
             fs::remove_file(sock_path).await?;
@@ -53,9 +50,12 @@ impl Server {
 
         info!("Runtime server listening on {}", self.config.sock_path());
 
+        let rt = MyRuntime::default();
+        let img = MyImage::default();
+
         transport::Server::builder()
-            .add_service(RuntimeServiceServer::new(rt))
-            .add_service(ImageServiceServer::new(img))
+            .add_service(RuntimeServiceServer::with_interceptor(rt, Self::intercept))
+            .add_service(ImageServiceServer::with_interceptor(img, Self::intercept))
             .serve_with_incoming(uds.incoming().map_ok(unix_stream::UnixStream))
             .await
             .context("serve GRPC")
@@ -71,5 +71,13 @@ impl Server {
 
         // Initialize the logger
         env_logger::try_init().context("init env logger")
+    }
+
+    /// This function will get called on each inbound request, if a `Status`
+    /// is returned, it will cancel the request and return that status to the
+    /// client.
+    fn intercept(req: Request<()>) -> std::result::Result<Request<()>, Status> {
+        debug!("{:?}", req);
+        Ok(req)
     }
 }

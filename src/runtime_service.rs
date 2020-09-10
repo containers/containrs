@@ -9,10 +9,8 @@ pub struct MyRuntime {}
 impl RuntimeService for MyRuntime {
     async fn version(
         &self,
-        request: Request<criapi::VersionRequest>,
+        _request: Request<criapi::VersionRequest>,
     ) -> Result<Response<criapi::VersionResponse>, Status> {
-        println!("Got a request from {:?}", request.remote_addr());
-
         let resp = criapi::VersionResponse {
             version: "0.1.0".into(),
             runtime_api_version: "v1alpha1".into(),
