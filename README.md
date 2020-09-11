@@ -1,5 +1,7 @@
 # CRI - Container runtime in Rust
 
+[![codecov](https://codecov.io/gh/cri-o/cri/branch/master/graph/badge.svg)](https://codecov.io/gh/cri-o/cri)
+
 This repository is a hacking space for a new container runtime in Rust. 
 
 Scope of the project includes:
