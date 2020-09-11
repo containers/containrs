@@ -38,12 +38,14 @@ impl Server {
             )
         }
         if sock_path.exists() {
-            fs::remove_file(sock_path).await?;
+            fs::remove_file(sock_path)
+                .await
+                .with_context(|| format!("unable to remove socket file {}", sock_path.display()))?;
         } else {
             let sock_dir = sock_path.parent().context("get socket path directory")?;
             fs::create_dir_all(sock_dir)
                 .await
-                .context(format!("create socket dir {}", sock_dir.display()))?;
+                .with_context(|| format!("create socket dir {}", sock_dir.display()))?;
         }
 
         let mut uds = UnixListener::bind(&self.config.sock_path())?;
