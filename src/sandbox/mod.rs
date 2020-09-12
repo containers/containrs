@@ -60,6 +60,11 @@ pub trait Pod {
     fn remove(&mut self, _: &SandboxData) -> Result<()> {
         Ok(())
     }
+
+    // Returns whether a sandbox is ready or not
+    fn ready(&mut self, _: &SandboxData) -> Result<bool> {
+        Ok(false)
+    }
 }
 
 impl<T> Sandbox<T>
@@ -86,6 +91,12 @@ where
     /// Wrapper for the implementations `remove` method
     pub fn remove(&mut self) -> Result<()> {
         self.implementation.remove(&self.data)
+    }
+
+    #[allow(dead_code)]
+    /// Wrapper for the implementations `remove` method
+    pub fn ready(&mut self) -> Result<bool> {
+        self.implementation.ready(&self.data)
     }
 }
 
@@ -122,19 +133,25 @@ pub mod tests {
         run_called: bool,
         stop_called: bool,
         remove_called: bool,
+        ready: bool,
     }
     impl Pod for Mock {
         fn run(&mut self, _: &SandboxData) -> Result<()> {
             self.run_called = true;
+            self.ready = true;
             Ok(())
         }
         fn stop(&mut self, _: &SandboxData) -> Result<()> {
             self.stop_called = true;
+            self.ready = false;
             Ok(())
         }
         fn remove(&mut self, _: &SandboxData) -> Result<()> {
             self.remove_called = true;
             Ok(())
+        }
+        fn ready(&mut self, _: &SandboxData) -> Result<bool> {
+            Ok(self.ready)
         }
     }
 
@@ -189,14 +206,18 @@ pub mod tests {
             .build()
             .map_err(|e| format_err!("build sandbox: {}", e))?;
 
+        assert!(!sandbox.ready().unwrap());
         sandbox.run()?;
         assert!(sandbox.implementation.run_called);
+        assert!(sandbox.ready().unwrap());
 
         sandbox.stop()?;
         assert!(sandbox.implementation.stop_called);
+        assert!(!sandbox.ready().unwrap());
 
         sandbox.remove()?;
         assert!(sandbox.implementation.remove_called);
+        assert!(!sandbox.ready().unwrap());
 
         Ok(())
     }
