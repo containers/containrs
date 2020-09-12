@@ -1,10 +1,10 @@
 use crate::{
     config::{Config, LogScope},
+    cri_service::CRIService,
     criapi::{
         image_service_server::ImageServiceServer, runtime_service_server::RuntimeServiceServer,
     },
-    image_service::MyImage,
-    runtime_service::MyRuntime,
+    storage::{default_key_value_storage::DefaultKeyValueStorage, KeyValueStorage},
     unix_stream,
 };
 use anyhow::{bail, Context, Result};
@@ -28,7 +28,7 @@ pub struct Server {
 impl Server {
     /// Create a new server instance
     pub fn new(config: Config) -> Self {
-        Server { config }
+        Self { config }
     }
 
     /// Start a new server with its default values
@@ -36,8 +36,9 @@ impl Server {
         self.set_logging_verbosity()
             .context("set logging verbosity")?;
 
-        let rt = MyRuntime::default();
-        let img = MyImage::default();
+        // Setup the storage and pass it to the service
+        let storage = DefaultKeyValueStorage::open(&self.config.storage_path())?;
+        let cri_service = CRIService::new(storage.clone());
 
         // Build a new socket from the config
         let mut uds = self.unix_domain_listener().await?;
@@ -53,8 +54,8 @@ impl Server {
 
         tokio::select! {
             res = transport::Server::builder()
-                .add_service(RuntimeServiceServer::with_interceptor(rt, Self::intercept))
-                .add_service(ImageServiceServer::with_interceptor(img, Self::intercept))
+                .add_service(RuntimeServiceServer::with_interceptor(cri_service.clone(), Self::intercept))
+                .add_service(ImageServiceServer::with_interceptor(cri_service, Self::intercept))
                 .serve_with_incoming(uds.incoming().map_ok(unix_stream::UnixStream)) => {
                 res.context("run GRPC server")?
             }
@@ -66,7 +67,7 @@ impl Server {
             }
         }
 
-        self.cleanup()
+        self.cleanup(storage)
     }
 
     /// Create a new UnixListener from the configs socket path.
@@ -115,8 +116,11 @@ impl Server {
     }
 
     /// Cleanup the server and persist any data if necessary.
-    fn cleanup(self) -> Result<()> {
+    fn cleanup(self, mut storage: DefaultKeyValueStorage) -> Result<()> {
         debug!("Cleaning up server");
+        storage.persist().context("persist storage")?;
+        std::fs::remove_file(self.config.sock_path())
+            .with_context(|| format!("remove socket path {}", self.config.sock_path().display()))?;
         Ok(())
     }
 }

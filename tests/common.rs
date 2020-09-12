@@ -68,10 +68,15 @@ impl Sut {
         let err_file = out_file.try_clone()?;
 
         info!("Starting server");
-        let sock_path = tmp_dir.path().join("test.sock");
+        let run_path = tmp_dir.path().to_owned();
+        let sock_path = run_path.join("test.sock");
         let child = Command::new(BINARY_PATH)
             .arg("--log-level=debug")
             .arg(format!("--sock-path={}", sock_path.display()))
+            .arg(format!(
+                "--storage-path={}",
+                run_path.join("storage").display()
+            ))
             .stderr(Stdio::from(err_file))
             .stdout(Stdio::from(out_file))
             .spawn()
@@ -80,7 +85,7 @@ impl Sut {
         info!("Waiting for server to be ready");
         Self::check_file_for_output(
             &log_path,
-            &sock_path.display().to_string(),
+            &run_path.display().to_string(),
             "Unable to run server",
         )?;
         info!("Server is ready");

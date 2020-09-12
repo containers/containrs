@@ -1,10 +1,10 @@
 use crate::{
+    cri_service::CRIService,
     criapi::{ExecRequest, ExecResponse},
-    runtime_service::MyRuntime,
 };
 use tonic::{Request, Response, Status};
 
-impl MyRuntime {
+impl CRIService {
     pub async fn handle_exec(
         &self,
         _request: Request<ExecRequest>,

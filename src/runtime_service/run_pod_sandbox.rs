@@ -1,12 +1,12 @@
 use crate::{
+    cri_service::CRIService,
     criapi::{RunPodSandboxRequest, RunPodSandboxResponse},
-    runtime_service::MyRuntime,
     sandbox::{pinned::PinnedSandbox, SandboxBuilder, SandboxDataBuilder},
 };
 use log::{debug, info};
 use tonic::{Request, Response, Status};
 
-impl MyRuntime {
+impl CRIService {
     pub async fn handle_run_pod_sandbox(
         &self,
         request: Request<RunPodSandboxRequest>,
@@ -58,15 +58,16 @@ impl MyRuntime {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::criapi::{
-        runtime_service_server::RuntimeService, PodSandboxConfig, PodSandboxMetadata,
+    use crate::{
+        cri_service::tests::new_cri_service,
+        criapi::{runtime_service_server::RuntimeService, PodSandboxConfig, PodSandboxMetadata},
     };
     use anyhow::Result;
     use std::collections::HashMap;
 
     #[tokio::test]
     async fn run_pod_sandbox_success() -> Result<()> {
-        let sut = MyRuntime::default();
+        let sut = new_cri_service()?;
         let test_id = "123";
         let request = RunPodSandboxRequest {
             config: Some(PodSandboxConfig {
@@ -92,19 +93,20 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn run_pod_sandbox_fail_no_config() {
-        let sut = MyRuntime::default();
+    async fn run_pod_sandbox_fail_no_config() -> Result<()> {
+        let sut = new_cri_service()?;
         let request = RunPodSandboxRequest {
             config: None,
             runtime_handler: "".into(),
         };
         let response = sut.run_pod_sandbox(Request::new(request)).await;
         assert!(response.is_err());
+        Ok(())
     }
 
     #[tokio::test]
-    async fn run_pod_sandbox_fail_no_config_metadata() {
-        let sut = MyRuntime::default();
+    async fn run_pod_sandbox_fail_no_config_metadata() -> Result<()> {
+        let sut = new_cri_service()?;
         let request = RunPodSandboxRequest {
             config: Some(PodSandboxConfig {
                 metadata: None,
@@ -120,5 +122,6 @@ mod tests {
         };
         let response = sut.run_pod_sandbox(Request::new(request)).await;
         assert!(response.is_err());
+        Ok(())
     }
 }

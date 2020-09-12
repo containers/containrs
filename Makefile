@@ -1,5 +1,7 @@
 CARGO ?= cargo
 
+export RUST_TEST_NOCAPTURE=1
+
 all: build ## Run the 'build' target
 
 .PHONY: build

@@ -1,10 +1,10 @@
 use crate::{
+    cri_service::CRIService,
     criapi::{UpdateRuntimeConfigRequest, UpdateRuntimeConfigResponse},
-    runtime_service::MyRuntime,
 };
 use tonic::{Request, Response, Status};
 
-impl MyRuntime {
+impl CRIService {
     pub async fn handle_update_runtime_config(
         &self,
         _request: Request<UpdateRuntimeConfigRequest>,

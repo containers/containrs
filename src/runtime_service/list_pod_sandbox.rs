@@ -1,10 +1,10 @@
 use crate::{
+    cri_service::CRIService,
     criapi::{ListPodSandboxRequest, ListPodSandboxResponse},
-    runtime_service::MyRuntime,
 };
 use tonic::{Request, Response, Status};
 
-impl MyRuntime {
+impl CRIService {
     pub async fn handle_list_pod_sandbox(
         &self,
         _request: Request<ListPodSandboxRequest>,

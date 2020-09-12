@@ -1,10 +1,10 @@
 use crate::{
+    cri_service::CRIService,
     criapi::{VersionRequest, VersionResponse},
-    runtime_service::MyRuntime,
 };
 use tonic::{Request, Response, Status};
 
-impl MyRuntime {
+impl CRIService {
     pub async fn handle_version(
         &self,
         _request: Request<VersionRequest>,

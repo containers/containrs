@@ -1,10 +1,10 @@
 use crate::{
+    cri_service::CRIService,
     criapi::{ReopenContainerLogRequest, ReopenContainerLogResponse},
-    runtime_service::MyRuntime,
 };
 use tonic::{Request, Response, Status};
 
-impl MyRuntime {
+impl CRIService {
     pub async fn handle_reopen_container_log(
         &self,
         _request: Request<ReopenContainerLogRequest>,

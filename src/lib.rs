@@ -2,12 +2,14 @@
 #![deny(missing_docs)]
 
 mod config;
+mod cri_service;
 mod criapi;
 mod image_service;
 mod oci_spec;
 mod runtime_service;
 mod sandbox;
 mod server;
+mod storage;
 mod unix_stream;
 
 pub use config::Config;

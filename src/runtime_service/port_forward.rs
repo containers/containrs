@@ -1,10 +1,10 @@
 use crate::{
+    cri_service::CRIService,
     criapi::{PortForwardRequest, PortForwardResponse},
-    runtime_service::MyRuntime,
 };
 use tonic::{Request, Response, Status};
 
-impl MyRuntime {
+impl CRIService {
     pub async fn handle_port_forward(
         &self,
         _request: Request<PortForwardRequest>,
