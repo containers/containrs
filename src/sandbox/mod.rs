@@ -61,7 +61,9 @@ pub trait Pod {
         Ok(())
     }
 
-    // Returns whether a sandbox is ready or not
+    // Returns whether a sandbox is ready or not. A sandbox should be `ready()` if running, which
+    // means that a previous call to `run()` was successful and it has not been neither `stopped()`
+    // nor already `removed()`.
     fn ready(&mut self, _: &SandboxData) -> Result<bool> {
         Ok(false)
     }
@@ -94,7 +96,7 @@ where
     }
 
     #[allow(dead_code)]
-    /// Wrapper for the implementations `remove` method
+    /// Wrapper for the implementations `ready` method
     pub fn ready(&mut self) -> Result<bool> {
         self.implementation.ready(&self.data)
     }
@@ -206,18 +208,18 @@ pub mod tests {
             .build()
             .map_err(|e| format_err!("build sandbox: {}", e))?;
 
-        assert!(!sandbox.ready().unwrap());
+        assert!(!sandbox.ready()?);
         sandbox.run()?;
         assert!(sandbox.implementation.run_called);
-        assert!(sandbox.ready().unwrap());
+        assert!(sandbox.ready()?);
 
         sandbox.stop()?;
         assert!(sandbox.implementation.stop_called);
-        assert!(!sandbox.ready().unwrap());
+        assert!(!sandbox.ready()?);
 
         sandbox.remove()?;
         assert!(sandbox.implementation.remove_called);
-        assert!(!sandbox.ready().unwrap());
+        assert!(!sandbox.ready()?);
 
         Ok(())
     }
