@@ -3,6 +3,7 @@ use clap::{AppSettings, Clap};
 use getset::{CopyGetters, Getters};
 use log::LevelFilter;
 use serde::{Deserialize, Serialize};
+use std::path::PathBuf;
 
 #[derive(Clap, CopyGetters, Getters, Deserialize, Serialize)]
 #[serde(rename_all = "kebab-case")]
@@ -31,7 +32,7 @@ pub struct Config {
         long("sock-path")
     )]
     /// The path to the unix socket for the server
-    sock_path: String,
+    sock_path: PathBuf,
 }
 
 impl Default for Config {

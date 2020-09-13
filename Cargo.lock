@@ -125,6 +125,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "clap",
+ "ctor",
  "derive_builder",
  "env_logger",
  "futures-util",
@@ -132,10 +133,22 @@ dependencies = [
  "log",
  "prost",
  "serde",
+ "tempfile",
  "tokio",
  "tokio-test",
  "tonic",
  "tonic-build",
+ "tower",
+]
+
+[[package]]
+name = "ctor"
+version = "0.1.15"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "39858aa5bac06462d4dd4b9164848eb81ffc4aa5c479746393598fd193afa227"
+dependencies = [
+ "quote",
+ "syn",
 ]
 
 [[package]]
