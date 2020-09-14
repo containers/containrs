@@ -133,6 +133,7 @@ dependencies = [
  "log",
  "prost",
  "serde",
+ "serde_json",
  "tempfile",
  "tokio",
  "tokio-test",
@@ -188,26 +189,31 @@ dependencies = [
 
 [[package]]
 name = "derive_builder"
-version = "0.9.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a2658621297f2cf68762a6f7dc0bb7e1ff2cfd6583daef8ee0fed6f7ec468ec0"
+version = "0.10.0-alpha"
+source = "git+https://github.com/colin-kiegel/rust-derive-builder#9e6bf5c7a3d4728dea86931661eef83bdf6d2a61"
+dependencies = [
+ "derive_builder_core",
+ "derive_builder_macro",
+]
+
+[[package]]
+name = "derive_builder_core"
+version = "0.10.0-alpha"
+source = "git+https://github.com/colin-kiegel/rust-derive-builder#9e6bf5c7a3d4728dea86931661eef83bdf6d2a61"
 dependencies = [
  "darling",
- "derive_builder_core",
+ "log",
  "proc-macro2",
  "quote",
  "syn",
 ]
 
 [[package]]
-name = "derive_builder_core"
-version = "0.9.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2791ea3e372c8495c0bc2033991d76b512cd799d07491fbd6890124db9458bef"
+name = "derive_builder_macro"
+version = "0.10.0-alpha"
+source = "git+https://github.com/colin-kiegel/rust-derive-builder#9e6bf5c7a3d4728dea86931661eef83bdf6d2a61"
 dependencies = [
- "darling",
- "proc-macro2",
- "quote",
+ "derive_builder_core",
  "syn",
 ]
 
@@ -841,6 +847,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "ryu"
+version = "1.0.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "71d301d4193d031abdd79ff7e3dd721168a9572ef3fe51a1517aba235bd8f86e"
+
+[[package]]
 name = "serde"
 version = "1.0.116"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -858,6 +870,17 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "serde_json"
+version = "1.0.57"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "164eacbdb13512ec2745fb09d51fd5b22b0d65ed294a1dcf7285a360c80a675c"
+dependencies = [
+ "itoa",
+ "ryu",
+ "serde",
 ]
 
 [[package]]

@@ -4,6 +4,7 @@
 mod config;
 mod criapi;
 mod image_service;
+mod oci_spec;
 mod runtime_service;
 mod sandbox;
 mod server;
