@@ -1,11 +1,13 @@
 //! Configuration related structures
 use clap::{AppSettings, Clap};
+use derive_builder::Builder;
 use getset::{CopyGetters, Getters};
 use log::LevelFilter;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
-#[derive(Clap, CopyGetters, Getters, Deserialize, Serialize)]
+#[derive(Builder, Clap, CopyGetters, Getters, Deserialize, Serialize)]
+#[builder(default, pattern = "owned", setter(into))]
 #[serde(rename_all = "kebab-case")]
 #[clap(
     after_help("More info at: https://github.com/cri-o/cri"),
@@ -44,10 +46,24 @@ impl Default for Config {
 #[cfg(test)]
 pub mod tests {
     use super::*;
+    use anyhow::Result;
 
     #[test]
     fn default_config() {
         let c = Config::default();
         assert_eq!(c.log_level(), LevelFilter::Info);
+    }
+
+    #[test]
+    fn build_config() -> Result<()> {
+        let c = ConfigBuilder::default()
+            .log_level(LevelFilter::Warn)
+            .sock_path("/some/path")
+            .build()?;
+
+        assert_eq!(c.log_level(), LevelFilter::Warn);
+        assert_eq!(&c.sock_path().display().to_string(), "/some/path");
+
+        Ok(())
     }
 }
