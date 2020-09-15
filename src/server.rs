@@ -12,9 +12,12 @@ use clap::crate_name;
 use futures_util::stream::TryStreamExt;
 use log::{debug, info};
 use std::env;
-use tokio::fs;
 #[cfg(unix)]
 use tokio::net::UnixListener;
+use tokio::{
+    fs,
+    signal::unix::{signal, SignalKind},
+};
 use tonic::{transport, Request, Status};
 
 /// Server is the main instance to run the Container Runtime Interface
@@ -61,12 +64,26 @@ impl Server {
         let rt = MyRuntime::default();
         let img = MyImage::default();
 
-        transport::Server::builder()
-            .add_service(RuntimeServiceServer::with_interceptor(rt, Self::intercept))
-            .add_service(ImageServiceServer::with_interceptor(img, Self::intercept))
-            .serve_with_incoming(uds.incoming().map_ok(unix_stream::UnixStream))
-            .await
-            .context("serve GRPC")
+        // Handle shutdown based on signals
+        let mut shutdown_terminate = signal(SignalKind::terminate())?;
+        let mut shutdown_interrupt = signal(SignalKind::interrupt())?;
+
+        tokio::select! {
+            res = transport::Server::builder()
+                .add_service(RuntimeServiceServer::with_interceptor(rt, Self::intercept))
+                .add_service(ImageServiceServer::with_interceptor(img, Self::intercept))
+                .serve_with_incoming(uds.incoming().map_ok(unix_stream::UnixStream)) => {
+                res.context("run GRPC server")?
+            }
+            _ = shutdown_interrupt.recv() => {
+                info!("Got interrupt signal, shutting down server");
+            }
+            _ = shutdown_terminate.recv() => {
+                info!("Got termination signal, shutting down server");
+            }
+        }
+
+        self.cleanup()
     }
 
     /// Initialize the logger and set the verbosity to the provided level.
@@ -87,5 +104,11 @@ impl Server {
     fn intercept(req: Request<()>) -> std::result::Result<Request<()>, Status> {
         debug!("{:?}", req);
         Ok(req)
+    }
+
+    /// Cleanup the server and persist any data if necessary.
+    fn cleanup(self) -> Result<()> {
+        debug!("Cleaning up server");
+        Ok(())
     }
 }
