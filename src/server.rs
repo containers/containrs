@@ -36,6 +36,41 @@ impl Server {
         self.set_logging_verbosity()
             .context("set logging verbosity")?;
 
+        let rt = MyRuntime::default();
+        let img = MyImage::default();
+
+        // Build a new socket from the config
+        let mut uds = self.unix_domain_listener().await?;
+
+        // Handle shutdown based on signals
+        let mut shutdown_terminate = signal(SignalKind::terminate())?;
+        let mut shutdown_interrupt = signal(SignalKind::interrupt())?;
+
+        info!(
+            "Runtime server listening on {}",
+            self.config.sock_path().display()
+        );
+
+        tokio::select! {
+            res = transport::Server::builder()
+                .add_service(RuntimeServiceServer::with_interceptor(rt, Self::intercept))
+                .add_service(ImageServiceServer::with_interceptor(img, Self::intercept))
+                .serve_with_incoming(uds.incoming().map_ok(unix_stream::UnixStream)) => {
+                res.context("run GRPC server")?
+            }
+            _ = shutdown_interrupt.recv() => {
+                info!("Got interrupt signal, shutting down server");
+            }
+            _ = shutdown_terminate.recv() => {
+                info!("Got termination signal, shutting down server");
+            }
+        }
+
+        self.cleanup()
+    }
+
+    /// Create a new UnixListener from the configs socket path.
+    async fn unix_domain_listener(&self) -> Result<UnixListener> {
         let sock_path = self.config.sock_path();
         if !sock_path.is_absolute() {
             bail!(
@@ -54,36 +89,7 @@ impl Server {
                 .with_context(|| format!("create socket dir {}", sock_dir.display()))?;
         }
 
-        let mut uds = UnixListener::bind(self.config.sock_path())?;
-
-        info!(
-            "Runtime server listening on {}",
-            self.config.sock_path().display()
-        );
-
-        let rt = MyRuntime::default();
-        let img = MyImage::default();
-
-        // Handle shutdown based on signals
-        let mut shutdown_terminate = signal(SignalKind::terminate())?;
-        let mut shutdown_interrupt = signal(SignalKind::interrupt())?;
-
-        tokio::select! {
-            res = transport::Server::builder()
-                .add_service(RuntimeServiceServer::with_interceptor(rt, Self::intercept))
-                .add_service(ImageServiceServer::with_interceptor(img, Self::intercept))
-                .serve_with_incoming(uds.incoming().map_ok(unix_stream::UnixStream)) => {
-                res.context("run GRPC server")?
-            }
-            _ = shutdown_interrupt.recv() => {
-                info!("Got interrupt signal, shutting down server");
-            }
-            _ = shutdown_terminate.recv() => {
-                info!("Got termination signal, shutting down server");
-            }
-        }
-
-        self.cleanup()
+        Ok(UnixListener::bind(sock_path).context("bind socket from path")?)
     }
 
     /// Initialize the logger and set the verbosity to the provided level.
@@ -109,6 +115,53 @@ impl Server {
     /// Cleanup the server and persist any data if necessary.
     fn cleanup(self) -> Result<()> {
         debug!("Cleaning up server");
+        Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::config::ConfigBuilder;
+    use tempfile::{tempdir, NamedTempFile};
+
+    #[tokio::test]
+    async fn unix_domain_listener_success() -> Result<()> {
+        let sock_path = &tempdir()?.path().join("test.sock");
+        let config = ConfigBuilder::default().sock_path(sock_path).build()?;
+        let sut = Server::new(config);
+
+        assert!(!sock_path.exists());
+        sut.unix_domain_listener().await?;
+        assert!(sock_path.exists());
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn unix_domain_listener_success_exists() -> Result<()> {
+        let sock_path = NamedTempFile::new()?;
+        let config = ConfigBuilder::default()
+            .sock_path(sock_path.path())
+            .build()?;
+        let sut = Server::new(config);
+
+        assert!(sock_path.path().exists());
+        sut.unix_domain_listener().await?;
+        assert!(sock_path.path().exists());
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn unix_domain_listener_fail_not_absolute() -> Result<()> {
+        let config = ConfigBuilder::default()
+            .sock_path("not/absolute/path")
+            .build()?;
+        let sut = Server::new(config);
+
+        assert!(sut.unix_domain_listener().await.is_err());
+
         Ok(())
     }
 }
