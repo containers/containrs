@@ -61,10 +61,11 @@ mod tests {
     use crate::criapi::{
         runtime_service_server::RuntimeService, PodSandboxConfig, PodSandboxMetadata,
     };
+    use anyhow::Result;
     use std::collections::HashMap;
 
     #[tokio::test]
-    async fn run_pod_sandbox_success() {
+    async fn run_pod_sandbox_success() -> Result<()> {
         let sut = MyRuntime::default();
         let test_id = "123";
         let request = RunPodSandboxRequest {
@@ -85,8 +86,9 @@ mod tests {
             }),
             runtime_handler: "".into(),
         };
-        let response = sut.run_pod_sandbox(Request::new(request)).await.unwrap();
+        let response = sut.run_pod_sandbox(Request::new(request)).await?;
         assert_eq!(response.get_ref().pod_sandbox_id, test_id);
+        Ok(())
     }
 
     #[tokio::test]
