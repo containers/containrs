@@ -1,1 +1,1 @@
-tonic::include_proto!("criapi");
+tonic::include_proto!("runtime.v1alpha2");

@@ -17,7 +17,7 @@ limitations under the License.
 // To regenerate api.pb.go run hack/update-generated-runtime.sh
 syntax = "proto3";
 
-package criapi;
+package runtime.v1alpha2;
 
 // Runtime service defines the public APIs for remote container runtimes
 service RuntimeService {
