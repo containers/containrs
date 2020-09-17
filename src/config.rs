@@ -1,11 +1,17 @@
 //! Configuration related structures
-use clap::{AppSettings, Clap};
+use clap::{crate_name, AppSettings, Clap};
 use derive_builder::Builder;
 use getset::{CopyGetters, Getters};
+use lazy_static::lazy_static;
 use log::LevelFilter;
+use nix::unistd::{self, Uid};
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 use strum::EnumString;
+
+lazy_static! {
+    static ref DEFAULT_SOCK_PATH: String = Config::default_sock_path().display().to_string();
+}
 
 #[derive(Builder, Clap, CopyGetters, Getters, Deserialize, Serialize)]
 #[builder(default, pattern = "owned", setter(into))]
@@ -43,12 +49,32 @@ pub struct Config {
 
     #[get = "pub"]
     #[clap(
-        default_value("/var/run/cri/cri.sock"),
+        default_value(&DEFAULT_SOCK_PATH),
         env("CRI_SOCK_PATH"),
         long("sock-path")
     )]
     /// The path to the unix socket for the server
     sock_path: PathBuf,
+}
+
+impl Config {
+    /// Return the default socket path depending if running as root or not.
+    fn default_sock_path() -> PathBuf {
+        Self::default_run_path(unistd::getuid())
+            .join(crate_name!())
+            .with_extension("sock")
+    }
+
+    /// Return the default run path depending on the provided user ID.
+    fn default_run_path(uid: Uid) -> PathBuf {
+        if uid.is_root() {
+            PathBuf::from("/var/run/").join(crate_name!())
+        } else {
+            PathBuf::from("/var/run/user")
+                .join(uid.to_string())
+                .join(crate_name!())
+        }
+    }
 }
 
 impl Default for Config {
@@ -93,5 +119,33 @@ pub mod tests {
         assert_eq!(c.log_scope(), LogScope::Global);
 
         Ok(())
+    }
+
+    #[test]
+    fn default_run_path_root() {
+        let uid = Uid::from_raw(0);
+        assert!(uid.is_root());
+        assert!(!Config::default_run_path(uid)
+            .display()
+            .to_string()
+            .contains("user"));
+    }
+
+    #[test]
+    fn default_run_path_non_root() {
+        let uid = Uid::from_raw(1000);
+        assert!(!uid.is_root());
+        assert!(Config::default_run_path(uid)
+            .display()
+            .to_string()
+            .contains(&uid.to_string()));
+    }
+
+    #[test]
+    fn default_sock_path() {
+        assert!(Config::default_sock_path()
+            .display()
+            .to_string()
+            .contains(".sock"));
     }
 }
