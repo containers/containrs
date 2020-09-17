@@ -20,7 +20,7 @@ use tonic::transport::{Channel, Endpoint, Uri};
 use tower::service_fn;
 
 pub mod criapi {
-    tonic::include_proto!("criapi");
+    tonic::include_proto!("runtime.v1alpha2");
 }
 
 const TIMEOUT: u64 = 2000;
