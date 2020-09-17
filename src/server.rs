@@ -1,5 +1,5 @@
 use crate::{
-    config::Config,
+    config::{Config, LogScope},
     criapi::{
         image_service_server::ImageServiceServer, runtime_service_server::RuntimeServiceServer,
     },
@@ -95,10 +95,12 @@ impl Server {
     /// Initialize the logger and set the verbosity to the provided level.
     fn set_logging_verbosity(&self) -> Result<()> {
         // Set the logging verbosity via the env
-        env::set_var(
-            "RUST_LOG",
-            format!("{}={}", crate_name!(), self.config.log_level()),
-        );
+        let level = if self.config.log_scope() == LogScope::Global {
+            self.config.log_level().to_string()
+        } else {
+            format!("{}={}", crate_name!(), self.config.log_level())
+        };
+        env::set_var("RUST_LOG", level);
 
         // Initialize the logger
         env_logger::try_init().context("init env logger")
