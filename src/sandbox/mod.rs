@@ -128,7 +128,15 @@ where
 #[cfg(test)]
 pub mod tests {
     use super::*;
-    use anyhow::format_err;
+
+    pub fn new_sandbox_data() -> Result<SandboxData> {
+        Ok(SandboxDataBuilder::default()
+            .id("uid")
+            .name("name")
+            .namespace("namespace")
+            .attempt(1u32)
+            .build()?)
+    }
 
     #[derive(Default)]
     struct Mock {
@@ -160,17 +168,8 @@ pub mod tests {
     #[test]
     fn create() -> Result<()> {
         let sandbox = SandboxBuilder::<Mock>::default()
-            .data(
-                SandboxDataBuilder::default()
-                    .id("uid")
-                    .name("name")
-                    .namespace("namespace")
-                    .attempt(1u32)
-                    .build()
-                    .map_err(|e| format_err!("build sandbox data: {}", e))?,
-            )
-            .build()
-            .map_err(|e| format_err!("build sandbox: {}", e))?;
+            .data(new_sandbox_data()?)
+            .build()?;
 
         assert_eq!(sandbox.id(), sandbox.data.id());
 
@@ -195,18 +194,9 @@ pub mod tests {
         assert!(!implementation.remove_called);
 
         let mut sandbox = SandboxBuilder::<Mock>::default()
-            .data(
-                SandboxDataBuilder::default()
-                    .id("id")
-                    .name("name")
-                    .namespace("namespace")
-                    .attempt(0u32)
-                    .build()
-                    .map_err(|e| format_err!("build sandbox data: {}", e))?,
-            )
+            .data(new_sandbox_data()?)
             .implementation(implementation)
-            .build()
-            .map_err(|e| format_err!("build sandbox: {}", e))?;
+            .build()?;
 
         assert!(!sandbox.ready()?);
         sandbox.run()?;

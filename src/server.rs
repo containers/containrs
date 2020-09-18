@@ -4,6 +4,10 @@ use crate::{
     criapi::{
         image_service_server::ImageServiceServer, runtime_service_server::RuntimeServiceServer,
     },
+    network::{
+        cni::{CNIBuilder, CNI},
+        Network, NetworkBuilder,
+    },
     storage::{default_key_value_storage::DefaultKeyValueStorage, KeyValueStorage},
     unix_stream,
 };
@@ -18,6 +22,7 @@ use tokio::{
     fs,
     signal::unix::{signal, SignalKind},
 };
+
 use tonic::{transport, Request, Status};
 
 /// Server is the main instance to run the Container Runtime Interface
@@ -39,6 +44,8 @@ impl Server {
         // Setup the storage and pass it to the service
         let storage = DefaultKeyValueStorage::open(&self.config.storage_path())?;
         let cri_service = CRIService::new(storage.clone());
+
+        let _network = self.initialize_network().context("init network")?;
 
         // Build a new socket from the config
         let mut uds = self.unix_domain_listener().await?;
@@ -107,6 +114,23 @@ impl Server {
         env_logger::try_init().context("init env logger")
     }
 
+    /// Create a new network and initialize it from the internal configuration.
+    fn initialize_network(&self) -> Result<Network<CNI>> {
+        let mut cni_network = CNIBuilder::default()
+            .default_network_name(self.config.cni_default_network().clone())
+            .config_paths(self.config.cni_config_paths().clone())
+            .plugin_paths(self.config.cni_plugin_paths().clone())
+            .build()
+            .context("build CNI network data")?;
+        cni_network.initialize().context("initialize CNI network")?;
+
+        let network = NetworkBuilder::<CNI>::default()
+            .implementation(cni_network)
+            .build()
+            .context("build CNI network")?;
+        Ok(network)
+    }
+
     /// This function will get called on each inbound request, if a `Status`
     /// is returned, it will cancel the request and return that status to the
     /// client.
@@ -168,6 +192,14 @@ mod tests {
 
         assert!(sut.unix_domain_listener().await.is_err());
 
+        Ok(())
+    }
+
+    #[test]
+    fn initialize_network() -> Result<()> {
+        let config = ConfigBuilder::default().build()?;
+        let sut = Server::new(config);
+        sut.initialize_network()?;
         Ok(())
     }
 }
