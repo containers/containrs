@@ -1,4 +1,7 @@
 use crate::storage::default_key_value_storage::DefaultKeyValueStorage;
+use log::debug;
+use std::fmt::Debug;
+use tonic::{Request, Response, Status};
 
 #[derive(Clone)]
 pub struct CRIService {
@@ -6,8 +9,25 @@ pub struct CRIService {
 }
 
 impl CRIService {
+    /// Create a new CRIService with the provided storage.
     pub fn new(storage: DefaultKeyValueStorage) -> Self {
         Self { storage }
+    }
+
+    /// Debug log a request.
+    pub fn debug_request<T>(&self, request: &Request<T>)
+    where
+        T: Debug,
+    {
+        debug!("{:?}", request.get_ref());
+    }
+
+    /// Debug log a response.
+    pub fn debug_response<T>(&self, response: &Result<Response<T>, Status>)
+    where
+        T: Debug,
+    {
+        debug!("{:?}", response.as_ref().map(|x| x.get_ref()));
     }
 }
 

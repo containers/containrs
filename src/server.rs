@@ -23,7 +23,6 @@ use tokio::{
     fs,
     signal::unix::{signal, SignalKind},
 };
-
 use tonic::{transport, Request, Status};
 
 /// Server is the main instance to run the Container Runtime Interface
@@ -62,8 +61,8 @@ impl Server {
 
         tokio::select! {
             res = transport::Server::builder()
-                .add_service(RuntimeServiceServer::with_interceptor(cri_service.clone(), Self::intercept))
-                .add_service(ImageServiceServer::with_interceptor(cri_service, Self::intercept))
+                .add_service(RuntimeServiceServer::new(cri_service.clone()))
+                .add_service(ImageServiceServer::new(cri_service))
                 .serve_with_incoming(uds.incoming().map_ok(unix_stream::UnixStream)) => {
                 res.context("run GRPC server")?
             }
@@ -153,14 +152,6 @@ impl Server {
             .build()
             .context("build CNI network")?;
         Ok(network)
-    }
-
-    /// This function will get called on each inbound request, if a `Status`
-    /// is returned, it will cancel the request and return that status to the
-    /// client.
-    fn intercept(req: Request<()>) -> std::result::Result<Request<()>, Status> {
-        debug!("{:?}", req);
-        Ok(req)
     }
 
     /// Cleanup the server and persist any data if necessary.
