@@ -1,11 +1,11 @@
 use crate::{
+    cri_service::CRIService,
     criapi::{ImageStatusRequest, ImageStatusResponse},
-    image_service::MyImage,
 };
 use std::collections::HashMap;
 use tonic::{Request, Response, Status};
 
-impl MyImage {
+impl CRIService {
     pub async fn handle_image_status(
         &self,
         _request: Request<ImageStatusRequest>,

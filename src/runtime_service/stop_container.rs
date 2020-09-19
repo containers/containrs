@@ -1,10 +1,10 @@
 use crate::{
+    cri_service::CRIService,
     criapi::{StopContainerRequest, StopContainerResponse},
-    runtime_service::MyRuntime,
 };
 use tonic::{Request, Response, Status};
 
-impl MyRuntime {
+impl CRIService {
     pub async fn handle_stop_container(
         &self,
         _request: Request<StopContainerRequest>,

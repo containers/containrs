@@ -1,5 +1,5 @@
 //! Configuration related structures
-use clap::{crate_name, AppSettings, Clap};
+use clap::{crate_name, crate_version, AppSettings, Clap};
 use derive_builder::Builder;
 use getset::{CopyGetters, Getters};
 use lazy_static::lazy_static;
@@ -11,6 +11,7 @@ use strum::EnumString;
 
 lazy_static! {
     static ref DEFAULT_SOCK_PATH: String = Config::default_sock_path().display().to_string();
+    static ref DEFAULT_STORAGE_PATH: String = Config::default_storage_path().display().to_string();
 }
 
 #[derive(Builder, Clap, CopyGetters, Getters, Deserialize, Serialize)]
@@ -19,7 +20,8 @@ lazy_static! {
 #[clap(
     about("CRI - The Kubernetes Container Runtime written in Rust"),
     after_help("More info at: https://github.com/cri-o/cri"),
-    global_setting(AppSettings::ColoredHelp)
+    global_setting(AppSettings::ColoredHelp),
+    version(crate_version!()),
 )]
 /// Config is the main configuration structure for the server.
 pub struct Config {
@@ -32,7 +34,7 @@ pub struct Config {
         short('l'),
         value_name("LEVEL")
     )]
-    /// The logging level of the application
+    /// The logging level of the application.
     log_level: LevelFilter,
 
     #[get_copy = "pub"]
@@ -51,10 +53,21 @@ pub struct Config {
     #[clap(
         default_value(&DEFAULT_SOCK_PATH),
         env("CRI_SOCK_PATH"),
-        long("sock-path")
+        long("sock-path"),
+        value_name("PATH")
     )]
-    /// The path to the unix socket for the server
+    /// The path to the unix socket for the server.
     sock_path: PathBuf,
+
+    #[get = "pub"]
+    #[clap(
+        default_value(&DEFAULT_STORAGE_PATH),
+        env("CRI_STORAGE_PATH"),
+        long("storage-path"),
+        value_name("PATH")
+    )]
+    /// The path to the persistent storage for the server.
+    storage_path: PathBuf,
 }
 
 impl Config {
@@ -63,6 +76,11 @@ impl Config {
         Self::default_run_path(unistd::getuid())
             .join(crate_name!())
             .with_extension("sock")
+    }
+
+    /// Return the default storage path depending if running as root or not.
+    fn default_storage_path() -> PathBuf {
+        Self::default_run_path(unistd::getuid()).join("storage")
     }
 
     /// Return the default run path depending on the provided user ID.
@@ -112,11 +130,13 @@ pub mod tests {
             .log_level(LevelFilter::Warn)
             .sock_path("/some/path")
             .log_scope(LogScope::Global)
+            .storage_path("/some/other/path")
             .build()?;
 
         assert_eq!(c.log_level(), LevelFilter::Warn);
         assert_eq!(&c.sock_path().display().to_string(), "/some/path");
         assert_eq!(c.log_scope(), LogScope::Global);
+        assert_eq!(&c.storage_path().display().to_string(), "/some/other/path");
 
         Ok(())
     }
@@ -147,5 +167,13 @@ pub mod tests {
             .display()
             .to_string()
             .contains(".sock"));
+    }
+
+    #[test]
+    fn default_storage_path() {
+        assert!(Config::default_storage_path()
+            .display()
+            .to_string()
+            .contains("storage"));
     }
 }

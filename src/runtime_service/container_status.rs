@@ -1,11 +1,11 @@
 use crate::{
+    cri_service::CRIService,
     criapi::{ContainerStatusRequest, ContainerStatusResponse},
-    runtime_service::MyRuntime,
 };
 use std::collections::HashMap;
 use tonic::{Request, Response, Status};
 
-impl MyRuntime {
+impl CRIService {
     pub async fn handle_container_status(
         &self,
         _request: Request<ContainerStatusRequest>,

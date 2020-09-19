@@ -1,10 +1,10 @@
 use crate::{
+    cri_service::CRIService,
     criapi::{PullImageRequest, PullImageResponse},
-    image_service::MyImage,
 };
 use tonic::{Request, Response, Status};
 
-impl MyImage {
+impl CRIService {
     pub async fn handle_pull_image(
         &self,
         _request: Request<PullImageRequest>,

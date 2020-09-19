@@ -1,4 +1,7 @@
-use crate::criapi::{self, image_service_server::ImageService};
+use crate::{
+    cri_service::CRIService,
+    criapi::{self, image_service_server::ImageService},
+};
 use tonic::{Request, Response, Status};
 
 mod image_fs_info;
@@ -7,11 +10,8 @@ mod list_images;
 mod pull_image;
 mod remove_image;
 
-#[derive(Default)]
-pub struct MyImage {}
-
 #[tonic::async_trait]
-impl ImageService for MyImage {
+impl ImageService for CRIService {
     async fn list_images(
         &self,
         request: Request<criapi::ListImagesRequest>,

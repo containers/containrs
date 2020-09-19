@@ -1,11 +1,11 @@
 use crate::{
+    cri_service::CRIService,
     criapi::{PodSandboxStatusRequest, PodSandboxStatusResponse},
-    runtime_service::MyRuntime,
 };
 use std::collections::HashMap;
 use tonic::{Request, Response, Status};
 
-impl MyRuntime {
+impl CRIService {
     pub async fn handle_pod_sandbox_status(
         &self,
         _request: Request<PodSandboxStatusRequest>,

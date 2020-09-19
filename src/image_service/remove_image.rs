@@ -1,10 +1,10 @@
 use crate::{
+    cri_service::CRIService,
     criapi::{RemoveImageRequest, RemoveImageResponse},
-    image_service::MyImage,
 };
 use tonic::{Request, Response, Status};
 
-impl MyImage {
+impl CRIService {
     pub async fn handle_remove_image(
         &self,
         _request: Request<RemoveImageRequest>,

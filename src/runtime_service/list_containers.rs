@@ -1,10 +1,10 @@
 use crate::{
+    cri_service::CRIService,
     criapi::{ListContainersRequest, ListContainersResponse},
-    runtime_service::MyRuntime,
 };
 use tonic::{Request, Response, Status};
 
-impl MyRuntime {
+impl CRIService {
     pub async fn handle_list_containers(
         &self,
         _request: Request<ListContainersRequest>,

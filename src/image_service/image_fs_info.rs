@@ -1,10 +1,10 @@
 use crate::{
+    cri_service::CRIService,
     criapi::{ImageFsInfoRequest, ImageFsInfoResponse},
-    image_service::MyImage,
 };
 use tonic::{Request, Response, Status};
 
-impl MyImage {
+impl CRIService {
     pub async fn handle_image_fs_info(
         &self,
         _request: Request<ImageFsInfoRequest>,

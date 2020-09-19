@@ -1,4 +1,7 @@
-use crate::criapi::{self, runtime_service_server::RuntimeService};
+use crate::{
+    cri_service::CRIService,
+    criapi::{self, runtime_service_server::RuntimeService},
+};
 use tonic::{Request, Response, Status};
 
 mod attach;
@@ -24,11 +27,8 @@ mod update_container_resources;
 mod update_runtime_config;
 mod version;
 
-#[derive(Default)]
-pub struct MyRuntime;
-
 #[tonic::async_trait]
-impl RuntimeService for MyRuntime {
+impl RuntimeService for CRIService {
     async fn version(
         &self,
         request: Request<criapi::VersionRequest>,
