@@ -17,7 +17,7 @@ impl KeyValueStorage for DefaultKeyValueStorage {
     fn open(path: &Path) -> Result<Self> {
         Ok(Self {
             db: sled::open(path)
-                .with_context(|| format!("open storage path {}", path.display()))?,
+                .with_context(|| format!("failed to open storage path {}", path.display()))?,
         })
     }
 
@@ -29,7 +29,7 @@ impl KeyValueStorage for DefaultKeyValueStorage {
         Ok(self
             .db
             .get(key)
-            .context("retrieve value for key")?
+            .context("failed to retrieve value for key")?
             .and_then(|x| bincode::deserialize(&x).ok()))
     }
 
@@ -42,10 +42,10 @@ impl KeyValueStorage for DefaultKeyValueStorage {
             .insert(
                 key,
                 bincode::serialize(&value)
-                    .context("serialize value")?
+                    .context("failed to serialize value")?
                     .as_slice(),
             )
-            .context("insert key and value")?;
+            .context("failed to insert key and value")?;
         Ok(())
     }
 
@@ -53,12 +53,12 @@ impl KeyValueStorage for DefaultKeyValueStorage {
     where
         K: AsRef<[u8]>,
     {
-        self.db.remove(key)?.context("remove value")?;
+        self.db.remove(key)?.context("failed to remove value")?;
         Ok(())
     }
 
     fn persist(&mut self) -> Result<()> {
-        self.db.flush().context("persist db")?;
+        self.db.flush().context("failed to persist db")?;
         Ok(())
     }
 }
