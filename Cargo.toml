@@ -47,7 +47,7 @@ anyhow = "1.0.32"
 tonic-build = "0.3.1"
 
 [dev-dependencies]
-ctor = "0.1.15"
+ctor = "0.1.16"
 tempfile = "3.1.0"
 tokio-test = "0.2.1"
 tower = "0.3.1"
