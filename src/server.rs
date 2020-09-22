@@ -9,9 +9,10 @@ use crate::{
 };
 use anyhow::{bail, Context, Result};
 use clap::crate_name;
+use env_logger::fmt::Color;
 use futures_util::stream::TryStreamExt;
-use log::{debug, info};
-use std::env;
+use log::{debug, info, LevelFilter};
+use std::{env, io::Write};
 #[cfg(unix)]
 use tokio::net::UnixListener;
 use tokio::{
@@ -103,8 +104,31 @@ impl Server {
         };
         env::set_var("RUST_LOG", level);
 
-        // Initialize the logger
-        env_logger::try_init().context("init env logger")
+        // Initialize the logger with the format:
+        // [YYYY-MM-DDTHH:MM:SS:MMMZ LEVEL crate::module file:LINE] MSG…
+        // The file and line will be only printed when running with debug or trace level.
+        let log_level = self.config.log_level();
+        env_logger::builder()
+            .format(move |buf, r| {
+                let mut style = buf.style();
+                style.set_color(Color::Black).set_intense(true);
+                writeln!(
+                    buf,
+                    "{}{} {:<5} {}{}{} {}",
+                    style.value("["),
+                    buf.timestamp_millis(),
+                    buf.default_styled_level(r.level()),
+                    r.target(),
+                    match (log_level >= LevelFilter::Debug, r.file(), r.line()) {
+                        (true, Some(file), Some(line)) => format!(" {}:{}", file, line),
+                        _ => "".into(),
+                    },
+                    style.value("]"),
+                    r.args()
+                )
+            })
+            .try_init()
+            .context("init env logger")
     }
 
     /// This function will get called on each inbound request, if a `Status`
