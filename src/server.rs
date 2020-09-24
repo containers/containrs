@@ -23,7 +23,7 @@ use tokio::{
     fs,
     signal::unix::{signal, SignalKind},
 };
-use tonic::{transport, Request, Status};
+use tonic::transport;
 
 /// Server is the main instance to run the Container Runtime Interface
 pub struct Server {
