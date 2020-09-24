@@ -15,7 +15,7 @@ lazy_static! {
 }
 
 #[derive(Builder, Clap, CopyGetters, Getters, Deserialize, Serialize)]
-#[builder(default, pattern = "owned", setter(into))]
+#[builder(default, pattern = "owned", setter(into, strip_option))]
 #[serde(rename_all = "kebab-case")]
 #[clap(
     about("CRI - The Kubernetes Container Runtime written in Rust"),
@@ -68,6 +68,35 @@ pub struct Config {
     )]
     /// The path to the persistent storage for the server.
     storage_path: PathBuf,
+
+    #[get = "pub"]
+    #[clap(
+        env("CRI_CNI_DEFAULT_NETWORK"),
+        long("cni-default-network"),
+        value_name("NAME")
+    )]
+    /// The default CNI network name to choose.
+    cni_default_network: Option<String>,
+
+    #[get = "pub"]
+    #[clap(
+        default_value("/etc/cni/net.d"),
+        env("CRI_CNI_CONFIG_PATHS"),
+        long("cni-config-paths"),
+        value_name("PATH")
+    )]
+    /// The paths to the CNI configurations.
+    cni_config_paths: Vec<PathBuf>,
+
+    #[get = "pub"]
+    #[clap(
+        default_value("/opt/cni/bin"),
+        env("CRI_CNI_PLUGIN_PATHS"),
+        long("cni-plugin-paths"),
+        value_name("PATH")
+    )]
+    /// The paths to the CNI plugin binaries.
+    cni_plugin_paths: Vec<PathBuf>,
 }
 
 impl Config {
@@ -122,6 +151,9 @@ pub mod tests {
     fn default_config() {
         let c = Config::default();
         assert_eq!(c.log_level(), LevelFilter::Info);
+        assert!(c.cni_default_network().is_none());
+        assert_eq!(c.cni_config_paths().len(), 1);
+        assert_eq!(c.cni_plugin_paths().len(), 1);
     }
 
     #[test]
@@ -129,6 +161,14 @@ pub mod tests {
         let c = ConfigBuilder::default()
             .log_level(LevelFilter::Warn)
             .sock_path("/some/path")
+            .cni_default_network("default-network")
+            .cni_config_paths(["a", "b"].iter().map(PathBuf::from).collect::<Vec<_>>())
+            .cni_plugin_paths(
+                ["1", "2", "3"]
+                    .iter()
+                    .map(PathBuf::from)
+                    .collect::<Vec<_>>(),
+            )
             .log_scope(LogScope::Global)
             .storage_path("/some/other/path")
             .build()?;
@@ -137,6 +177,9 @@ pub mod tests {
         assert_eq!(&c.sock_path().display().to_string(), "/some/path");
         assert_eq!(c.log_scope(), LogScope::Global);
         assert_eq!(&c.storage_path().display().to_string(), "/some/other/path");
+        assert_eq!(c.cni_default_network(), &Some("default-network".into()));
+        assert_eq!(c.cni_config_paths().len(), 2);
+        assert_eq!(c.cni_plugin_paths().len(), 3);
 
         Ok(())
     }
