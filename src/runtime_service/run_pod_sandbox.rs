@@ -1,7 +1,7 @@
 use crate::{
     cri_service::CRIService,
     criapi::{RunPodSandboxRequest, RunPodSandboxResponse},
-    sandbox::{pinned::PinnedSandbox, SandboxBuilder, SandboxDataBuilder},
+    sandbox::{pinned::PinnedSandbox, LinuxNamespaces, SandboxBuilder, SandboxDataBuilder},
 };
 use log::{debug, info};
 use tonic::{Request, Response, Status};
@@ -31,6 +31,7 @@ impl CRIService {
                     .name(metadata.name)
                     .namespace(metadata.namespace)
                     .attempt(metadata.attempt)
+                    .linux_namespaces(LinuxNamespaces::NET)
                     .build()
                     .map_err(|e| {
                         Status::internal(format!("build sandbox data from metadata: {}", e))
