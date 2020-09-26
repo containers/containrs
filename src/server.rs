@@ -84,7 +84,9 @@ impl Server {
                 .await
                 .with_context(|| format!("unable to remove socket file {}", sock_path.display()))?;
         } else {
-            let sock_dir = sock_path.parent().context("unable to get socket path directory")?;
+            let sock_dir = sock_path
+                .parent()
+                .context("unable to get socket path directory")?;
             fs::create_dir_all(sock_dir)
                 .await
                 .with_context(|| format!("unable to create socket dir {}", sock_dir.display()))?;
@@ -119,8 +121,12 @@ impl Server {
     fn cleanup(self, mut storage: DefaultKeyValueStorage) -> Result<()> {
         debug!("Cleaning up server");
         storage.persist().context("persist storage")?;
-        std::fs::remove_file(self.config.sock_path())
-            .with_context(|| format!("unable to remove socket path {}", self.config.sock_path().display()))?;
+        std::fs::remove_file(self.config.sock_path()).with_context(|| {
+            format!(
+                "unable to remove socket path {}",
+                self.config.sock_path().display()
+            )
+        })?;
         Ok(())
     }
 }
