@@ -84,13 +84,13 @@ impl Server {
                 .await
                 .with_context(|| format!("unable to remove socket file {}", sock_path.display()))?;
         } else {
-            let sock_dir = sock_path.parent().context("get socket path directory")?;
+            let sock_dir = sock_path.parent().context("unable to get socket path directory")?;
             fs::create_dir_all(sock_dir)
                 .await
-                .with_context(|| format!("create socket dir {}", sock_dir.display()))?;
+                .with_context(|| format!("unable to create socket dir {}", sock_dir.display()))?;
         }
 
-        Ok(UnixListener::bind(sock_path).context("bind socket from path")?)
+        Ok(UnixListener::bind(sock_path).context("unable to bind socket from path")?)
     }
 
     /// Initialize the logger and set the verbosity to the provided level.
@@ -120,7 +120,7 @@ impl Server {
         debug!("Cleaning up server");
         storage.persist().context("persist storage")?;
         std::fs::remove_file(self.config.sock_path())
-            .with_context(|| format!("remove socket path {}", self.config.sock_path().display()))?;
+            .with_context(|| format!("unable to remove socket path {}", self.config.sock_path().display()))?;
         Ok(())
     }
 }
