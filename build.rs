@@ -1,6 +1,8 @@
 use anyhow::{Context, Result};
-use tonic_build::compile_protos;
 
 fn main() -> Result<()> {
-    compile_protos("proto/criapi.proto").context("compile CRI protocol buffers")
+    tonic_build::configure()
+        .out_dir("src/criapi")
+        .compile(&["proto/criapi.proto"], &["proto"])
+        .context("compile CRI protocol buffers")
 }
