@@ -1,5 +1,8 @@
 use crate::common::{
-    criapi::{PodSandboxConfig, PodSandboxMetadata, RunPodSandboxRequest, RunPodSandboxResponse},
+    criapi::{
+        LinuxPodSandboxConfig, LinuxSandboxSecurityContext, NamespaceOption, PodSandboxConfig,
+        PodSandboxMetadata, RunPodSandboxRequest, RunPodSandboxResponse,
+    },
     Sut,
 };
 use anyhow::Result;
@@ -25,7 +28,25 @@ async fn run_pod_sandbox_success() -> Result<()> {
             port_mappings: vec![],
             labels: HashMap::new(),
             annotations: HashMap::new(),
-            linux: None,
+            linux: Some(LinuxPodSandboxConfig {
+                cgroup_parent: String::from("abc-pod.slice"),
+                sysctls: HashMap::new(),
+                security_context: Some(LinuxSandboxSecurityContext {
+                    namespace_options: Some(NamespaceOption {
+                        network: 0,
+                        pid: 1,
+                        ipc: 0,
+                        target_id: String::from("container_id"),
+                    }),
+                    selinux_options: None,
+                    run_as_user: None,
+                    run_as_group: None,
+                    readonly_rootfs: false,
+                    supplemental_groups: Vec::new(),
+                    privileged: false,
+                    seccomp_profile_path: String::from("/path/to/seccomp"),
+                }),
+            }),
         }),
         runtime_handler: "".into(),
     });

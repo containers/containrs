@@ -171,6 +171,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "bincode",
+ "bitflags",
  "clap",
  "ctor",
  "derive_builder",

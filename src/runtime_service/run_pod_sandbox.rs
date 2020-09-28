@@ -1,7 +1,7 @@
 use crate::{
     cri_service::CRIService,
-    criapi::{RunPodSandboxRequest, RunPodSandboxResponse},
-    sandbox::{pinned::PinnedSandbox, SandboxBuilder, SandboxDataBuilder},
+    criapi::{NamespaceMode, RunPodSandboxRequest, RunPodSandboxResponse},
+    sandbox::{pinned::PinnedSandbox, LinuxNamespaces, SandboxBuilder, SandboxDataBuilder},
 };
 use log::{debug, info};
 use tonic::{Request, Response, Status};
@@ -23,6 +23,30 @@ impl CRIService {
             .metadata
             .ok_or_else(|| Status::invalid_argument("no pod sandbox metadata provided"))?;
 
+        let linux_config = config
+            .linux
+            .ok_or_else(|| Status::invalid_argument("no linux configuration provided"))?;
+
+        let security_context = linux_config
+            .security_context
+            .ok_or_else(|| Status::invalid_argument("no linux security context provided"))?;
+
+        let namespace_options = security_context
+            .namespace_options
+            .ok_or_else(|| Status::invalid_argument("no namespace options provided"))?;
+
+        let mut linux_namespaces = LinuxNamespaces::empty();
+        if namespace_options.network == NamespaceMode::Pod as i32 {
+            linux_namespaces |= LinuxNamespaces::NET;
+            linux_namespaces |= LinuxNamespaces::UTS;
+        }
+        if namespace_options.ipc == NamespaceMode::Pod as i32 {
+            linux_namespaces |= LinuxNamespaces::IPC;
+        }
+        if namespace_options.pid == NamespaceMode::Pod as i32 {
+            linux_namespaces |= LinuxNamespaces::PID;
+        }
+
         // Build a new sandbox from it
         let mut sandbox = SandboxBuilder::<PinnedSandbox>::default()
             .data(
@@ -31,6 +55,7 @@ impl CRIService {
                     .name(metadata.name)
                     .namespace(metadata.namespace)
                     .attempt(metadata.attempt)
+                    .linux_namespaces(linux_namespaces)
                     .build()
                     .map_err(|e| {
                         Status::internal(format!("build sandbox data from metadata: {}", e))
@@ -60,7 +85,10 @@ mod tests {
     use super::*;
     use crate::{
         cri_service::tests::new_cri_service,
-        criapi::{runtime_service_server::RuntimeService, PodSandboxConfig, PodSandboxMetadata},
+        criapi::{
+            runtime_service_server::RuntimeService, LinuxPodSandboxConfig,
+            LinuxSandboxSecurityContext, NamespaceOption, PodSandboxConfig, PodSandboxMetadata,
+        },
     };
     use anyhow::Result;
     use std::collections::HashMap;
@@ -83,7 +111,25 @@ mod tests {
                 port_mappings: vec![],
                 labels: HashMap::new(),
                 annotations: HashMap::new(),
-                linux: None,
+                linux: Some(LinuxPodSandboxConfig {
+                    cgroup_parent: String::from("abc-pod.slice"),
+                    sysctls: HashMap::new(),
+                    security_context: Some(LinuxSandboxSecurityContext {
+                        namespace_options: Some(NamespaceOption {
+                            network: 0,
+                            pid: 1,
+                            ipc: 0,
+                            target_id: String::from("container_id"),
+                        }),
+                        selinux_options: None,
+                        run_as_user: None,
+                        run_as_group: None,
+                        readonly_rootfs: false,
+                        supplemental_groups: Vec::new(),
+                        privileged: false,
+                        seccomp_profile_path: String::from("/path/to/seccomp"),
+                    }),
+                }),
             }),
             runtime_handler: "".into(),
         };

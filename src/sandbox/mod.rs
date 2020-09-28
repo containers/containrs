@@ -23,6 +23,18 @@ where
     implementation: T,
 }
 
+bitflags! {
+    pub struct LinuxNamespaces: u32 {
+        const MOUNT = 0b00000001;
+        const CGROUP = 0b00000010;
+        const UTS = 0b000000100;
+        const IPC = 0b00001000;
+        const USER = 0b00010000;
+        const PID = 0b000100000;
+        const NET = 0b001000000;
+    }
+}
+
 #[derive(Builder, Getters)]
 #[builder(pattern = "owned", setter(into))]
 /// SandboxData holds all the data which will be passed around to the `Pod` trait, too.
@@ -43,6 +55,10 @@ pub struct SandboxData {
     /// Sandbox creation attempt. It only changes if the Kubernetes sandbox data changed or dies
     /// because of any error, not if the sandbox creation itself fails.
     attempt: u32,
+
+    #[get = "pub"]
+    /// Linux namespaces held by the Sandbox.
+    linux_namespaces: Option<LinuxNamespaces>,
 }
 
 pub trait Pod {
@@ -112,6 +128,7 @@ where
             .field("name", self.data.name())
             .field("namespace", self.data.namespace())
             .field("attempt", self.data.attempt())
+            .field("linux_namespaces", self.data.linux_namespaces())
             .finish()
     }
 }
@@ -135,6 +152,7 @@ pub mod tests {
             .name("name")
             .namespace("namespace")
             .attempt(1u32)
+            .linux_namespaces(LinuxNamespaces::NET)
             .build()?)
     }
 
