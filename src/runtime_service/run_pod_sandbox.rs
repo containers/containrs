@@ -56,6 +56,7 @@ impl CRIService {
                     .namespace(metadata.namespace)
                     .attempt(metadata.attempt)
                     .linux_namespaces(linux_namespaces)
+                    .hostname(config.hostname)
                     .build()
                     .map_err(|e| {
                         Status::internal(format!("build sandbox data from metadata: {}", e))

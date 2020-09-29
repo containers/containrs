@@ -59,6 +59,10 @@ pub struct SandboxData {
     #[get = "pub"]
     /// Linux namespaces held by the Sandbox.
     linux_namespaces: Option<LinuxNamespaces>,
+
+    #[get = "pub"]
+    /// Hostname of the sandbox.
+    hostname: String,
 }
 
 pub trait Pod {
@@ -129,6 +133,7 @@ where
             .field("namespace", self.data.namespace())
             .field("attempt", self.data.attempt())
             .field("linux_namespaces", self.data.linux_namespaces())
+            .field("hostname", self.data.hostname())
             .finish()
     }
 }
@@ -153,6 +158,7 @@ pub mod tests {
             .namespace("namespace")
             .attempt(1u32)
             .linux_namespaces(LinuxNamespaces::NET)
+            .hostname("hostname")
             .build()?)
     }
 
@@ -200,6 +206,7 @@ pub mod tests {
         assert!(sandbox_debug.contains(sandbox.data.namespace()));
         assert!(sandbox_debug.contains(sandbox.data.id()));
         assert!(sandbox_debug.contains(&sandbox.data.attempt().to_string()));
+        assert!(sandbox_debug.contains(sandbox.data.hostname()));
         Ok(())
     }
 
