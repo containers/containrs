@@ -1,6 +1,7 @@
 //! This is the main library interface for this project
 #![deny(missing_docs)]
 
+mod capability;
 mod config;
 mod cri_service;
 mod criapi;

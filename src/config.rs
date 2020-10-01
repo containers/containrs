@@ -7,7 +7,7 @@ use log::LevelFilter;
 use nix::unistd::{self, Uid};
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
-use strum::EnumString;
+use strum::{AsRefStr, EnumString};
 
 lazy_static! {
     static ref DEFAULT_SOCK_PATH: String = Config::default_sock_path().display().to_string();
@@ -42,7 +42,7 @@ pub struct Config {
         default_value("lib"),
         env("CRI_LOG_SCOPE"),
         long("log-scope"),
-        possible_values(&["lib", "global"]),
+        possible_values(&[LogScope::Lib.as_ref(), LogScope::Global.as_ref()]),
         value_name("SCOPE")
     )]
     /// The logging scope of the application. If set to `global`, then all dependent crates will
@@ -130,14 +130,13 @@ impl Default for Config {
     }
 }
 
-#[derive(Clone, Copy, Debug, Deserialize, EnumString, PartialEq, Serialize)]
+#[derive(AsRefStr, Clone, Copy, Debug, Deserialize, EnumString, PartialEq, Serialize)]
+#[strum(serialize_all = "snake_case")]
 /// Defines the scope of the log level
 pub enum LogScope {
-    #[strum(serialize = "lib")]
     /// Logging will only happen on a library level.
     Lib,
 
-    #[strum(serialize = "global")]
     /// All dependent libraries will log too.
     Global,
 }
