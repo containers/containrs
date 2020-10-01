@@ -10,7 +10,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
-#[derive(Serialize, Deserialize, Debug, Builder, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Builder, Getters)]
 #[builder(default, pattern = "owned", setter(into, strip_option))]
 /// Spec is the base configuration for the container.
 pub struct Spec {
@@ -108,7 +108,7 @@ impl Spec {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Builder, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Builder, Getters)]
 #[builder(pattern = "owned", setter(into, strip_option))]
 /// Process contains information to start a specific application inside the container.
 pub struct Process {
@@ -198,7 +198,7 @@ pub struct Process {
     selinux_label: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Default, Builder, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Default, Builder, Getters)]
 #[builder(default, pattern = "owned", setter(into, strip_option))]
 /// LinuxCapabilities specifies the list of allowed capabilities that are kept for a process.
 /// http://man7.org/linux/man-pages/man7/capabilities.7.html
@@ -229,7 +229,8 @@ pub struct LinuxCapabilities {
     ambient: Option<Vec<String>>,
 }
 
-#[derive(Default, Serialize, Deserialize, Debug, Builder, CopyGetters)]
+#[derive(PartialEq, Eq, Default, Serialize, Deserialize, Debug, Builder, CopyGetters)]
+#[builder(default, pattern = "owned", setter(into))]
 /// Box specifies dimensions of a rectangle. Used for specifying the size of a console.
 pub struct Box {
     #[getset(get_copy = "pub")]
@@ -242,7 +243,7 @@ pub struct Box {
 }
 
 /// User specifies specific user (and group) information for the container process.
-#[derive(Serialize, Deserialize, Debug, Builder, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Builder, Getters)]
 #[builder(pattern = "owned", setter(into, strip_option))]
 pub struct User {
     #[getset(get_copy = "pub")]
@@ -273,7 +274,7 @@ pub struct User {
     username: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Builder, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Builder, Getters)]
 #[builder(pattern = "owned", setter(into, strip_option))]
 /// Root contains information about the container's root filesystem on the host.
 pub struct Root {
@@ -288,7 +289,7 @@ pub struct Root {
     readonly: Option<bool>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Builder, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Builder, Getters)]
 #[builder(pattern = "owned", setter(into, strip_option))]
 /// Mount specifies a mount for a container.
 pub struct Mount {
@@ -312,7 +313,7 @@ pub struct Mount {
     options: Option<Vec<String>>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Builder, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Builder, Getters)]
 #[builder(pattern = "owned", setter(into, strip_option))]
 /// Hook specifies a command that is run at a particular event in the lifecycle of a container.
 pub struct Hook {
@@ -332,7 +333,7 @@ pub struct Hook {
     timeout: Option<i64>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Default, Builder, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Default, Builder, Getters)]
 #[builder(default, pattern = "owned", setter(into, strip_option))]
 /// Hooks specifies a command that is run in the container at a particular event in the lifecycle
 /// (setup and teardown) of a container.
@@ -388,7 +389,7 @@ pub struct Hooks {
     poststop: Option<Vec<Hook>>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Default, Builder, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Default, Builder, Getters)]
 #[builder(default, pattern = "owned", setter(into, strip_option))]
 /// Linux contains platform-specific configuration for Linux based containers.
 pub struct Linux {
@@ -494,7 +495,7 @@ pub struct Linux {
     personality: Option<LinuxPersonality>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Builder, CopyGetters, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Builder, CopyGetters, Getters)]
 #[builder(pattern = "owned", setter(into, strip_option))]
 /// LinuxNamespace is the configuration for a Linux namespace.
 pub struct LinuxNamespace {
@@ -510,7 +511,7 @@ pub struct LinuxNamespace {
     path: Option<PathBuf>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Clone, Copy)]
 pub enum LinuxNamespaceType {
     #[serde(rename = "pid")]
     /// For isolating process IDs.
@@ -541,7 +542,7 @@ pub enum LinuxNamespaceType {
     Cgroup,
 }
 
-#[derive(Serialize, Deserialize, Debug, Builder, CopyGetters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Builder, CopyGetters)]
 #[builder(pattern = "owned", setter(into, strip_option))]
 /// LinuxIDMapping specifies UID/GID mappings.
 pub struct LinuxIDMapping {
@@ -560,7 +561,7 @@ pub struct LinuxIDMapping {
     size: u32,
 }
 
-#[derive(Serialize, Deserialize, Debug, Builder, CopyGetters, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Builder, CopyGetters, Getters)]
 #[builder(pattern = "owned", setter(into, strip_option))]
 /// POSIXRlimit type and restrictions.
 pub struct POSIXRlimit {
@@ -578,7 +579,7 @@ pub struct POSIXRlimit {
     soft: u64,
 }
 
-#[derive(Serialize, Deserialize, Debug, Builder, CopyGetters, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Builder, CopyGetters, Getters)]
 #[builder(pattern = "owned", setter(into, strip_option))]
 /// LinuxHugepageLimit structure corresponds to limiting kernel hugepages.
 pub struct LinuxHugepageLimit {
@@ -593,7 +594,7 @@ pub struct LinuxHugepageLimit {
     limit: i64,
 }
 
-#[derive(Serialize, Deserialize, Debug, Builder, CopyGetters, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Builder, CopyGetters, Getters)]
 #[builder(pattern = "owned", setter(into, strip_option))]
 /// LinuxInterfacePriority for network interfaces.
 pub struct LinuxInterfacePriority {
@@ -606,7 +607,7 @@ pub struct LinuxInterfacePriority {
     priority: u32,
 }
 
-#[derive(Serialize, Deserialize, Debug, Builder, CopyGetters, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Builder, CopyGetters, Getters)]
 #[builder(pattern = "owned", setter(into, strip_option))]
 /// LinuxWeightDevice struct holds a `major:minor weight` pair for weightDevice.
 pub struct LinuxWeightDevice {
@@ -630,7 +631,7 @@ pub struct LinuxWeightDevice {
     leaf_weight: Option<u16>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Builder, CopyGetters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Builder, CopyGetters)]
 #[builder(pattern = "owned", setter(into, strip_option))]
 pub struct LinuxThrottleDevice {
     #[getset(get_copy = "pub")]
@@ -646,7 +647,7 @@ pub struct LinuxThrottleDevice {
     rate: u64,
 }
 
-#[derive(Serialize, Deserialize, Debug, Default, Builder, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Default, Builder, Getters)]
 #[builder(default, pattern = "owned", setter(into, strip_option))]
 /// LinuxBlockIO for Linux cgroup 'blkio' resource management.
 pub struct LinuxBlockIO {
@@ -707,7 +708,7 @@ pub struct LinuxBlockIO {
     throttle_write_iops_device: Option<Vec<LinuxThrottleDevice>>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Default, Builder, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Default, Builder, Getters)]
 #[builder(default, pattern = "owned", setter(into, strip_option))]
 /// LinuxMemory for Linux cgroup 'memory' resource management.
 pub struct LinuxMemory {
@@ -752,7 +753,7 @@ pub struct LinuxMemory {
     use_hierarchy: Option<bool>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Default, Builder, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Default, Builder, Getters)]
 #[builder(default, pattern = "owned", setter(into, strip_option))]
 /// LinuxCPU for Linux cgroup 'cpu' resource management.
 pub struct LinuxCPU {
@@ -792,7 +793,7 @@ pub struct LinuxCPU {
     mems: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Builder, CopyGetters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Builder, CopyGetters)]
 #[builder(pattern = "owned", setter(into, strip_option))]
 /// LinuxPids for Linux cgroup 'pids' resource management (Linux 4.3).
 pub struct LinuxPids {
@@ -801,7 +802,7 @@ pub struct LinuxPids {
     limit: i64,
 }
 
-#[derive(Serialize, Deserialize, Debug, Default, Builder, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Default, Builder, Getters)]
 #[builder(default, pattern = "owned", setter(into, strip_option))]
 /// LinuxNetwork identification and priority configuration.
 pub struct LinuxNetwork {
@@ -816,7 +817,7 @@ pub struct LinuxNetwork {
     priorities: Option<Vec<LinuxInterfacePriority>>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Default, Builder, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Default, Builder, Getters)]
 #[builder(default, pattern = "owned", setter(into, strip_option))]
 /// LinuxRdma for Linux cgroup 'rdma' resource management (Linux 4.11).
 pub struct LinuxRdma {
@@ -831,7 +832,7 @@ pub struct LinuxRdma {
     hca_objects: Option<u32>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Default, Builder, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Default, Builder, Getters)]
 #[builder(default, pattern = "owned", setter(into, strip_option))]
 /// LinuxResources has container runtime resource constraints.
 pub struct LinuxResources {
@@ -886,7 +887,7 @@ pub struct LinuxResources {
     unified: Option<HashMap<String, String>>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Builder, CopyGetters, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Builder, CopyGetters, Getters)]
 #[builder(pattern = "owned", setter(into, strip_option))]
 /// LinuxDevice represents the mknod information for a Linux special device file.
 pub struct LinuxDevice {
@@ -923,7 +924,7 @@ pub struct LinuxDevice {
     gid: Option<u32>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Builder, CopyGetters, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Builder, CopyGetters, Getters)]
 #[builder(pattern = "owned", setter(into, strip_option))]
 /// LinuxDeviceCgroup represents a device rule for the devices specified to the device controller.
 pub struct LinuxDeviceCgroup {
@@ -952,7 +953,7 @@ pub struct LinuxDeviceCgroup {
     access: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Builder, CopyGetters, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Builder, CopyGetters, Getters)]
 #[builder(pattern = "owned", setter(into, strip_option))]
 /// LinuxPersonality represents the Linux personality syscall input.
 pub struct LinuxPersonality {
@@ -966,7 +967,7 @@ pub struct LinuxPersonality {
     flags: Option<Vec<String>>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Clone, Copy)]
 /// Define domain and flags for LinuxPersonality.
 pub enum LinuxPersonalityDomain {
     #[serde(rename = "LINUX")]
@@ -978,8 +979,8 @@ pub enum LinuxPersonalityDomain {
     PerLinux32,
 }
 
-#[derive(Serialize, Deserialize, Debug, Builder, CopyGetters, Getters)]
-#[builder(pattern = "owned", setter(into, strip_option))]
+#[derive(Default, PartialEq, Eq, Serialize, Deserialize, Debug, Builder, CopyGetters, Getters)]
+#[builder(default, pattern = "owned", setter(into, strip_option))]
 /// LinuxSeccomp represents syscall restrictions.
 pub struct LinuxSeccomp {
     #[getset(get_copy = "pub")]
@@ -999,7 +1000,7 @@ pub struct LinuxSeccomp {
     syscalls: Option<Vec<LinuxSyscall>>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Clone, Copy)]
 pub enum LinuxSeccompAction {
     #[serde(rename = "SCMP_ACT_KILL")]
     Kill,
@@ -1023,7 +1024,13 @@ pub enum LinuxSeccompAction {
     Log,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
+impl Default for LinuxSeccompAction {
+    fn default() -> Self {
+        LinuxSeccompAction::Allow
+    }
+}
+
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Clone, Copy)]
 pub enum Arch {
     #[serde(rename = "SCMP_ARCH_X86")]
     X86,
@@ -1083,15 +1090,15 @@ pub enum Arch {
     RISCV64,
 }
 
-#[derive(Serialize, Deserialize, Debug, Builder, CopyGetters, Getters)]
-#[builder(pattern = "owned", setter(into, strip_option))]
+#[derive(Default, PartialEq, Eq, Serialize, Deserialize, Debug, Builder, CopyGetters, Getters)]
+#[builder(default, pattern = "owned", setter(into, strip_option))]
 /// LinuxSyscall is used to match a syscall in seccomp.
 pub struct LinuxSyscall {
     #[getset(get = "pub")]
     names: Vec<String>,
 
     #[getset(get_copy = "pub")]
-    actions: LinuxSeccompAction,
+    action: LinuxSeccompAction,
 
     #[getset(get = "pub")]
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1102,8 +1109,8 @@ pub struct LinuxSyscall {
     args: Option<Vec<LinuxSeccompArg>>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Builder, CopyGetters, Getters)]
-#[builder(pattern = "owned", setter(into, strip_option))]
+#[derive(Default, PartialEq, Eq, Serialize, Deserialize, Debug, Builder, CopyGetters, Getters)]
+#[builder(default, pattern = "owned", setter(into, strip_option))]
 /// LinuxSeccompArg used for matching specific syscall arguments in seccomp.
 pub struct LinuxSeccompArg {
     #[getset(get_copy = "pub")]
@@ -1120,7 +1127,7 @@ pub struct LinuxSeccompArg {
     op: LinuxSeccompOperator,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Clone, Copy)]
 /// The seccomp operator to be used for args.
 pub enum LinuxSeccompOperator {
     #[serde(rename = "SCMP_CMP_NE")]
@@ -1152,7 +1159,13 @@ pub enum LinuxSeccompOperator {
     MaskedEqual,
 }
 
-#[derive(Serialize, Deserialize, Debug, Default, Builder, Getters)]
+impl Default for LinuxSeccompOperator {
+    fn default() -> Self {
+        LinuxSeccompOperator::EqualTo
+    }
+}
+
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Default, Builder, Getters)]
 #[builder(default, pattern = "owned", setter(into, strip_option))]
 /// LinuxIntelRdt has container runtime resource constraints for Intel RDT CAT and MBA features
 /// which introduced in Linux 4.10 and 4.12 kernel.
@@ -1185,7 +1198,7 @@ pub struct LinuxIntelRdt {
     mem_bw_schema: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Default, Builder, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Default, Builder, Getters)]
 #[builder(default, pattern = "owned", setter(into, strip_option))]
 /// Solaris contains platform-specific configuration for Solaris application containers.
 pub struct Solaris {
@@ -1228,7 +1241,7 @@ pub struct Solaris {
     capped_memory: Option<SolarisCappedMemory>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Default, Builder, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Default, Builder, Getters)]
 #[builder(default, pattern = "owned", setter(into, strip_option))]
 /// SolarisAnet provides the specification for automatic creation of network resources for this
 /// container.
@@ -1285,7 +1298,7 @@ pub struct SolarisAnet {
     mac_address: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Default, Builder, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Default, Builder, Getters)]
 #[builder(default, pattern = "owned", setter(into, strip_option))]
 /// SolarisCappedCPU allows users to set limit on the amount of CPU time that can be used by
 /// container.
@@ -1295,7 +1308,7 @@ pub struct SolarisCappedCPU {
     ncpus: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Default, Builder, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Default, Builder, Getters)]
 #[builder(default, pattern = "owned", setter(into, strip_option))]
 /// SolarisCappedMemory allows users to set the physical and swap caps on the memory that can be
 /// used by this container.
@@ -1311,7 +1324,7 @@ pub struct SolarisCappedMemory {
     swap: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Builder, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Builder, Getters)]
 #[builder(pattern = "owned", setter(into, strip_option))]
 /// Windows defines the runtime configuration for Windows based containers, including Hyper-V
 /// containers.
@@ -1368,7 +1381,7 @@ pub struct Windows {
     network: Option<WindowsNetwork>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Builder, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Builder, Getters)]
 #[builder(pattern = "owned", setter(into, strip_option))]
 /// WindowsDevice represents information about a host device to be mapped into the container.
 pub struct WindowsDevice {
@@ -1382,7 +1395,7 @@ pub struct WindowsDevice {
     id_type: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Default, Builder, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Default, Builder, Getters)]
 #[builder(default, pattern = "owned", setter(into, strip_option))]
 pub struct WindowsResources {
     #[getset(get = "pub")]
@@ -1401,7 +1414,7 @@ pub struct WindowsResources {
     storage: Option<WindowsStorageResources>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Default, Builder, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Default, Builder, Getters)]
 #[builder(default, pattern = "owned", setter(into, strip_option))]
 /// WindowsMemoryResources contains memory resource management settings.
 pub struct WindowsMemoryResources {
@@ -1411,7 +1424,7 @@ pub struct WindowsMemoryResources {
     limit: Option<u64>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Default, Builder, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Default, Builder, Getters)]
 #[builder(default, pattern = "owned", setter(into, strip_option))]
 /// WindowsCPUResources contains CPU resource management settings.
 pub struct WindowsCPUResources {
@@ -1432,7 +1445,7 @@ pub struct WindowsCPUResources {
     maximum: Option<u16>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Builder, Default, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Builder, Default, Getters)]
 #[builder(default, pattern = "owned", setter(into, strip_option))]
 /// WindowsStorageResources contains storage resource management settings.
 pub struct WindowsStorageResources {
@@ -1456,7 +1469,7 @@ pub struct WindowsStorageResources {
     sandbox_size: Option<u64>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Builder, Default, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Builder, Default, Getters)]
 #[builder(default, pattern = "owned", setter(into, strip_option))]
 /// WindowsHyperV contains information for configuring a container to run with Hyper-V isolation.
 pub struct WindowsHyperV {
@@ -1470,7 +1483,7 @@ pub struct WindowsHyperV {
     utility_vm_path: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Builder, Default, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Builder, Default, Getters)]
 #[builder(default, pattern = "owned", setter(into, strip_option))]
 /// WindowsNetwork contains network settings for Windows containers.
 pub struct WindowsNetwork {
@@ -1520,7 +1533,7 @@ pub struct WindowsNetwork {
     network_namespace: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Builder, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Builder, Getters)]
 #[builder(pattern = "owned", setter(into, strip_option))]
 /// VM contains information for virtual-machine-based containers.
 pub struct VM {
@@ -1539,7 +1552,7 @@ pub struct VM {
     image: Option<VMImage>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Builder, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Builder, Getters)]
 #[builder(pattern = "owned", setter(into, strip_option))]
 /// VMHypervisor contains information about the hypervisor to use for a virtual machine.
 pub struct VMHypervisor {
@@ -1553,7 +1566,7 @@ pub struct VMHypervisor {
     parameters: Option<Vec<String>>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Builder, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Builder, Getters)]
 #[builder(pattern = "owned", setter(into, strip_option))]
 /// VMKernel contains information about the kernel to use for a virtual machine.
 pub struct VMKernel {
@@ -1572,7 +1585,7 @@ pub struct VMKernel {
     initrd: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Builder, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Builder, Getters)]
 #[builder(pattern = "owned", setter(into, strip_option))]
 /// VMImage contains information about the virtual machine root image.
 pub struct VMImage {
@@ -1651,7 +1664,7 @@ mod tests {
 
         temp_file
             .as_file()
-            .write_all(b"{\"ociVersion\": \"1.0.0\"}")?;
+            .write_all(br#"{"ociVersion": "1.0.0"}"#)?;
 
         let spec = Spec::from(temp_file.path())?;
         assert_eq!(spec.version(), "1.0.0");
