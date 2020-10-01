@@ -1,0 +1,3226 @@
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct VersionRequest {
+    /// Version of the kubelet runtime API.
+    #[prost(string, tag = "1")]
+    pub version: std::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct VersionResponse {
+    /// Version of the kubelet runtime API.
+    #[prost(string, tag = "1")]
+    pub version: std::string::String,
+    /// Name of the container runtime.
+    #[prost(string, tag = "2")]
+    pub runtime_name: std::string::String,
+    /// Version of the container runtime. The string must be
+    /// semver-compatible.
+    #[prost(string, tag = "3")]
+    pub runtime_version: std::string::String,
+    /// API version of the container runtime. The string must be
+    /// semver-compatible.
+    #[prost(string, tag = "4")]
+    pub runtime_api_version: std::string::String,
+}
+/// DNSConfig specifies the DNS servers and search domains of a sandbox.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct DnsConfig {
+    /// List of DNS servers of the cluster.
+    #[prost(string, repeated, tag = "1")]
+    pub servers: ::std::vec::Vec<std::string::String>,
+    /// List of DNS search domains of the cluster.
+    #[prost(string, repeated, tag = "2")]
+    pub searches: ::std::vec::Vec<std::string::String>,
+    /// List of DNS options. See https://linux.die.net/man/5/resolv.conf
+    /// for all available options.
+    #[prost(string, repeated, tag = "3")]
+    pub options: ::std::vec::Vec<std::string::String>,
+}
+/// PortMapping specifies the port mapping configurations of a sandbox.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct PortMapping {
+    /// Protocol of the port mapping.
+    #[prost(enumeration = "Protocol", tag = "1")]
+    pub protocol: i32,
+    /// Port number within the container. Default: 0 (not specified).
+    #[prost(int32, tag = "2")]
+    pub container_port: i32,
+    /// Port number on the host. Default: 0 (not specified).
+    #[prost(int32, tag = "3")]
+    pub host_port: i32,
+    /// Host IP.
+    #[prost(string, tag = "4")]
+    pub host_ip: std::string::String,
+}
+/// Mount specifies a host volume to mount into a container.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct Mount {
+    /// Path of the mount within the container.
+    #[prost(string, tag = "1")]
+    pub container_path: std::string::String,
+    /// Path of the mount on the host. If the hostPath doesn't exist, then runtimes
+    /// should report error. If the hostpath is a symbolic link, runtimes should
+    /// follow the symlink and mount the real destination to container.
+    #[prost(string, tag = "2")]
+    pub host_path: std::string::String,
+    /// If set, the mount is read-only.
+    #[prost(bool, tag = "3")]
+    pub readonly: bool,
+    /// If set, the mount needs SELinux relabeling.
+    #[prost(bool, tag = "4")]
+    pub selinux_relabel: bool,
+    /// Requested propagation mode.
+    #[prost(enumeration = "MountPropagation", tag = "5")]
+    pub propagation: i32,
+}
+/// NamespaceOption provides options for Linux namespaces.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct NamespaceOption {
+    /// Network namespace for this container/sandbox.
+    /// Note: There is currently no way to set CONTAINER scoped network in the Kubernetes API.
+    /// Namespaces currently set by the kubelet: POD, NODE
+    #[prost(enumeration = "NamespaceMode", tag = "1")]
+    pub network: i32,
+    /// PID namespace for this container/sandbox.
+    /// Note: The CRI default is POD, but the v1.PodSpec default is CONTAINER.
+    /// The kubelet's runtime manager will set this to CONTAINER explicitly for v1 pods.
+    /// Namespaces currently set by the kubelet: POD, CONTAINER, NODE, TARGET
+    #[prost(enumeration = "NamespaceMode", tag = "2")]
+    pub pid: i32,
+    /// IPC namespace for this container/sandbox.
+    /// Note: There is currently no way to set CONTAINER scoped IPC in the Kubernetes API.
+    /// Namespaces currently set by the kubelet: POD, NODE
+    #[prost(enumeration = "NamespaceMode", tag = "3")]
+    pub ipc: i32,
+    /// Target Container ID for NamespaceMode of TARGET. This container must have been
+    /// previously created in the same pod. It is not possible to specify different targets
+    /// for each namespace.
+    #[prost(string, tag = "4")]
+    pub target_id: std::string::String,
+}
+/// Int64Value is the wrapper of int64.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct Int64Value {
+    /// The value.
+    #[prost(int64, tag = "1")]
+    pub value: i64,
+}
+/// LinuxSandboxSecurityContext holds linux security configuration that will be
+/// applied to a sandbox. Note that:
+/// 1) It does not apply to containers in the pods.
+/// 2) It may not be applicable to a PodSandbox which does not contain any running
+///    process.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct LinuxSandboxSecurityContext {
+    /// Configurations for the sandbox's namespaces.
+    /// This will be used only if the PodSandbox uses namespace for isolation.
+    #[prost(message, optional, tag = "1")]
+    pub namespace_options: ::std::option::Option<NamespaceOption>,
+    /// Optional SELinux context to be applied.
+    #[prost(message, optional, tag = "2")]
+    pub selinux_options: ::std::option::Option<SeLinuxOption>,
+    /// UID to run sandbox processes as, when applicable.
+    #[prost(message, optional, tag = "3")]
+    pub run_as_user: ::std::option::Option<Int64Value>,
+    /// GID to run sandbox processes as, when applicable. run_as_group should only
+    /// be specified when run_as_user is specified; otherwise, the runtime MUST error.
+    #[prost(message, optional, tag = "8")]
+    pub run_as_group: ::std::option::Option<Int64Value>,
+    /// If set, the root filesystem of the sandbox is read-only.
+    #[prost(bool, tag = "4")]
+    pub readonly_rootfs: bool,
+    /// List of groups applied to the first process run in the sandbox, in
+    /// addition to the sandbox's primary GID.
+    #[prost(int64, repeated, tag = "5")]
+    pub supplemental_groups: ::std::vec::Vec<i64>,
+    /// Indicates whether the sandbox will be asked to run a privileged
+    /// container. If a privileged container is to be executed within it, this
+    /// MUST be true.
+    /// This allows a sandbox to take additional security precautions if no
+    /// privileged containers are expected to be run.
+    #[prost(bool, tag = "6")]
+    pub privileged: bool,
+    /// Seccomp profile for the sandbox, candidate values are:
+    /// * runtime/default: the default profile for the container runtime
+    /// * unconfined: unconfined profile, ie, no seccomp sandboxing
+    /// * localhost/<full-path-to-profile>: the profile installed on the node.
+    ///   <full-path-to-profile> is the full path of the profile.
+    /// Default: "", which is identical with unconfined.
+    #[prost(string, tag = "7")]
+    pub seccomp_profile_path: std::string::String,
+}
+/// LinuxPodSandboxConfig holds platform-specific configurations for Linux
+/// host platforms and Linux-based containers.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct LinuxPodSandboxConfig {
+    /// Parent cgroup of the PodSandbox.
+    /// The cgroupfs style syntax will be used, but the container runtime can
+    /// convert it to systemd semantics if needed.
+    #[prost(string, tag = "1")]
+    pub cgroup_parent: std::string::String,
+    /// LinuxSandboxSecurityContext holds sandbox security attributes.
+    #[prost(message, optional, tag = "2")]
+    pub security_context: ::std::option::Option<LinuxSandboxSecurityContext>,
+    /// Sysctls holds linux sysctls config for the sandbox.
+    #[prost(map = "string, string", tag = "3")]
+    pub sysctls: ::std::collections::HashMap<std::string::String, std::string::String>,
+}
+/// PodSandboxMetadata holds all necessary information for building the sandbox name.
+/// The container runtime is encouraged to expose the metadata associated with the
+/// PodSandbox in its user interface for better user experience. For example,
+/// the runtime can construct a unique PodSandboxName based on the metadata.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct PodSandboxMetadata {
+    /// Pod name of the sandbox. Same as the pod name in the Pod ObjectMeta.
+    #[prost(string, tag = "1")]
+    pub name: std::string::String,
+    /// Pod UID of the sandbox. Same as the pod UID in the Pod ObjectMeta.
+    #[prost(string, tag = "2")]
+    pub uid: std::string::String,
+    /// Pod namespace of the sandbox. Same as the pod namespace in the Pod ObjectMeta.
+    #[prost(string, tag = "3")]
+    pub namespace: std::string::String,
+    /// Attempt number of creating the sandbox. Default: 0.
+    #[prost(uint32, tag = "4")]
+    pub attempt: u32,
+}
+/// PodSandboxConfig holds all the required and optional fields for creating a
+/// sandbox.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct PodSandboxConfig {
+    /// Metadata of the sandbox. This information will uniquely identify the
+    /// sandbox, and the runtime should leverage this to ensure correct
+    /// operation. The runtime may also use this information to improve UX, such
+    /// as by constructing a readable name.
+    #[prost(message, optional, tag = "1")]
+    pub metadata: ::std::option::Option<PodSandboxMetadata>,
+    /// Hostname of the sandbox. Hostname could only be empty when the pod
+    /// network namespace is NODE.
+    #[prost(string, tag = "2")]
+    pub hostname: std::string::String,
+    /// Path to the directory on the host in which container log files are
+    /// stored.
+    /// By default the log of a container going into the LogDirectory will be
+    /// hooked up to STDOUT and STDERR. However, the LogDirectory may contain
+    /// binary log files with structured logging data from the individual
+    /// containers. For example, the files might be newline separated JSON
+    /// structured logs, systemd-journald journal files, gRPC trace files, etc.
+    /// E.g.,
+    ///     PodSandboxConfig.LogDirectory = `/var/log/pods/<podUID>/`
+    ///     ContainerConfig.LogPath = `containerName/Instance#.log`
+    ///
+    /// WARNING: Log management and how kubelet should interface with the
+    /// container logs are under active discussion in
+    /// https://issues.k8s.io/24677. There *may* be future change of direction
+    /// for logging as the discussion carries on.
+    #[prost(string, tag = "3")]
+    pub log_directory: std::string::String,
+    /// DNS config for the sandbox.
+    #[prost(message, optional, tag = "4")]
+    pub dns_config: ::std::option::Option<DnsConfig>,
+    /// Port mappings for the sandbox.
+    #[prost(message, repeated, tag = "5")]
+    pub port_mappings: ::std::vec::Vec<PortMapping>,
+    /// Key-value pairs that may be used to scope and select individual resources.
+    #[prost(map = "string, string", tag = "6")]
+    pub labels: ::std::collections::HashMap<std::string::String, std::string::String>,
+    /// Unstructured key-value map that may be set by the kubelet to store and
+    /// retrieve arbitrary metadata. This will include any annotations set on a
+    /// pod through the Kubernetes API.
+    ///
+    /// Annotations MUST NOT be altered by the runtime; the annotations stored
+    /// here MUST be returned in the PodSandboxStatus associated with the pod
+    /// this PodSandboxConfig creates.
+    ///
+    /// In general, in order to preserve a well-defined interface between the
+    /// kubelet and the container runtime, annotations SHOULD NOT influence
+    /// runtime behaviour.
+    ///
+    /// Annotations can also be useful for runtime authors to experiment with
+    /// new features that are opaque to the Kubernetes APIs (both user-facing
+    /// and the CRI). Whenever possible, however, runtime authors SHOULD
+    /// consider proposing new typed fields for any new features instead.
+    #[prost(map = "string, string", tag = "7")]
+    pub annotations: ::std::collections::HashMap<std::string::String, std::string::String>,
+    /// Optional configurations specific to Linux hosts.
+    #[prost(message, optional, tag = "8")]
+    pub linux: ::std::option::Option<LinuxPodSandboxConfig>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct RunPodSandboxRequest {
+    /// Configuration for creating a PodSandbox.
+    #[prost(message, optional, tag = "1")]
+    pub config: ::std::option::Option<PodSandboxConfig>,
+    /// Named runtime configuration to use for this PodSandbox.
+    /// If the runtime handler is unknown, this request should be rejected.  An
+    /// empty string should select the default handler, equivalent to the
+    /// behavior before this feature was added.
+    /// See https://git.k8s.io/enhancements/keps/sig-node/runtime-class.md
+    #[prost(string, tag = "2")]
+    pub runtime_handler: std::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct RunPodSandboxResponse {
+    /// ID of the PodSandbox to run.
+    #[prost(string, tag = "1")]
+    pub pod_sandbox_id: std::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct StopPodSandboxRequest {
+    /// ID of the PodSandbox to stop.
+    #[prost(string, tag = "1")]
+    pub pod_sandbox_id: std::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct StopPodSandboxResponse {}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct RemovePodSandboxRequest {
+    /// ID of the PodSandbox to remove.
+    #[prost(string, tag = "1")]
+    pub pod_sandbox_id: std::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct RemovePodSandboxResponse {}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct PodSandboxStatusRequest {
+    /// ID of the PodSandbox for which to retrieve status.
+    #[prost(string, tag = "1")]
+    pub pod_sandbox_id: std::string::String,
+    /// Verbose indicates whether to return extra information about the pod sandbox.
+    #[prost(bool, tag = "2")]
+    pub verbose: bool,
+}
+/// PodIP represents an ip of a Pod
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct PodIp {
+    /// an ip is a string representation of an IPv4 or an IPv6
+    #[prost(string, tag = "1")]
+    pub ip: std::string::String,
+}
+/// PodSandboxNetworkStatus is the status of the network for a PodSandbox.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct PodSandboxNetworkStatus {
+    /// IP address of the PodSandbox.
+    #[prost(string, tag = "1")]
+    pub ip: std::string::String,
+    /// list of additional ips (not inclusive of PodSandboxNetworkStatus.Ip) of the PodSandBoxNetworkStatus
+    #[prost(message, repeated, tag = "2")]
+    pub additional_ips: ::std::vec::Vec<PodIp>,
+}
+/// Namespace contains paths to the namespaces.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct Namespace {
+    /// Namespace options for Linux namespaces.
+    #[prost(message, optional, tag = "2")]
+    pub options: ::std::option::Option<NamespaceOption>,
+}
+/// LinuxSandboxStatus contains status specific to Linux sandboxes.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct LinuxPodSandboxStatus {
+    /// Paths to the sandbox's namespaces.
+    #[prost(message, optional, tag = "1")]
+    pub namespaces: ::std::option::Option<Namespace>,
+}
+/// PodSandboxStatus contains the status of the PodSandbox.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct PodSandboxStatus {
+    /// ID of the sandbox.
+    #[prost(string, tag = "1")]
+    pub id: std::string::String,
+    /// Metadata of the sandbox.
+    #[prost(message, optional, tag = "2")]
+    pub metadata: ::std::option::Option<PodSandboxMetadata>,
+    /// State of the sandbox.
+    #[prost(enumeration = "PodSandboxState", tag = "3")]
+    pub state: i32,
+    /// Creation timestamp of the sandbox in nanoseconds. Must be > 0.
+    #[prost(int64, tag = "4")]
+    pub created_at: i64,
+    /// Network contains network status if network is handled by the runtime.
+    #[prost(message, optional, tag = "5")]
+    pub network: ::std::option::Option<PodSandboxNetworkStatus>,
+    /// Linux-specific status to a pod sandbox.
+    #[prost(message, optional, tag = "6")]
+    pub linux: ::std::option::Option<LinuxPodSandboxStatus>,
+    /// Labels are key-value pairs that may be used to scope and select individual resources.
+    #[prost(map = "string, string", tag = "7")]
+    pub labels: ::std::collections::HashMap<std::string::String, std::string::String>,
+    /// Unstructured key-value map holding arbitrary metadata.
+    /// Annotations MUST NOT be altered by the runtime; the value of this field
+    /// MUST be identical to that of the corresponding PodSandboxConfig used to
+    /// instantiate the pod sandbox this status represents.
+    #[prost(map = "string, string", tag = "8")]
+    pub annotations: ::std::collections::HashMap<std::string::String, std::string::String>,
+    /// runtime configuration used for this PodSandbox.
+    #[prost(string, tag = "9")]
+    pub runtime_handler: std::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct PodSandboxStatusResponse {
+    /// Status of the PodSandbox.
+    #[prost(message, optional, tag = "1")]
+    pub status: ::std::option::Option<PodSandboxStatus>,
+    /// Info is extra information of the PodSandbox. The key could be arbitrary string, and
+    /// value should be in json format. The information could include anything useful for
+    /// debug, e.g. network namespace for linux container based container runtime.
+    /// It should only be returned non-empty when Verbose is true.
+    #[prost(map = "string, string", tag = "2")]
+    pub info: ::std::collections::HashMap<std::string::String, std::string::String>,
+}
+/// PodSandboxStateValue is the wrapper of PodSandboxState.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct PodSandboxStateValue {
+    /// State of the sandbox.
+    #[prost(enumeration = "PodSandboxState", tag = "1")]
+    pub state: i32,
+}
+/// PodSandboxFilter is used to filter a list of PodSandboxes.
+/// All those fields are combined with 'AND'
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct PodSandboxFilter {
+    /// ID of the sandbox.
+    #[prost(string, tag = "1")]
+    pub id: std::string::String,
+    /// State of the sandbox.
+    #[prost(message, optional, tag = "2")]
+    pub state: ::std::option::Option<PodSandboxStateValue>,
+    /// LabelSelector to select matches.
+    /// Only api.MatchLabels is supported for now and the requirements
+    /// are ANDed. MatchExpressions is not supported yet.
+    #[prost(map = "string, string", tag = "3")]
+    pub label_selector: ::std::collections::HashMap<std::string::String, std::string::String>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListPodSandboxRequest {
+    /// PodSandboxFilter to filter a list of PodSandboxes.
+    #[prost(message, optional, tag = "1")]
+    pub filter: ::std::option::Option<PodSandboxFilter>,
+}
+/// PodSandbox contains minimal information about a sandbox.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct PodSandbox {
+    /// ID of the PodSandbox.
+    #[prost(string, tag = "1")]
+    pub id: std::string::String,
+    /// Metadata of the PodSandbox.
+    #[prost(message, optional, tag = "2")]
+    pub metadata: ::std::option::Option<PodSandboxMetadata>,
+    /// State of the PodSandbox.
+    #[prost(enumeration = "PodSandboxState", tag = "3")]
+    pub state: i32,
+    /// Creation timestamps of the PodSandbox in nanoseconds. Must be > 0.
+    #[prost(int64, tag = "4")]
+    pub created_at: i64,
+    /// Labels of the PodSandbox.
+    #[prost(map = "string, string", tag = "5")]
+    pub labels: ::std::collections::HashMap<std::string::String, std::string::String>,
+    /// Unstructured key-value map holding arbitrary metadata.
+    /// Annotations MUST NOT be altered by the runtime; the value of this field
+    /// MUST be identical to that of the corresponding PodSandboxConfig used to
+    /// instantiate this PodSandbox.
+    #[prost(map = "string, string", tag = "6")]
+    pub annotations: ::std::collections::HashMap<std::string::String, std::string::String>,
+    /// runtime configuration used for this PodSandbox.
+    #[prost(string, tag = "7")]
+    pub runtime_handler: std::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListPodSandboxResponse {
+    /// List of PodSandboxes.
+    #[prost(message, repeated, tag = "1")]
+    pub items: ::std::vec::Vec<PodSandbox>,
+}
+/// ImageSpec is an internal representation of an image.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ImageSpec {
+    /// Container's Image field (e.g. imageID or imageDigest).
+    #[prost(string, tag = "1")]
+    pub image: std::string::String,
+    /// Unstructured key-value map holding arbitrary metadata.
+    /// ImageSpec Annotations can be used to help the runtime target specific
+    /// images in multi-arch images.
+    #[prost(map = "string, string", tag = "2")]
+    pub annotations: ::std::collections::HashMap<std::string::String, std::string::String>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct KeyValue {
+    #[prost(string, tag = "1")]
+    pub key: std::string::String,
+    #[prost(string, tag = "2")]
+    pub value: std::string::String,
+}
+/// LinuxContainerResources specifies Linux specific configuration for
+/// resources.
+/// TODO: Consider using Resources from opencontainers/runtime-spec/specs-go
+/// directly.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct LinuxContainerResources {
+    /// CPU CFS (Completely Fair Scheduler) period. Default: 0 (not specified).
+    #[prost(int64, tag = "1")]
+    pub cpu_period: i64,
+    /// CPU CFS (Completely Fair Scheduler) quota. Default: 0 (not specified).
+    #[prost(int64, tag = "2")]
+    pub cpu_quota: i64,
+    /// CPU shares (relative weight vs. other containers). Default: 0 (not specified).
+    #[prost(int64, tag = "3")]
+    pub cpu_shares: i64,
+    /// Memory limit in bytes. Default: 0 (not specified).
+    #[prost(int64, tag = "4")]
+    pub memory_limit_in_bytes: i64,
+    /// OOMScoreAdj adjusts the oom-killer score. Default: 0 (not specified).
+    #[prost(int64, tag = "5")]
+    pub oom_score_adj: i64,
+    /// CpusetCpus constrains the allowed set of logical CPUs. Default: "" (not specified).
+    #[prost(string, tag = "6")]
+    pub cpuset_cpus: std::string::String,
+    /// CpusetMems constrains the allowed set of memory nodes. Default: "" (not specified).
+    #[prost(string, tag = "7")]
+    pub cpuset_mems: std::string::String,
+    /// List of HugepageLimits to limit the HugeTLB usage of container per page size. Default: nil (not specified).
+    #[prost(message, repeated, tag = "8")]
+    pub hugepage_limits: ::std::vec::Vec<HugepageLimit>,
+}
+/// HugepageLimit corresponds to the file`hugetlb.<hugepagesize>.limit_in_byte` in container level cgroup.
+/// For example, `PageSize=1GB`, `Limit=1073741824` means setting `1073741824` bytes to hugetlb.1GB.limit_in_bytes.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct HugepageLimit {
+    /// The value of PageSize has the format <size><unit-prefix>B (2MB, 1GB),
+    /// and must match the <hugepagesize> of the corresponding control file found in `hugetlb.<hugepagesize>.limit_in_bytes`.
+    /// The values of <unit-prefix> are intended to be parsed using base 1024("1KB" = 1024, "1MB" = 1048576, etc).
+    #[prost(string, tag = "1")]
+    pub page_size: std::string::String,
+    /// limit in bytes of hugepagesize HugeTLB usage.
+    #[prost(uint64, tag = "2")]
+    pub limit: u64,
+}
+/// SELinuxOption are the labels to be applied to the container.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct SeLinuxOption {
+    #[prost(string, tag = "1")]
+    pub user: std::string::String,
+    #[prost(string, tag = "2")]
+    pub role: std::string::String,
+    #[prost(string, tag = "3")]
+    pub r#type: std::string::String,
+    #[prost(string, tag = "4")]
+    pub level: std::string::String,
+}
+/// Capability contains the container capabilities to add or drop
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct Capability {
+    /// List of capabilities to add.
+    #[prost(string, repeated, tag = "1")]
+    pub add_capabilities: ::std::vec::Vec<std::string::String>,
+    /// List of capabilities to drop.
+    #[prost(string, repeated, tag = "2")]
+    pub drop_capabilities: ::std::vec::Vec<std::string::String>,
+}
+/// LinuxContainerSecurityContext holds linux security configuration that will be applied to a container.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct LinuxContainerSecurityContext {
+    /// Capabilities to add or drop.
+    #[prost(message, optional, tag = "1")]
+    pub capabilities: ::std::option::Option<Capability>,
+    /// If set, run container in privileged mode.
+    /// Privileged mode is incompatible with the following options. If
+    /// privileged is set, the following features MAY have no effect:
+    /// 1. capabilities
+    /// 2. selinux_options
+    /// 4. seccomp
+    /// 5. apparmor
+    ///
+    /// Privileged mode implies the following specific options are applied:
+    /// 1. All capabilities are added.
+    /// 2. Sensitive paths, such as kernel module paths within sysfs, are not masked.
+    /// 3. Any sysfs and procfs mounts are mounted RW.
+    /// 4. Apparmor confinement is not applied.
+    /// 5. Seccomp restrictions are not applied.
+    /// 6. The device cgroup does not restrict access to any devices.
+    /// 7. All devices from the host's /dev are available within the container.
+    /// 8. SELinux restrictions are not applied (e.g. label=disabled).
+    #[prost(bool, tag = "2")]
+    pub privileged: bool,
+    /// Configurations for the container's namespaces.
+    /// Only used if the container uses namespace for isolation.
+    #[prost(message, optional, tag = "3")]
+    pub namespace_options: ::std::option::Option<NamespaceOption>,
+    /// SELinux context to be optionally applied.
+    #[prost(message, optional, tag = "4")]
+    pub selinux_options: ::std::option::Option<SeLinuxOption>,
+    /// UID to run the container process as. Only one of run_as_user and
+    /// run_as_username can be specified at a time.
+    #[prost(message, optional, tag = "5")]
+    pub run_as_user: ::std::option::Option<Int64Value>,
+    /// GID to run the container process as. run_as_group should only be specified
+    /// when run_as_user or run_as_username is specified; otherwise, the runtime
+    /// MUST error.
+    #[prost(message, optional, tag = "12")]
+    pub run_as_group: ::std::option::Option<Int64Value>,
+    /// User name to run the container process as. If specified, the user MUST
+    /// exist in the container image (i.e. in the /etc/passwd inside the image),
+    /// and be resolved there by the runtime; otherwise, the runtime MUST error.
+    #[prost(string, tag = "6")]
+    pub run_as_username: std::string::String,
+    /// If set, the root filesystem of the container is read-only.
+    #[prost(bool, tag = "7")]
+    pub readonly_rootfs: bool,
+    /// List of groups applied to the first process run in the container, in
+    /// addition to the container's primary GID.
+    #[prost(int64, repeated, tag = "8")]
+    pub supplemental_groups: ::std::vec::Vec<i64>,
+    /// AppArmor profile for the container, candidate values are:
+    /// * runtime/default: equivalent to not specifying a profile.
+    /// * unconfined: no profiles are loaded
+    /// * localhost/<profile_name>: profile loaded on the node
+    ///    (localhost) by name. The possible profile names are detailed at
+    ///    http://wiki.apparmor.net/index.php/AppArmor_Core_Policy_Reference
+    #[prost(string, tag = "9")]
+    pub apparmor_profile: std::string::String,
+    /// Seccomp profile for the container, candidate values are:
+    /// * runtime/default: the default profile for the container runtime
+    /// * unconfined: unconfined profile, ie, no seccomp sandboxing
+    /// * localhost/<full-path-to-profile>: the profile installed on the node.
+    ///   <full-path-to-profile> is the full path of the profile.
+    /// Default: "", which is identical with unconfined.
+    #[prost(string, tag = "10")]
+    pub seccomp_profile_path: std::string::String,
+    /// no_new_privs defines if the flag for no_new_privs should be set on the
+    /// container.
+    #[prost(bool, tag = "11")]
+    pub no_new_privs: bool,
+    /// masked_paths is a slice of paths that should be masked by the container
+    /// runtime, this can be passed directly to the OCI spec.
+    #[prost(string, repeated, tag = "13")]
+    pub masked_paths: ::std::vec::Vec<std::string::String>,
+    /// readonly_paths is a slice of paths that should be set as readonly by the
+    /// container runtime, this can be passed directly to the OCI spec.
+    #[prost(string, repeated, tag = "14")]
+    pub readonly_paths: ::std::vec::Vec<std::string::String>,
+}
+/// LinuxContainerConfig contains platform-specific configuration for
+/// Linux-based containers.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct LinuxContainerConfig {
+    /// Resources specification for the container.
+    #[prost(message, optional, tag = "1")]
+    pub resources: ::std::option::Option<LinuxContainerResources>,
+    /// LinuxContainerSecurityContext configuration for the container.
+    #[prost(message, optional, tag = "2")]
+    pub security_context: ::std::option::Option<LinuxContainerSecurityContext>,
+}
+/// WindowsContainerSecurityContext holds windows security configuration that will be applied to a container.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct WindowsContainerSecurityContext {
+    /// User name to run the container process as. If specified, the user MUST
+    /// exist in the container image and be resolved there by the runtime;
+    /// otherwise, the runtime MUST return error.
+    #[prost(string, tag = "1")]
+    pub run_as_username: std::string::String,
+    /// The contents of the GMSA credential spec to use to run this container.
+    #[prost(string, tag = "2")]
+    pub credential_spec: std::string::String,
+}
+/// WindowsContainerConfig contains platform-specific configuration for
+/// Windows-based containers.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct WindowsContainerConfig {
+    /// Resources specification for the container.
+    #[prost(message, optional, tag = "1")]
+    pub resources: ::std::option::Option<WindowsContainerResources>,
+    /// WindowsContainerSecurityContext configuration for the container.
+    #[prost(message, optional, tag = "2")]
+    pub security_context: ::std::option::Option<WindowsContainerSecurityContext>,
+}
+/// WindowsContainerResources specifies Windows specific configuration for
+/// resources.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct WindowsContainerResources {
+    /// CPU shares (relative weight vs. other containers). Default: 0 (not specified).
+    #[prost(int64, tag = "1")]
+    pub cpu_shares: i64,
+    /// Number of CPUs available to the container. Default: 0 (not specified).
+    #[prost(int64, tag = "2")]
+    pub cpu_count: i64,
+    /// Specifies the portion of processor cycles that this container can use as a percentage times 100.
+    #[prost(int64, tag = "3")]
+    pub cpu_maximum: i64,
+    /// Memory limit in bytes. Default: 0 (not specified).
+    #[prost(int64, tag = "4")]
+    pub memory_limit_in_bytes: i64,
+}
+/// ContainerMetadata holds all necessary information for building the container
+/// name. The container runtime is encouraged to expose the metadata in its user
+/// interface for better user experience. E.g., runtime can construct a unique
+/// container name based on the metadata. Note that (name, attempt) is unique
+/// within a sandbox for the entire lifetime of the sandbox.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ContainerMetadata {
+    /// Name of the container. Same as the container name in the PodSpec.
+    #[prost(string, tag = "1")]
+    pub name: std::string::String,
+    /// Attempt number of creating the container. Default: 0.
+    #[prost(uint32, tag = "2")]
+    pub attempt: u32,
+}
+/// Device specifies a host device to mount into a container.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct Device {
+    /// Path of the device within the container.
+    #[prost(string, tag = "1")]
+    pub container_path: std::string::String,
+    /// Path of the device on the host.
+    #[prost(string, tag = "2")]
+    pub host_path: std::string::String,
+    /// Cgroups permissions of the device, candidates are one or more of
+    /// * r - allows container to read from the specified device.
+    /// * w - allows container to write to the specified device.
+    /// * m - allows container to create device files that do not yet exist.
+    #[prost(string, tag = "3")]
+    pub permissions: std::string::String,
+}
+/// ContainerConfig holds all the required and optional fields for creating a
+/// container.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ContainerConfig {
+    /// Metadata of the container. This information will uniquely identify the
+    /// container, and the runtime should leverage this to ensure correct
+    /// operation. The runtime may also use this information to improve UX, such
+    /// as by constructing a readable name.
+    #[prost(message, optional, tag = "1")]
+    pub metadata: ::std::option::Option<ContainerMetadata>,
+    /// Image to use.
+    #[prost(message, optional, tag = "2")]
+    pub image: ::std::option::Option<ImageSpec>,
+    /// Command to execute (i.e., entrypoint for docker)
+    #[prost(string, repeated, tag = "3")]
+    pub command: ::std::vec::Vec<std::string::String>,
+    /// Args for the Command (i.e., command for docker)
+    #[prost(string, repeated, tag = "4")]
+    pub args: ::std::vec::Vec<std::string::String>,
+    /// Current working directory of the command.
+    #[prost(string, tag = "5")]
+    pub working_dir: std::string::String,
+    /// List of environment variable to set in the container.
+    #[prost(message, repeated, tag = "6")]
+    pub envs: ::std::vec::Vec<KeyValue>,
+    /// Mounts for the container.
+    #[prost(message, repeated, tag = "7")]
+    pub mounts: ::std::vec::Vec<Mount>,
+    /// Devices for the container.
+    #[prost(message, repeated, tag = "8")]
+    pub devices: ::std::vec::Vec<Device>,
+    /// Key-value pairs that may be used to scope and select individual resources.
+    /// Label keys are of the form:
+    ///     label-key ::= prefixed-name | name
+    ///     prefixed-name ::= prefix '/' name
+    ///     prefix ::= DNS_SUBDOMAIN
+    ///     name ::= DNS_LABEL
+    #[prost(map = "string, string", tag = "9")]
+    pub labels: ::std::collections::HashMap<std::string::String, std::string::String>,
+    /// Unstructured key-value map that may be used by the kubelet to store and
+    /// retrieve arbitrary metadata.
+    ///
+    /// Annotations MUST NOT be altered by the runtime; the annotations stored
+    /// here MUST be returned in the ContainerStatus associated with the container
+    /// this ContainerConfig creates.
+    ///
+    /// In general, in order to preserve a well-defined interface between the
+    /// kubelet and the container runtime, annotations SHOULD NOT influence
+    /// runtime behaviour.
+    #[prost(map = "string, string", tag = "10")]
+    pub annotations: ::std::collections::HashMap<std::string::String, std::string::String>,
+    /// Path relative to PodSandboxConfig.LogDirectory for container to store
+    /// the log (STDOUT and STDERR) on the host.
+    /// E.g.,
+    ///     PodSandboxConfig.LogDirectory = `/var/log/pods/<podUID>/`
+    ///     ContainerConfig.LogPath = `containerName/Instance#.log`
+    ///
+    /// WARNING: Log management and how kubelet should interface with the
+    /// container logs are under active discussion in
+    /// https://issues.k8s.io/24677. There *may* be future change of direction
+    /// for logging as the discussion carries on.
+    #[prost(string, tag = "11")]
+    pub log_path: std::string::String,
+    /// Variables for interactive containers, these have very specialized
+    /// use-cases (e.g. debugging).
+    /// TODO: Determine if we need to continue supporting these fields that are
+    /// part of Kubernetes's Container Spec.
+    #[prost(bool, tag = "12")]
+    pub stdin: bool,
+    #[prost(bool, tag = "13")]
+    pub stdin_once: bool,
+    #[prost(bool, tag = "14")]
+    pub tty: bool,
+    /// Configuration specific to Linux containers.
+    #[prost(message, optional, tag = "15")]
+    pub linux: ::std::option::Option<LinuxContainerConfig>,
+    /// Configuration specific to Windows containers.
+    #[prost(message, optional, tag = "16")]
+    pub windows: ::std::option::Option<WindowsContainerConfig>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct CreateContainerRequest {
+    /// ID of the PodSandbox in which the container should be created.
+    #[prost(string, tag = "1")]
+    pub pod_sandbox_id: std::string::String,
+    /// Config of the container.
+    #[prost(message, optional, tag = "2")]
+    pub config: ::std::option::Option<ContainerConfig>,
+    /// Config of the PodSandbox. This is the same config that was passed
+    /// to RunPodSandboxRequest to create the PodSandbox. It is passed again
+    /// here just for easy reference. The PodSandboxConfig is immutable and
+    /// remains the same throughout the lifetime of the pod.
+    #[prost(message, optional, tag = "3")]
+    pub sandbox_config: ::std::option::Option<PodSandboxConfig>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct CreateContainerResponse {
+    /// ID of the created container.
+    #[prost(string, tag = "1")]
+    pub container_id: std::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct StartContainerRequest {
+    /// ID of the container to start.
+    #[prost(string, tag = "1")]
+    pub container_id: std::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct StartContainerResponse {}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct StopContainerRequest {
+    /// ID of the container to stop.
+    #[prost(string, tag = "1")]
+    pub container_id: std::string::String,
+    /// Timeout in seconds to wait for the container to stop before forcibly
+    /// terminating it. Default: 0 (forcibly terminate the container immediately)
+    #[prost(int64, tag = "2")]
+    pub timeout: i64,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct StopContainerResponse {}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct RemoveContainerRequest {
+    /// ID of the container to remove.
+    #[prost(string, tag = "1")]
+    pub container_id: std::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct RemoveContainerResponse {}
+/// ContainerStateValue is the wrapper of ContainerState.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ContainerStateValue {
+    /// State of the container.
+    #[prost(enumeration = "ContainerState", tag = "1")]
+    pub state: i32,
+}
+/// ContainerFilter is used to filter containers.
+/// All those fields are combined with 'AND'
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ContainerFilter {
+    /// ID of the container.
+    #[prost(string, tag = "1")]
+    pub id: std::string::String,
+    /// State of the container.
+    #[prost(message, optional, tag = "2")]
+    pub state: ::std::option::Option<ContainerStateValue>,
+    /// ID of the PodSandbox.
+    #[prost(string, tag = "3")]
+    pub pod_sandbox_id: std::string::String,
+    /// LabelSelector to select matches.
+    /// Only api.MatchLabels is supported for now and the requirements
+    /// are ANDed. MatchExpressions is not supported yet.
+    #[prost(map = "string, string", tag = "4")]
+    pub label_selector: ::std::collections::HashMap<std::string::String, std::string::String>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListContainersRequest {
+    #[prost(message, optional, tag = "1")]
+    pub filter: ::std::option::Option<ContainerFilter>,
+}
+/// Container provides the runtime information for a container, such as ID, hash,
+/// state of the container.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct Container {
+    /// ID of the container, used by the container runtime to identify
+    /// a container.
+    #[prost(string, tag = "1")]
+    pub id: std::string::String,
+    /// ID of the sandbox to which this container belongs.
+    #[prost(string, tag = "2")]
+    pub pod_sandbox_id: std::string::String,
+    /// Metadata of the container.
+    #[prost(message, optional, tag = "3")]
+    pub metadata: ::std::option::Option<ContainerMetadata>,
+    /// Spec of the image.
+    #[prost(message, optional, tag = "4")]
+    pub image: ::std::option::Option<ImageSpec>,
+    /// Reference to the image in use. For most runtimes, this should be an
+    /// image ID.
+    #[prost(string, tag = "5")]
+    pub image_ref: std::string::String,
+    /// State of the container.
+    #[prost(enumeration = "ContainerState", tag = "6")]
+    pub state: i32,
+    /// Creation time of the container in nanoseconds.
+    #[prost(int64, tag = "7")]
+    pub created_at: i64,
+    /// Key-value pairs that may be used to scope and select individual resources.
+    #[prost(map = "string, string", tag = "8")]
+    pub labels: ::std::collections::HashMap<std::string::String, std::string::String>,
+    /// Unstructured key-value map holding arbitrary metadata.
+    /// Annotations MUST NOT be altered by the runtime; the value of this field
+    /// MUST be identical to that of the corresponding ContainerConfig used to
+    /// instantiate this Container.
+    #[prost(map = "string, string", tag = "9")]
+    pub annotations: ::std::collections::HashMap<std::string::String, std::string::String>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListContainersResponse {
+    /// List of containers.
+    #[prost(message, repeated, tag = "1")]
+    pub containers: ::std::vec::Vec<Container>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ContainerStatusRequest {
+    /// ID of the container for which to retrieve status.
+    #[prost(string, tag = "1")]
+    pub container_id: std::string::String,
+    /// Verbose indicates whether to return extra information about the container.
+    #[prost(bool, tag = "2")]
+    pub verbose: bool,
+}
+/// ContainerStatus represents the status of a container.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ContainerStatus {
+    /// ID of the container.
+    #[prost(string, tag = "1")]
+    pub id: std::string::String,
+    /// Metadata of the container.
+    #[prost(message, optional, tag = "2")]
+    pub metadata: ::std::option::Option<ContainerMetadata>,
+    /// Status of the container.
+    #[prost(enumeration = "ContainerState", tag = "3")]
+    pub state: i32,
+    /// Creation time of the container in nanoseconds.
+    #[prost(int64, tag = "4")]
+    pub created_at: i64,
+    /// Start time of the container in nanoseconds. Default: 0 (not specified).
+    #[prost(int64, tag = "5")]
+    pub started_at: i64,
+    /// Finish time of the container in nanoseconds. Default: 0 (not specified).
+    #[prost(int64, tag = "6")]
+    pub finished_at: i64,
+    /// Exit code of the container. Only required when finished_at != 0. Default: 0.
+    #[prost(int32, tag = "7")]
+    pub exit_code: i32,
+    /// Spec of the image.
+    #[prost(message, optional, tag = "8")]
+    pub image: ::std::option::Option<ImageSpec>,
+    /// Reference to the image in use. For most runtimes, this should be an
+    /// image ID
+    #[prost(string, tag = "9")]
+    pub image_ref: std::string::String,
+    /// Brief CamelCase string explaining why container is in its current state.
+    #[prost(string, tag = "10")]
+    pub reason: std::string::String,
+    /// Human-readable message indicating details about why container is in its
+    /// current state.
+    #[prost(string, tag = "11")]
+    pub message: std::string::String,
+    /// Key-value pairs that may be used to scope and select individual resources.
+    #[prost(map = "string, string", tag = "12")]
+    pub labels: ::std::collections::HashMap<std::string::String, std::string::String>,
+    /// Unstructured key-value map holding arbitrary metadata.
+    /// Annotations MUST NOT be altered by the runtime; the value of this field
+    /// MUST be identical to that of the corresponding ContainerConfig used to
+    /// instantiate the Container this status represents.
+    #[prost(map = "string, string", tag = "13")]
+    pub annotations: ::std::collections::HashMap<std::string::String, std::string::String>,
+    /// Mounts for the container.
+    #[prost(message, repeated, tag = "14")]
+    pub mounts: ::std::vec::Vec<Mount>,
+    /// Log path of container.
+    #[prost(string, tag = "15")]
+    pub log_path: std::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ContainerStatusResponse {
+    /// Status of the container.
+    #[prost(message, optional, tag = "1")]
+    pub status: ::std::option::Option<ContainerStatus>,
+    /// Info is extra information of the Container. The key could be arbitrary string, and
+    /// value should be in json format. The information could include anything useful for
+    /// debug, e.g. pid for linux container based container runtime.
+    /// It should only be returned non-empty when Verbose is true.
+    #[prost(map = "string, string", tag = "2")]
+    pub info: ::std::collections::HashMap<std::string::String, std::string::String>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct UpdateContainerResourcesRequest {
+    /// ID of the container to update.
+    #[prost(string, tag = "1")]
+    pub container_id: std::string::String,
+    /// Resource configuration specific to Linux containers.
+    #[prost(message, optional, tag = "2")]
+    pub linux: ::std::option::Option<LinuxContainerResources>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct UpdateContainerResourcesResponse {}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ExecSyncRequest {
+    /// ID of the container.
+    #[prost(string, tag = "1")]
+    pub container_id: std::string::String,
+    /// Command to execute.
+    #[prost(string, repeated, tag = "2")]
+    pub cmd: ::std::vec::Vec<std::string::String>,
+    /// Timeout in seconds to stop the command. Default: 0 (run forever).
+    #[prost(int64, tag = "3")]
+    pub timeout: i64,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ExecSyncResponse {
+    /// Captured command stdout output.
+    #[prost(bytes, tag = "1")]
+    pub stdout: std::vec::Vec<u8>,
+    /// Captured command stderr output.
+    #[prost(bytes, tag = "2")]
+    pub stderr: std::vec::Vec<u8>,
+    /// Exit code the command finished with. Default: 0 (success).
+    #[prost(int32, tag = "3")]
+    pub exit_code: i32,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ExecRequest {
+    /// ID of the container in which to execute the command.
+    #[prost(string, tag = "1")]
+    pub container_id: std::string::String,
+    /// Command to execute.
+    #[prost(string, repeated, tag = "2")]
+    pub cmd: ::std::vec::Vec<std::string::String>,
+    /// Whether to exec the command in a TTY.
+    #[prost(bool, tag = "3")]
+    pub tty: bool,
+    /// Whether to stream stdin.
+    /// One of `stdin`, `stdout`, and `stderr` MUST be true.
+    #[prost(bool, tag = "4")]
+    pub stdin: bool,
+    /// Whether to stream stdout.
+    /// One of `stdin`, `stdout`, and `stderr` MUST be true.
+    #[prost(bool, tag = "5")]
+    pub stdout: bool,
+    /// Whether to stream stderr.
+    /// One of `stdin`, `stdout`, and `stderr` MUST be true.
+    /// If `tty` is true, `stderr` MUST be false. Multiplexing is not supported
+    /// in this case. The output of stdout and stderr will be combined to a
+    /// single stream.
+    #[prost(bool, tag = "6")]
+    pub stderr: bool,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ExecResponse {
+    /// Fully qualified URL of the exec streaming server.
+    #[prost(string, tag = "1")]
+    pub url: std::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct AttachRequest {
+    /// ID of the container to which to attach.
+    #[prost(string, tag = "1")]
+    pub container_id: std::string::String,
+    /// Whether to stream stdin.
+    /// One of `stdin`, `stdout`, and `stderr` MUST be true.
+    #[prost(bool, tag = "2")]
+    pub stdin: bool,
+    /// Whether the process being attached is running in a TTY.
+    /// This must match the TTY setting in the ContainerConfig.
+    #[prost(bool, tag = "3")]
+    pub tty: bool,
+    /// Whether to stream stdout.
+    /// One of `stdin`, `stdout`, and `stderr` MUST be true.
+    #[prost(bool, tag = "4")]
+    pub stdout: bool,
+    /// Whether to stream stderr.
+    /// One of `stdin`, `stdout`, and `stderr` MUST be true.
+    /// If `tty` is true, `stderr` MUST be false. Multiplexing is not supported
+    /// in this case. The output of stdout and stderr will be combined to a
+    /// single stream.
+    #[prost(bool, tag = "5")]
+    pub stderr: bool,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct AttachResponse {
+    /// Fully qualified URL of the attach streaming server.
+    #[prost(string, tag = "1")]
+    pub url: std::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct PortForwardRequest {
+    /// ID of the container to which to forward the port.
+    #[prost(string, tag = "1")]
+    pub pod_sandbox_id: std::string::String,
+    /// Port to forward.
+    #[prost(int32, repeated, tag = "2")]
+    pub port: ::std::vec::Vec<i32>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct PortForwardResponse {
+    /// Fully qualified URL of the port-forward streaming server.
+    #[prost(string, tag = "1")]
+    pub url: std::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ImageFilter {
+    /// Spec of the image.
+    #[prost(message, optional, tag = "1")]
+    pub image: ::std::option::Option<ImageSpec>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListImagesRequest {
+    /// Filter to list images.
+    #[prost(message, optional, tag = "1")]
+    pub filter: ::std::option::Option<ImageFilter>,
+}
+/// Basic information about a container image.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct Image {
+    /// ID of the image.
+    #[prost(string, tag = "1")]
+    pub id: std::string::String,
+    /// Other names by which this image is known.
+    #[prost(string, repeated, tag = "2")]
+    pub repo_tags: ::std::vec::Vec<std::string::String>,
+    /// Digests by which this image is known.
+    #[prost(string, repeated, tag = "3")]
+    pub repo_digests: ::std::vec::Vec<std::string::String>,
+    /// Size of the image in bytes. Must be > 0.
+    #[prost(uint64, tag = "4")]
+    pub size: u64,
+    /// UID that will run the command(s). This is used as a default if no user is
+    /// specified when creating the container. UID and the following user name
+    /// are mutually exclusive.
+    #[prost(message, optional, tag = "5")]
+    pub uid: ::std::option::Option<Int64Value>,
+    /// User name that will run the command(s). This is used if UID is not set
+    /// and no user is specified when creating container.
+    #[prost(string, tag = "6")]
+    pub username: std::string::String,
+    /// ImageSpec for image which includes annotations
+    #[prost(message, optional, tag = "7")]
+    pub spec: ::std::option::Option<ImageSpec>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListImagesResponse {
+    /// List of images.
+    #[prost(message, repeated, tag = "1")]
+    pub images: ::std::vec::Vec<Image>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ImageStatusRequest {
+    /// Spec of the image.
+    #[prost(message, optional, tag = "1")]
+    pub image: ::std::option::Option<ImageSpec>,
+    /// Verbose indicates whether to return extra information about the image.
+    #[prost(bool, tag = "2")]
+    pub verbose: bool,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ImageStatusResponse {
+    /// Status of the image.
+    #[prost(message, optional, tag = "1")]
+    pub image: ::std::option::Option<Image>,
+    /// Info is extra information of the Image. The key could be arbitrary string, and
+    /// value should be in json format. The information could include anything useful
+    /// for debug, e.g. image config for oci image based container runtime.
+    /// It should only be returned non-empty when Verbose is true.
+    #[prost(map = "string, string", tag = "2")]
+    pub info: ::std::collections::HashMap<std::string::String, std::string::String>,
+}
+/// AuthConfig contains authorization information for connecting to a registry.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct AuthConfig {
+    #[prost(string, tag = "1")]
+    pub username: std::string::String,
+    #[prost(string, tag = "2")]
+    pub password: std::string::String,
+    #[prost(string, tag = "3")]
+    pub auth: std::string::String,
+    #[prost(string, tag = "4")]
+    pub server_address: std::string::String,
+    /// IdentityToken is used to authenticate the user and get
+    /// an access token for the registry.
+    #[prost(string, tag = "5")]
+    pub identity_token: std::string::String,
+    /// RegistryToken is a bearer token to be sent to a registry
+    #[prost(string, tag = "6")]
+    pub registry_token: std::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct PullImageRequest {
+    /// Spec of the image.
+    #[prost(message, optional, tag = "1")]
+    pub image: ::std::option::Option<ImageSpec>,
+    /// Authentication configuration for pulling the image.
+    #[prost(message, optional, tag = "2")]
+    pub auth: ::std::option::Option<AuthConfig>,
+    /// Config of the PodSandbox, which is used to pull image in PodSandbox context.
+    #[prost(message, optional, tag = "3")]
+    pub sandbox_config: ::std::option::Option<PodSandboxConfig>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct PullImageResponse {
+    /// Reference to the image in use. For most runtimes, this should be an
+    /// image ID or digest.
+    #[prost(string, tag = "1")]
+    pub image_ref: std::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct RemoveImageRequest {
+    /// Spec of the image to remove.
+    #[prost(message, optional, tag = "1")]
+    pub image: ::std::option::Option<ImageSpec>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct RemoveImageResponse {}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct NetworkConfig {
+    /// CIDR to use for pod IP addresses. If the CIDR is empty, runtimes
+    /// should omit it.
+    #[prost(string, tag = "1")]
+    pub pod_cidr: std::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct RuntimeConfig {
+    #[prost(message, optional, tag = "1")]
+    pub network_config: ::std::option::Option<NetworkConfig>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct UpdateRuntimeConfigRequest {
+    #[prost(message, optional, tag = "1")]
+    pub runtime_config: ::std::option::Option<RuntimeConfig>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct UpdateRuntimeConfigResponse {}
+/// RuntimeCondition contains condition information for the runtime.
+/// There are 2 kinds of runtime conditions:
+/// 1. Required conditions: Conditions are required for kubelet to work
+/// properly. If any required condition is unmet, the node will be not ready.
+/// The required conditions include:
+///   * RuntimeReady: RuntimeReady means the runtime is up and ready to accept
+///   basic containers e.g. container only needs host network.
+///   * NetworkReady: NetworkReady means the runtime network is up and ready to
+///   accept containers which require container network.
+/// 2. Optional conditions: Conditions are informative to the user, but kubelet
+/// will not rely on. Since condition type is an arbitrary string, all conditions
+/// not required are optional. These conditions will be exposed to users to help
+/// them understand the status of the system.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct RuntimeCondition {
+    /// Type of runtime condition.
+    #[prost(string, tag = "1")]
+    pub r#type: std::string::String,
+    /// Status of the condition, one of true/false. Default: false.
+    #[prost(bool, tag = "2")]
+    pub status: bool,
+    /// Brief CamelCase string containing reason for the condition's last transition.
+    #[prost(string, tag = "3")]
+    pub reason: std::string::String,
+    /// Human-readable message indicating details about last transition.
+    #[prost(string, tag = "4")]
+    pub message: std::string::String,
+}
+/// RuntimeStatus is information about the current status of the runtime.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct RuntimeStatus {
+    /// List of current observed runtime conditions.
+    #[prost(message, repeated, tag = "1")]
+    pub conditions: ::std::vec::Vec<RuntimeCondition>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct StatusRequest {
+    /// Verbose indicates whether to return extra information about the runtime.
+    #[prost(bool, tag = "1")]
+    pub verbose: bool,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct StatusResponse {
+    /// Status of the Runtime.
+    #[prost(message, optional, tag = "1")]
+    pub status: ::std::option::Option<RuntimeStatus>,
+    /// Info is extra information of the Runtime. The key could be arbitrary string, and
+    /// value should be in json format. The information could include anything useful for
+    /// debug, e.g. plugins used by the container runtime.
+    /// It should only be returned non-empty when Verbose is true.
+    #[prost(map = "string, string", tag = "2")]
+    pub info: ::std::collections::HashMap<std::string::String, std::string::String>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ImageFsInfoRequest {}
+/// UInt64Value is the wrapper of uint64.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct UInt64Value {
+    /// The value.
+    #[prost(uint64, tag = "1")]
+    pub value: u64,
+}
+/// FilesystemIdentifier uniquely identify the filesystem.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct FilesystemIdentifier {
+    /// Mountpoint of a filesystem.
+    #[prost(string, tag = "1")]
+    pub mountpoint: std::string::String,
+}
+/// FilesystemUsage provides the filesystem usage information.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct FilesystemUsage {
+    /// Timestamp in nanoseconds at which the information were collected. Must be > 0.
+    #[prost(int64, tag = "1")]
+    pub timestamp: i64,
+    /// The unique identifier of the filesystem.
+    #[prost(message, optional, tag = "2")]
+    pub fs_id: ::std::option::Option<FilesystemIdentifier>,
+    /// UsedBytes represents the bytes used for images on the filesystem.
+    /// This may differ from the total bytes used on the filesystem and may not
+    /// equal CapacityBytes - AvailableBytes.
+    #[prost(message, optional, tag = "3")]
+    pub used_bytes: ::std::option::Option<UInt64Value>,
+    /// InodesUsed represents the inodes used by the images.
+    /// This may not equal InodesCapacity - InodesAvailable because the underlying
+    /// filesystem may also be used for purposes other than storing images.
+    #[prost(message, optional, tag = "4")]
+    pub inodes_used: ::std::option::Option<UInt64Value>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ImageFsInfoResponse {
+    /// Information of image filesystem(s).
+    #[prost(message, repeated, tag = "1")]
+    pub image_filesystems: ::std::vec::Vec<FilesystemUsage>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ContainerStatsRequest {
+    /// ID of the container for which to retrieve stats.
+    #[prost(string, tag = "1")]
+    pub container_id: std::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ContainerStatsResponse {
+    /// Stats of the container.
+    #[prost(message, optional, tag = "1")]
+    pub stats: ::std::option::Option<ContainerStats>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListContainerStatsRequest {
+    /// Filter for the list request.
+    #[prost(message, optional, tag = "1")]
+    pub filter: ::std::option::Option<ContainerStatsFilter>,
+}
+/// ContainerStatsFilter is used to filter containers.
+/// All those fields are combined with 'AND'
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ContainerStatsFilter {
+    /// ID of the container.
+    #[prost(string, tag = "1")]
+    pub id: std::string::String,
+    /// ID of the PodSandbox.
+    #[prost(string, tag = "2")]
+    pub pod_sandbox_id: std::string::String,
+    /// LabelSelector to select matches.
+    /// Only api.MatchLabels is supported for now and the requirements
+    /// are ANDed. MatchExpressions is not supported yet.
+    #[prost(map = "string, string", tag = "3")]
+    pub label_selector: ::std::collections::HashMap<std::string::String, std::string::String>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListContainerStatsResponse {
+    /// Stats of the container.
+    #[prost(message, repeated, tag = "1")]
+    pub stats: ::std::vec::Vec<ContainerStats>,
+}
+/// ContainerAttributes provides basic information of the container.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ContainerAttributes {
+    /// ID of the container.
+    #[prost(string, tag = "1")]
+    pub id: std::string::String,
+    /// Metadata of the container.
+    #[prost(message, optional, tag = "2")]
+    pub metadata: ::std::option::Option<ContainerMetadata>,
+    /// Key-value pairs that may be used to scope and select individual resources.
+    #[prost(map = "string, string", tag = "3")]
+    pub labels: ::std::collections::HashMap<std::string::String, std::string::String>,
+    /// Unstructured key-value map holding arbitrary metadata.
+    /// Annotations MUST NOT be altered by the runtime; the value of this field
+    /// MUST be identical to that of the corresponding ContainerConfig used to
+    /// instantiate the Container this status represents.
+    #[prost(map = "string, string", tag = "4")]
+    pub annotations: ::std::collections::HashMap<std::string::String, std::string::String>,
+}
+/// ContainerStats provides the resource usage statistics for a container.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ContainerStats {
+    /// Information of the container.
+    #[prost(message, optional, tag = "1")]
+    pub attributes: ::std::option::Option<ContainerAttributes>,
+    /// CPU usage gathered from the container.
+    #[prost(message, optional, tag = "2")]
+    pub cpu: ::std::option::Option<CpuUsage>,
+    /// Memory usage gathered from the container.
+    #[prost(message, optional, tag = "3")]
+    pub memory: ::std::option::Option<MemoryUsage>,
+    /// Usage of the writable layer.
+    #[prost(message, optional, tag = "4")]
+    pub writable_layer: ::std::option::Option<FilesystemUsage>,
+}
+/// CpuUsage provides the CPU usage information.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct CpuUsage {
+    /// Timestamp in nanoseconds at which the information were collected. Must be > 0.
+    #[prost(int64, tag = "1")]
+    pub timestamp: i64,
+    /// Cumulative CPU usage (sum across all cores) since object creation.
+    #[prost(message, optional, tag = "2")]
+    pub usage_core_nano_seconds: ::std::option::Option<UInt64Value>,
+}
+/// MemoryUsage provides the memory usage information.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct MemoryUsage {
+    /// Timestamp in nanoseconds at which the information were collected. Must be > 0.
+    #[prost(int64, tag = "1")]
+    pub timestamp: i64,
+    /// The amount of working set memory in bytes.
+    #[prost(message, optional, tag = "2")]
+    pub working_set_bytes: ::std::option::Option<UInt64Value>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ReopenContainerLogRequest {
+    /// ID of the container for which to reopen the log.
+    #[prost(string, tag = "1")]
+    pub container_id: std::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ReopenContainerLogResponse {}
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum Protocol {
+    Tcp = 0,
+    Udp = 1,
+    Sctp = 2,
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum MountPropagation {
+    /// No mount propagation ("private" in Linux terminology).
+    PropagationPrivate = 0,
+    /// Mounts get propagated from the host to the container ("rslave" in Linux).
+    PropagationHostToContainer = 1,
+    /// Mounts get propagated from the host to the container and from the
+    /// container to the host ("rshared" in Linux).
+    PropagationBidirectional = 2,
+}
+/// A NamespaceMode describes the intended namespace configuration for each
+/// of the namespaces (Network, PID, IPC) in NamespaceOption. Runtimes should
+/// map these modes as appropriate for the technology underlying the runtime.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum NamespaceMode {
+    /// A POD namespace is common to all containers in a pod.
+    /// For example, a container with a PID namespace of POD expects to view
+    /// all of the processes in all of the containers in the pod.
+    Pod = 0,
+    /// A CONTAINER namespace is restricted to a single container.
+    /// For example, a container with a PID namespace of CONTAINER expects to
+    /// view only the processes in that container.
+    Container = 1,
+    /// A NODE namespace is the namespace of the Kubernetes node.
+    /// For example, a container with a PID namespace of NODE expects to view
+    /// all of the processes on the host running the kubelet.
+    Node = 2,
+    /// TARGET targets the namespace of another container. When this is specified,
+    /// a target_id must be specified in NamespaceOption and refer to a container
+    /// previously created with NamespaceMode CONTAINER. This containers namespace
+    /// will be made to match that of container target_id.
+    /// For example, a container with a PID namespace of TARGET expects to view
+    /// all of the processes that container target_id can view.
+    Target = 3,
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum PodSandboxState {
+    SandboxReady = 0,
+    SandboxNotready = 1,
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum ContainerState {
+    ContainerCreated = 0,
+    ContainerRunning = 1,
+    ContainerExited = 2,
+    ContainerUnknown = 3,
+}
+#[doc = r" Generated client implementations."]
+pub mod runtime_service_client {
+    #![allow(unused_variables, dead_code, missing_docs)]
+    use tonic::codegen::*;
+    #[doc = " Runtime service defines the public APIs for remote container runtimes"]
+    pub struct RuntimeServiceClient<T> {
+        inner: tonic::client::Grpc<T>,
+    }
+    impl RuntimeServiceClient<tonic::transport::Channel> {
+        #[doc = r" Attempt to create a new client by connecting to a given endpoint."]
+        pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
+        where
+            D: std::convert::TryInto<tonic::transport::Endpoint>,
+            D::Error: Into<StdError>,
+        {
+            let conn = tonic::transport::Endpoint::new(dst)?.connect().await?;
+            Ok(Self::new(conn))
+        }
+    }
+    impl<T> RuntimeServiceClient<T>
+    where
+        T: tonic::client::GrpcService<tonic::body::BoxBody>,
+        T::ResponseBody: Body + HttpBody + Send + 'static,
+        T::Error: Into<StdError>,
+        <T::ResponseBody as HttpBody>::Error: Into<StdError> + Send,
+    {
+        pub fn new(inner: T) -> Self {
+            let inner = tonic::client::Grpc::new(inner);
+            Self { inner }
+        }
+        pub fn with_interceptor(inner: T, interceptor: impl Into<tonic::Interceptor>) -> Self {
+            let inner = tonic::client::Grpc::with_interceptor(inner, interceptor);
+            Self { inner }
+        }
+        #[doc = " Version returns the runtime name, runtime version, and runtime API version."]
+        pub async fn version(
+            &mut self,
+            request: impl tonic::IntoRequest<super::VersionRequest>,
+        ) -> Result<tonic::Response<super::VersionResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path =
+                http::uri::PathAndQuery::from_static("/runtime.v1alpha2.RuntimeService/Version");
+            self.inner.unary(request.into_request(), path, codec).await
+        }
+        #[doc = " RunPodSandbox creates and starts a pod-level sandbox. Runtimes must ensure"]
+        #[doc = " the sandbox is in the ready state on success."]
+        pub async fn run_pod_sandbox(
+            &mut self,
+            request: impl tonic::IntoRequest<super::RunPodSandboxRequest>,
+        ) -> Result<tonic::Response<super::RunPodSandboxResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/runtime.v1alpha2.RuntimeService/RunPodSandbox",
+            );
+            self.inner.unary(request.into_request(), path, codec).await
+        }
+        #[doc = " StopPodSandbox stops any running process that is part of the sandbox and"]
+        #[doc = " reclaims network resources (e.g., IP addresses) allocated to the sandbox."]
+        #[doc = " If there are any running containers in the sandbox, they must be forcibly"]
+        #[doc = " terminated."]
+        #[doc = " This call is idempotent, and must not return an error if all relevant"]
+        #[doc = " resources have already been reclaimed. kubelet will call StopPodSandbox"]
+        #[doc = " at least once before calling RemovePodSandbox. It will also attempt to"]
+        #[doc = " reclaim resources eagerly, as soon as a sandbox is not needed. Hence,"]
+        #[doc = " multiple StopPodSandbox calls are expected."]
+        pub async fn stop_pod_sandbox(
+            &mut self,
+            request: impl tonic::IntoRequest<super::StopPodSandboxRequest>,
+        ) -> Result<tonic::Response<super::StopPodSandboxResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/runtime.v1alpha2.RuntimeService/StopPodSandbox",
+            );
+            self.inner.unary(request.into_request(), path, codec).await
+        }
+        #[doc = " RemovePodSandbox removes the sandbox. If there are any running containers"]
+        #[doc = " in the sandbox, they must be forcibly terminated and removed."]
+        #[doc = " This call is idempotent, and must not return an error if the sandbox has"]
+        #[doc = " already been removed."]
+        pub async fn remove_pod_sandbox(
+            &mut self,
+            request: impl tonic::IntoRequest<super::RemovePodSandboxRequest>,
+        ) -> Result<tonic::Response<super::RemovePodSandboxResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/runtime.v1alpha2.RuntimeService/RemovePodSandbox",
+            );
+            self.inner.unary(request.into_request(), path, codec).await
+        }
+        #[doc = " PodSandboxStatus returns the status of the PodSandbox. If the PodSandbox is not"]
+        #[doc = " present, returns an error."]
+        pub async fn pod_sandbox_status(
+            &mut self,
+            request: impl tonic::IntoRequest<super::PodSandboxStatusRequest>,
+        ) -> Result<tonic::Response<super::PodSandboxStatusResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/runtime.v1alpha2.RuntimeService/PodSandboxStatus",
+            );
+            self.inner.unary(request.into_request(), path, codec).await
+        }
+        #[doc = " ListPodSandbox returns a list of PodSandboxes."]
+        pub async fn list_pod_sandbox(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ListPodSandboxRequest>,
+        ) -> Result<tonic::Response<super::ListPodSandboxResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/runtime.v1alpha2.RuntimeService/ListPodSandbox",
+            );
+            self.inner.unary(request.into_request(), path, codec).await
+        }
+        #[doc = " CreateContainer creates a new container in specified PodSandbox"]
+        pub async fn create_container(
+            &mut self,
+            request: impl tonic::IntoRequest<super::CreateContainerRequest>,
+        ) -> Result<tonic::Response<super::CreateContainerResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/runtime.v1alpha2.RuntimeService/CreateContainer",
+            );
+            self.inner.unary(request.into_request(), path, codec).await
+        }
+        #[doc = " StartContainer starts the container."]
+        pub async fn start_container(
+            &mut self,
+            request: impl tonic::IntoRequest<super::StartContainerRequest>,
+        ) -> Result<tonic::Response<super::StartContainerResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/runtime.v1alpha2.RuntimeService/StartContainer",
+            );
+            self.inner.unary(request.into_request(), path, codec).await
+        }
+        #[doc = " StopContainer stops a running container with a grace period (i.e., timeout)."]
+        #[doc = " This call is idempotent, and must not return an error if the container has"]
+        #[doc = " already been stopped."]
+        #[doc = " TODO: what must the runtime do after the grace period is reached?"]
+        pub async fn stop_container(
+            &mut self,
+            request: impl tonic::IntoRequest<super::StopContainerRequest>,
+        ) -> Result<tonic::Response<super::StopContainerResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/runtime.v1alpha2.RuntimeService/StopContainer",
+            );
+            self.inner.unary(request.into_request(), path, codec).await
+        }
+        #[doc = " RemoveContainer removes the container. If the container is running, the"]
+        #[doc = " container must be forcibly removed."]
+        #[doc = " This call is idempotent, and must not return an error if the container has"]
+        #[doc = " already been removed."]
+        pub async fn remove_container(
+            &mut self,
+            request: impl tonic::IntoRequest<super::RemoveContainerRequest>,
+        ) -> Result<tonic::Response<super::RemoveContainerResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/runtime.v1alpha2.RuntimeService/RemoveContainer",
+            );
+            self.inner.unary(request.into_request(), path, codec).await
+        }
+        #[doc = " ListContainers lists all containers by filters."]
+        pub async fn list_containers(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ListContainersRequest>,
+        ) -> Result<tonic::Response<super::ListContainersResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/runtime.v1alpha2.RuntimeService/ListContainers",
+            );
+            self.inner.unary(request.into_request(), path, codec).await
+        }
+        #[doc = " ContainerStatus returns status of the container. If the container is not"]
+        #[doc = " present, returns an error."]
+        pub async fn container_status(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ContainerStatusRequest>,
+        ) -> Result<tonic::Response<super::ContainerStatusResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/runtime.v1alpha2.RuntimeService/ContainerStatus",
+            );
+            self.inner.unary(request.into_request(), path, codec).await
+        }
+        #[doc = " UpdateContainerResources updates ContainerConfig of the container."]
+        pub async fn update_container_resources(
+            &mut self,
+            request: impl tonic::IntoRequest<super::UpdateContainerResourcesRequest>,
+        ) -> Result<tonic::Response<super::UpdateContainerResourcesResponse>, tonic::Status>
+        {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/runtime.v1alpha2.RuntimeService/UpdateContainerResources",
+            );
+            self.inner.unary(request.into_request(), path, codec).await
+        }
+        #[doc = " ReopenContainerLog asks runtime to reopen the stdout/stderr log file"]
+        #[doc = " for the container. This is often called after the log file has been"]
+        #[doc = " rotated. If the container is not running, container runtime can choose"]
+        #[doc = " to either create a new log file and return nil, or return an error."]
+        #[doc = " Once it returns error, new container log file MUST NOT be created."]
+        pub async fn reopen_container_log(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ReopenContainerLogRequest>,
+        ) -> Result<tonic::Response<super::ReopenContainerLogResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/runtime.v1alpha2.RuntimeService/ReopenContainerLog",
+            );
+            self.inner.unary(request.into_request(), path, codec).await
+        }
+        #[doc = " ExecSync runs a command in a container synchronously."]
+        pub async fn exec_sync(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ExecSyncRequest>,
+        ) -> Result<tonic::Response<super::ExecSyncResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path =
+                http::uri::PathAndQuery::from_static("/runtime.v1alpha2.RuntimeService/ExecSync");
+            self.inner.unary(request.into_request(), path, codec).await
+        }
+        #[doc = " Exec prepares a streaming endpoint to execute a command in the container."]
+        pub async fn exec(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ExecRequest>,
+        ) -> Result<tonic::Response<super::ExecResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path =
+                http::uri::PathAndQuery::from_static("/runtime.v1alpha2.RuntimeService/Exec");
+            self.inner.unary(request.into_request(), path, codec).await
+        }
+        #[doc = " Attach prepares a streaming endpoint to attach to a running container."]
+        pub async fn attach(
+            &mut self,
+            request: impl tonic::IntoRequest<super::AttachRequest>,
+        ) -> Result<tonic::Response<super::AttachResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path =
+                http::uri::PathAndQuery::from_static("/runtime.v1alpha2.RuntimeService/Attach");
+            self.inner.unary(request.into_request(), path, codec).await
+        }
+        #[doc = " PortForward prepares a streaming endpoint to forward ports from a PodSandbox."]
+        pub async fn port_forward(
+            &mut self,
+            request: impl tonic::IntoRequest<super::PortForwardRequest>,
+        ) -> Result<tonic::Response<super::PortForwardResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/runtime.v1alpha2.RuntimeService/PortForward",
+            );
+            self.inner.unary(request.into_request(), path, codec).await
+        }
+        #[doc = " ContainerStats returns stats of the container. If the container does not"]
+        #[doc = " exist, the call returns an error."]
+        pub async fn container_stats(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ContainerStatsRequest>,
+        ) -> Result<tonic::Response<super::ContainerStatsResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/runtime.v1alpha2.RuntimeService/ContainerStats",
+            );
+            self.inner.unary(request.into_request(), path, codec).await
+        }
+        #[doc = " ListContainerStats returns stats of all running containers."]
+        pub async fn list_container_stats(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ListContainerStatsRequest>,
+        ) -> Result<tonic::Response<super::ListContainerStatsResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/runtime.v1alpha2.RuntimeService/ListContainerStats",
+            );
+            self.inner.unary(request.into_request(), path, codec).await
+        }
+        #[doc = " UpdateRuntimeConfig updates the runtime configuration based on the given request."]
+        pub async fn update_runtime_config(
+            &mut self,
+            request: impl tonic::IntoRequest<super::UpdateRuntimeConfigRequest>,
+        ) -> Result<tonic::Response<super::UpdateRuntimeConfigResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/runtime.v1alpha2.RuntimeService/UpdateRuntimeConfig",
+            );
+            self.inner.unary(request.into_request(), path, codec).await
+        }
+        #[doc = " Status returns the status of the runtime."]
+        pub async fn status(
+            &mut self,
+            request: impl tonic::IntoRequest<super::StatusRequest>,
+        ) -> Result<tonic::Response<super::StatusResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path =
+                http::uri::PathAndQuery::from_static("/runtime.v1alpha2.RuntimeService/Status");
+            self.inner.unary(request.into_request(), path, codec).await
+        }
+    }
+    impl<T: Clone> Clone for RuntimeServiceClient<T> {
+        fn clone(&self) -> Self {
+            Self {
+                inner: self.inner.clone(),
+            }
+        }
+    }
+    impl<T> std::fmt::Debug for RuntimeServiceClient<T> {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            write!(f, "RuntimeServiceClient {{ ... }}")
+        }
+    }
+}
+#[doc = r" Generated client implementations."]
+pub mod image_service_client {
+    #![allow(unused_variables, dead_code, missing_docs)]
+    use tonic::codegen::*;
+    #[doc = " ImageService defines the public APIs for managing images."]
+    pub struct ImageServiceClient<T> {
+        inner: tonic::client::Grpc<T>,
+    }
+    impl ImageServiceClient<tonic::transport::Channel> {
+        #[doc = r" Attempt to create a new client by connecting to a given endpoint."]
+        pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
+        where
+            D: std::convert::TryInto<tonic::transport::Endpoint>,
+            D::Error: Into<StdError>,
+        {
+            let conn = tonic::transport::Endpoint::new(dst)?.connect().await?;
+            Ok(Self::new(conn))
+        }
+    }
+    impl<T> ImageServiceClient<T>
+    where
+        T: tonic::client::GrpcService<tonic::body::BoxBody>,
+        T::ResponseBody: Body + HttpBody + Send + 'static,
+        T::Error: Into<StdError>,
+        <T::ResponseBody as HttpBody>::Error: Into<StdError> + Send,
+    {
+        pub fn new(inner: T) -> Self {
+            let inner = tonic::client::Grpc::new(inner);
+            Self { inner }
+        }
+        pub fn with_interceptor(inner: T, interceptor: impl Into<tonic::Interceptor>) -> Self {
+            let inner = tonic::client::Grpc::with_interceptor(inner, interceptor);
+            Self { inner }
+        }
+        #[doc = " ListImages lists existing images."]
+        pub async fn list_images(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ListImagesRequest>,
+        ) -> Result<tonic::Response<super::ListImagesResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path =
+                http::uri::PathAndQuery::from_static("/runtime.v1alpha2.ImageService/ListImages");
+            self.inner.unary(request.into_request(), path, codec).await
+        }
+        #[doc = " ImageStatus returns the status of the image. If the image is not"]
+        #[doc = " present, returns a response with ImageStatusResponse.Image set to"]
+        #[doc = " nil."]
+        pub async fn image_status(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ImageStatusRequest>,
+        ) -> Result<tonic::Response<super::ImageStatusResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path =
+                http::uri::PathAndQuery::from_static("/runtime.v1alpha2.ImageService/ImageStatus");
+            self.inner.unary(request.into_request(), path, codec).await
+        }
+        #[doc = " PullImage pulls an image with authentication config."]
+        pub async fn pull_image(
+            &mut self,
+            request: impl tonic::IntoRequest<super::PullImageRequest>,
+        ) -> Result<tonic::Response<super::PullImageResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path =
+                http::uri::PathAndQuery::from_static("/runtime.v1alpha2.ImageService/PullImage");
+            self.inner.unary(request.into_request(), path, codec).await
+        }
+        #[doc = " RemoveImage removes the image."]
+        #[doc = " This call is idempotent, and must not return an error if the image has"]
+        #[doc = " already been removed."]
+        pub async fn remove_image(
+            &mut self,
+            request: impl tonic::IntoRequest<super::RemoveImageRequest>,
+        ) -> Result<tonic::Response<super::RemoveImageResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path =
+                http::uri::PathAndQuery::from_static("/runtime.v1alpha2.ImageService/RemoveImage");
+            self.inner.unary(request.into_request(), path, codec).await
+        }
+        #[doc = " ImageFSInfo returns information of the filesystem that is used to store images."]
+        pub async fn image_fs_info(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ImageFsInfoRequest>,
+        ) -> Result<tonic::Response<super::ImageFsInfoResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path =
+                http::uri::PathAndQuery::from_static("/runtime.v1alpha2.ImageService/ImageFsInfo");
+            self.inner.unary(request.into_request(), path, codec).await
+        }
+    }
+    impl<T: Clone> Clone for ImageServiceClient<T> {
+        fn clone(&self) -> Self {
+            Self {
+                inner: self.inner.clone(),
+            }
+        }
+    }
+    impl<T> std::fmt::Debug for ImageServiceClient<T> {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            write!(f, "ImageServiceClient {{ ... }}")
+        }
+    }
+}
+#[doc = r" Generated server implementations."]
+pub mod runtime_service_server {
+    #![allow(unused_variables, dead_code, missing_docs)]
+    use tonic::codegen::*;
+    #[doc = "Generated trait containing gRPC methods that should be implemented for use with RuntimeServiceServer."]
+    #[async_trait]
+    pub trait RuntimeService: Send + Sync + 'static {
+        #[doc = " Version returns the runtime name, runtime version, and runtime API version."]
+        async fn version(
+            &self,
+            request: tonic::Request<super::VersionRequest>,
+        ) -> Result<tonic::Response<super::VersionResponse>, tonic::Status>;
+        #[doc = " RunPodSandbox creates and starts a pod-level sandbox. Runtimes must ensure"]
+        #[doc = " the sandbox is in the ready state on success."]
+        async fn run_pod_sandbox(
+            &self,
+            request: tonic::Request<super::RunPodSandboxRequest>,
+        ) -> Result<tonic::Response<super::RunPodSandboxResponse>, tonic::Status>;
+        #[doc = " StopPodSandbox stops any running process that is part of the sandbox and"]
+        #[doc = " reclaims network resources (e.g., IP addresses) allocated to the sandbox."]
+        #[doc = " If there are any running containers in the sandbox, they must be forcibly"]
+        #[doc = " terminated."]
+        #[doc = " This call is idempotent, and must not return an error if all relevant"]
+        #[doc = " resources have already been reclaimed. kubelet will call StopPodSandbox"]
+        #[doc = " at least once before calling RemovePodSandbox. It will also attempt to"]
+        #[doc = " reclaim resources eagerly, as soon as a sandbox is not needed. Hence,"]
+        #[doc = " multiple StopPodSandbox calls are expected."]
+        async fn stop_pod_sandbox(
+            &self,
+            request: tonic::Request<super::StopPodSandboxRequest>,
+        ) -> Result<tonic::Response<super::StopPodSandboxResponse>, tonic::Status>;
+        #[doc = " RemovePodSandbox removes the sandbox. If there are any running containers"]
+        #[doc = " in the sandbox, they must be forcibly terminated and removed."]
+        #[doc = " This call is idempotent, and must not return an error if the sandbox has"]
+        #[doc = " already been removed."]
+        async fn remove_pod_sandbox(
+            &self,
+            request: tonic::Request<super::RemovePodSandboxRequest>,
+        ) -> Result<tonic::Response<super::RemovePodSandboxResponse>, tonic::Status>;
+        #[doc = " PodSandboxStatus returns the status of the PodSandbox. If the PodSandbox is not"]
+        #[doc = " present, returns an error."]
+        async fn pod_sandbox_status(
+            &self,
+            request: tonic::Request<super::PodSandboxStatusRequest>,
+        ) -> Result<tonic::Response<super::PodSandboxStatusResponse>, tonic::Status>;
+        #[doc = " ListPodSandbox returns a list of PodSandboxes."]
+        async fn list_pod_sandbox(
+            &self,
+            request: tonic::Request<super::ListPodSandboxRequest>,
+        ) -> Result<tonic::Response<super::ListPodSandboxResponse>, tonic::Status>;
+        #[doc = " CreateContainer creates a new container in specified PodSandbox"]
+        async fn create_container(
+            &self,
+            request: tonic::Request<super::CreateContainerRequest>,
+        ) -> Result<tonic::Response<super::CreateContainerResponse>, tonic::Status>;
+        #[doc = " StartContainer starts the container."]
+        async fn start_container(
+            &self,
+            request: tonic::Request<super::StartContainerRequest>,
+        ) -> Result<tonic::Response<super::StartContainerResponse>, tonic::Status>;
+        #[doc = " StopContainer stops a running container with a grace period (i.e., timeout)."]
+        #[doc = " This call is idempotent, and must not return an error if the container has"]
+        #[doc = " already been stopped."]
+        #[doc = " TODO: what must the runtime do after the grace period is reached?"]
+        async fn stop_container(
+            &self,
+            request: tonic::Request<super::StopContainerRequest>,
+        ) -> Result<tonic::Response<super::StopContainerResponse>, tonic::Status>;
+        #[doc = " RemoveContainer removes the container. If the container is running, the"]
+        #[doc = " container must be forcibly removed."]
+        #[doc = " This call is idempotent, and must not return an error if the container has"]
+        #[doc = " already been removed."]
+        async fn remove_container(
+            &self,
+            request: tonic::Request<super::RemoveContainerRequest>,
+        ) -> Result<tonic::Response<super::RemoveContainerResponse>, tonic::Status>;
+        #[doc = " ListContainers lists all containers by filters."]
+        async fn list_containers(
+            &self,
+            request: tonic::Request<super::ListContainersRequest>,
+        ) -> Result<tonic::Response<super::ListContainersResponse>, tonic::Status>;
+        #[doc = " ContainerStatus returns status of the container. If the container is not"]
+        #[doc = " present, returns an error."]
+        async fn container_status(
+            &self,
+            request: tonic::Request<super::ContainerStatusRequest>,
+        ) -> Result<tonic::Response<super::ContainerStatusResponse>, tonic::Status>;
+        #[doc = " UpdateContainerResources updates ContainerConfig of the container."]
+        async fn update_container_resources(
+            &self,
+            request: tonic::Request<super::UpdateContainerResourcesRequest>,
+        ) -> Result<tonic::Response<super::UpdateContainerResourcesResponse>, tonic::Status>;
+        #[doc = " ReopenContainerLog asks runtime to reopen the stdout/stderr log file"]
+        #[doc = " for the container. This is often called after the log file has been"]
+        #[doc = " rotated. If the container is not running, container runtime can choose"]
+        #[doc = " to either create a new log file and return nil, or return an error."]
+        #[doc = " Once it returns error, new container log file MUST NOT be created."]
+        async fn reopen_container_log(
+            &self,
+            request: tonic::Request<super::ReopenContainerLogRequest>,
+        ) -> Result<tonic::Response<super::ReopenContainerLogResponse>, tonic::Status>;
+        #[doc = " ExecSync runs a command in a container synchronously."]
+        async fn exec_sync(
+            &self,
+            request: tonic::Request<super::ExecSyncRequest>,
+        ) -> Result<tonic::Response<super::ExecSyncResponse>, tonic::Status>;
+        #[doc = " Exec prepares a streaming endpoint to execute a command in the container."]
+        async fn exec(
+            &self,
+            request: tonic::Request<super::ExecRequest>,
+        ) -> Result<tonic::Response<super::ExecResponse>, tonic::Status>;
+        #[doc = " Attach prepares a streaming endpoint to attach to a running container."]
+        async fn attach(
+            &self,
+            request: tonic::Request<super::AttachRequest>,
+        ) -> Result<tonic::Response<super::AttachResponse>, tonic::Status>;
+        #[doc = " PortForward prepares a streaming endpoint to forward ports from a PodSandbox."]
+        async fn port_forward(
+            &self,
+            request: tonic::Request<super::PortForwardRequest>,
+        ) -> Result<tonic::Response<super::PortForwardResponse>, tonic::Status>;
+        #[doc = " ContainerStats returns stats of the container. If the container does not"]
+        #[doc = " exist, the call returns an error."]
+        async fn container_stats(
+            &self,
+            request: tonic::Request<super::ContainerStatsRequest>,
+        ) -> Result<tonic::Response<super::ContainerStatsResponse>, tonic::Status>;
+        #[doc = " ListContainerStats returns stats of all running containers."]
+        async fn list_container_stats(
+            &self,
+            request: tonic::Request<super::ListContainerStatsRequest>,
+        ) -> Result<tonic::Response<super::ListContainerStatsResponse>, tonic::Status>;
+        #[doc = " UpdateRuntimeConfig updates the runtime configuration based on the given request."]
+        async fn update_runtime_config(
+            &self,
+            request: tonic::Request<super::UpdateRuntimeConfigRequest>,
+        ) -> Result<tonic::Response<super::UpdateRuntimeConfigResponse>, tonic::Status>;
+        #[doc = " Status returns the status of the runtime."]
+        async fn status(
+            &self,
+            request: tonic::Request<super::StatusRequest>,
+        ) -> Result<tonic::Response<super::StatusResponse>, tonic::Status>;
+    }
+    #[doc = " Runtime service defines the public APIs for remote container runtimes"]
+    #[derive(Debug)]
+    pub struct RuntimeServiceServer<T: RuntimeService> {
+        inner: _Inner<T>,
+    }
+    struct _Inner<T>(Arc<T>, Option<tonic::Interceptor>);
+    impl<T: RuntimeService> RuntimeServiceServer<T> {
+        pub fn new(inner: T) -> Self {
+            let inner = Arc::new(inner);
+            let inner = _Inner(inner, None);
+            Self { inner }
+        }
+        pub fn with_interceptor(inner: T, interceptor: impl Into<tonic::Interceptor>) -> Self {
+            let inner = Arc::new(inner);
+            let inner = _Inner(inner, Some(interceptor.into()));
+            Self { inner }
+        }
+    }
+    impl<T, B> Service<http::Request<B>> for RuntimeServiceServer<T>
+    where
+        T: RuntimeService,
+        B: HttpBody + Send + Sync + 'static,
+        B::Error: Into<StdError> + Send + 'static,
+    {
+        type Response = http::Response<tonic::body::BoxBody>;
+        type Error = Never;
+        type Future = BoxFuture<Self::Response, Self::Error>;
+        fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
+            Poll::Ready(Ok(()))
+        }
+        fn call(&mut self, req: http::Request<B>) -> Self::Future {
+            let inner = self.inner.clone();
+            match req.uri().path() {
+                "/runtime.v1alpha2.RuntimeService/Version" => {
+                    #[allow(non_camel_case_types)]
+                    struct VersionSvc<T: RuntimeService>(pub Arc<T>);
+                    impl<T: RuntimeService> tonic::server::UnaryService<super::VersionRequest> for VersionSvc<T> {
+                        type Response = super::VersionResponse;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::VersionRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).version(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let interceptor = inner.1.clone();
+                        let inner = inner.0;
+                        let method = VersionSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = if let Some(interceptor) = interceptor {
+                            tonic::server::Grpc::with_interceptor(codec, interceptor)
+                        } else {
+                            tonic::server::Grpc::new(codec)
+                        };
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/runtime.v1alpha2.RuntimeService/RunPodSandbox" => {
+                    #[allow(non_camel_case_types)]
+                    struct RunPodSandboxSvc<T: RuntimeService>(pub Arc<T>);
+                    impl<T: RuntimeService> tonic::server::UnaryService<super::RunPodSandboxRequest>
+                        for RunPodSandboxSvc<T>
+                    {
+                        type Response = super::RunPodSandboxResponse;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::RunPodSandboxRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).run_pod_sandbox(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let interceptor = inner.1.clone();
+                        let inner = inner.0;
+                        let method = RunPodSandboxSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = if let Some(interceptor) = interceptor {
+                            tonic::server::Grpc::with_interceptor(codec, interceptor)
+                        } else {
+                            tonic::server::Grpc::new(codec)
+                        };
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/runtime.v1alpha2.RuntimeService/StopPodSandbox" => {
+                    #[allow(non_camel_case_types)]
+                    struct StopPodSandboxSvc<T: RuntimeService>(pub Arc<T>);
+                    impl<T: RuntimeService>
+                        tonic::server::UnaryService<super::StopPodSandboxRequest>
+                        for StopPodSandboxSvc<T>
+                    {
+                        type Response = super::StopPodSandboxResponse;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::StopPodSandboxRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).stop_pod_sandbox(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let interceptor = inner.1.clone();
+                        let inner = inner.0;
+                        let method = StopPodSandboxSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = if let Some(interceptor) = interceptor {
+                            tonic::server::Grpc::with_interceptor(codec, interceptor)
+                        } else {
+                            tonic::server::Grpc::new(codec)
+                        };
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/runtime.v1alpha2.RuntimeService/RemovePodSandbox" => {
+                    #[allow(non_camel_case_types)]
+                    struct RemovePodSandboxSvc<T: RuntimeService>(pub Arc<T>);
+                    impl<T: RuntimeService>
+                        tonic::server::UnaryService<super::RemovePodSandboxRequest>
+                        for RemovePodSandboxSvc<T>
+                    {
+                        type Response = super::RemovePodSandboxResponse;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::RemovePodSandboxRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).remove_pod_sandbox(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let interceptor = inner.1.clone();
+                        let inner = inner.0;
+                        let method = RemovePodSandboxSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = if let Some(interceptor) = interceptor {
+                            tonic::server::Grpc::with_interceptor(codec, interceptor)
+                        } else {
+                            tonic::server::Grpc::new(codec)
+                        };
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/runtime.v1alpha2.RuntimeService/PodSandboxStatus" => {
+                    #[allow(non_camel_case_types)]
+                    struct PodSandboxStatusSvc<T: RuntimeService>(pub Arc<T>);
+                    impl<T: RuntimeService>
+                        tonic::server::UnaryService<super::PodSandboxStatusRequest>
+                        for PodSandboxStatusSvc<T>
+                    {
+                        type Response = super::PodSandboxStatusResponse;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::PodSandboxStatusRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).pod_sandbox_status(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let interceptor = inner.1.clone();
+                        let inner = inner.0;
+                        let method = PodSandboxStatusSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = if let Some(interceptor) = interceptor {
+                            tonic::server::Grpc::with_interceptor(codec, interceptor)
+                        } else {
+                            tonic::server::Grpc::new(codec)
+                        };
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/runtime.v1alpha2.RuntimeService/ListPodSandbox" => {
+                    #[allow(non_camel_case_types)]
+                    struct ListPodSandboxSvc<T: RuntimeService>(pub Arc<T>);
+                    impl<T: RuntimeService>
+                        tonic::server::UnaryService<super::ListPodSandboxRequest>
+                        for ListPodSandboxSvc<T>
+                    {
+                        type Response = super::ListPodSandboxResponse;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ListPodSandboxRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).list_pod_sandbox(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let interceptor = inner.1.clone();
+                        let inner = inner.0;
+                        let method = ListPodSandboxSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = if let Some(interceptor) = interceptor {
+                            tonic::server::Grpc::with_interceptor(codec, interceptor)
+                        } else {
+                            tonic::server::Grpc::new(codec)
+                        };
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/runtime.v1alpha2.RuntimeService/CreateContainer" => {
+                    #[allow(non_camel_case_types)]
+                    struct CreateContainerSvc<T: RuntimeService>(pub Arc<T>);
+                    impl<T: RuntimeService>
+                        tonic::server::UnaryService<super::CreateContainerRequest>
+                        for CreateContainerSvc<T>
+                    {
+                        type Response = super::CreateContainerResponse;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::CreateContainerRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).create_container(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let interceptor = inner.1.clone();
+                        let inner = inner.0;
+                        let method = CreateContainerSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = if let Some(interceptor) = interceptor {
+                            tonic::server::Grpc::with_interceptor(codec, interceptor)
+                        } else {
+                            tonic::server::Grpc::new(codec)
+                        };
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/runtime.v1alpha2.RuntimeService/StartContainer" => {
+                    #[allow(non_camel_case_types)]
+                    struct StartContainerSvc<T: RuntimeService>(pub Arc<T>);
+                    impl<T: RuntimeService>
+                        tonic::server::UnaryService<super::StartContainerRequest>
+                        for StartContainerSvc<T>
+                    {
+                        type Response = super::StartContainerResponse;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::StartContainerRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).start_container(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let interceptor = inner.1.clone();
+                        let inner = inner.0;
+                        let method = StartContainerSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = if let Some(interceptor) = interceptor {
+                            tonic::server::Grpc::with_interceptor(codec, interceptor)
+                        } else {
+                            tonic::server::Grpc::new(codec)
+                        };
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/runtime.v1alpha2.RuntimeService/StopContainer" => {
+                    #[allow(non_camel_case_types)]
+                    struct StopContainerSvc<T: RuntimeService>(pub Arc<T>);
+                    impl<T: RuntimeService> tonic::server::UnaryService<super::StopContainerRequest>
+                        for StopContainerSvc<T>
+                    {
+                        type Response = super::StopContainerResponse;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::StopContainerRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).stop_container(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let interceptor = inner.1.clone();
+                        let inner = inner.0;
+                        let method = StopContainerSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = if let Some(interceptor) = interceptor {
+                            tonic::server::Grpc::with_interceptor(codec, interceptor)
+                        } else {
+                            tonic::server::Grpc::new(codec)
+                        };
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/runtime.v1alpha2.RuntimeService/RemoveContainer" => {
+                    #[allow(non_camel_case_types)]
+                    struct RemoveContainerSvc<T: RuntimeService>(pub Arc<T>);
+                    impl<T: RuntimeService>
+                        tonic::server::UnaryService<super::RemoveContainerRequest>
+                        for RemoveContainerSvc<T>
+                    {
+                        type Response = super::RemoveContainerResponse;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::RemoveContainerRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).remove_container(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let interceptor = inner.1.clone();
+                        let inner = inner.0;
+                        let method = RemoveContainerSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = if let Some(interceptor) = interceptor {
+                            tonic::server::Grpc::with_interceptor(codec, interceptor)
+                        } else {
+                            tonic::server::Grpc::new(codec)
+                        };
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/runtime.v1alpha2.RuntimeService/ListContainers" => {
+                    #[allow(non_camel_case_types)]
+                    struct ListContainersSvc<T: RuntimeService>(pub Arc<T>);
+                    impl<T: RuntimeService>
+                        tonic::server::UnaryService<super::ListContainersRequest>
+                        for ListContainersSvc<T>
+                    {
+                        type Response = super::ListContainersResponse;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ListContainersRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).list_containers(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let interceptor = inner.1.clone();
+                        let inner = inner.0;
+                        let method = ListContainersSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = if let Some(interceptor) = interceptor {
+                            tonic::server::Grpc::with_interceptor(codec, interceptor)
+                        } else {
+                            tonic::server::Grpc::new(codec)
+                        };
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/runtime.v1alpha2.RuntimeService/ContainerStatus" => {
+                    #[allow(non_camel_case_types)]
+                    struct ContainerStatusSvc<T: RuntimeService>(pub Arc<T>);
+                    impl<T: RuntimeService>
+                        tonic::server::UnaryService<super::ContainerStatusRequest>
+                        for ContainerStatusSvc<T>
+                    {
+                        type Response = super::ContainerStatusResponse;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ContainerStatusRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).container_status(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let interceptor = inner.1.clone();
+                        let inner = inner.0;
+                        let method = ContainerStatusSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = if let Some(interceptor) = interceptor {
+                            tonic::server::Grpc::with_interceptor(codec, interceptor)
+                        } else {
+                            tonic::server::Grpc::new(codec)
+                        };
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/runtime.v1alpha2.RuntimeService/UpdateContainerResources" => {
+                    #[allow(non_camel_case_types)]
+                    struct UpdateContainerResourcesSvc<T: RuntimeService>(pub Arc<T>);
+                    impl<T: RuntimeService>
+                        tonic::server::UnaryService<super::UpdateContainerResourcesRequest>
+                        for UpdateContainerResourcesSvc<T>
+                    {
+                        type Response = super::UpdateContainerResourcesResponse;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::UpdateContainerResourcesRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut =
+                                async move { (*inner).update_container_resources(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let interceptor = inner.1.clone();
+                        let inner = inner.0;
+                        let method = UpdateContainerResourcesSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = if let Some(interceptor) = interceptor {
+                            tonic::server::Grpc::with_interceptor(codec, interceptor)
+                        } else {
+                            tonic::server::Grpc::new(codec)
+                        };
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/runtime.v1alpha2.RuntimeService/ReopenContainerLog" => {
+                    #[allow(non_camel_case_types)]
+                    struct ReopenContainerLogSvc<T: RuntimeService>(pub Arc<T>);
+                    impl<T: RuntimeService>
+                        tonic::server::UnaryService<super::ReopenContainerLogRequest>
+                        for ReopenContainerLogSvc<T>
+                    {
+                        type Response = super::ReopenContainerLogResponse;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ReopenContainerLogRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).reopen_container_log(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let interceptor = inner.1.clone();
+                        let inner = inner.0;
+                        let method = ReopenContainerLogSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = if let Some(interceptor) = interceptor {
+                            tonic::server::Grpc::with_interceptor(codec, interceptor)
+                        } else {
+                            tonic::server::Grpc::new(codec)
+                        };
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/runtime.v1alpha2.RuntimeService/ExecSync" => {
+                    #[allow(non_camel_case_types)]
+                    struct ExecSyncSvc<T: RuntimeService>(pub Arc<T>);
+                    impl<T: RuntimeService> tonic::server::UnaryService<super::ExecSyncRequest> for ExecSyncSvc<T> {
+                        type Response = super::ExecSyncResponse;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ExecSyncRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).exec_sync(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let interceptor = inner.1.clone();
+                        let inner = inner.0;
+                        let method = ExecSyncSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = if let Some(interceptor) = interceptor {
+                            tonic::server::Grpc::with_interceptor(codec, interceptor)
+                        } else {
+                            tonic::server::Grpc::new(codec)
+                        };
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/runtime.v1alpha2.RuntimeService/Exec" => {
+                    #[allow(non_camel_case_types)]
+                    struct ExecSvc<T: RuntimeService>(pub Arc<T>);
+                    impl<T: RuntimeService> tonic::server::UnaryService<super::ExecRequest> for ExecSvc<T> {
+                        type Response = super::ExecResponse;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ExecRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).exec(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let interceptor = inner.1.clone();
+                        let inner = inner.0;
+                        let method = ExecSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = if let Some(interceptor) = interceptor {
+                            tonic::server::Grpc::with_interceptor(codec, interceptor)
+                        } else {
+                            tonic::server::Grpc::new(codec)
+                        };
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/runtime.v1alpha2.RuntimeService/Attach" => {
+                    #[allow(non_camel_case_types)]
+                    struct AttachSvc<T: RuntimeService>(pub Arc<T>);
+                    impl<T: RuntimeService> tonic::server::UnaryService<super::AttachRequest> for AttachSvc<T> {
+                        type Response = super::AttachResponse;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::AttachRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).attach(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let interceptor = inner.1.clone();
+                        let inner = inner.0;
+                        let method = AttachSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = if let Some(interceptor) = interceptor {
+                            tonic::server::Grpc::with_interceptor(codec, interceptor)
+                        } else {
+                            tonic::server::Grpc::new(codec)
+                        };
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/runtime.v1alpha2.RuntimeService/PortForward" => {
+                    #[allow(non_camel_case_types)]
+                    struct PortForwardSvc<T: RuntimeService>(pub Arc<T>);
+                    impl<T: RuntimeService> tonic::server::UnaryService<super::PortForwardRequest>
+                        for PortForwardSvc<T>
+                    {
+                        type Response = super::PortForwardResponse;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::PortForwardRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).port_forward(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let interceptor = inner.1.clone();
+                        let inner = inner.0;
+                        let method = PortForwardSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = if let Some(interceptor) = interceptor {
+                            tonic::server::Grpc::with_interceptor(codec, interceptor)
+                        } else {
+                            tonic::server::Grpc::new(codec)
+                        };
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/runtime.v1alpha2.RuntimeService/ContainerStats" => {
+                    #[allow(non_camel_case_types)]
+                    struct ContainerStatsSvc<T: RuntimeService>(pub Arc<T>);
+                    impl<T: RuntimeService>
+                        tonic::server::UnaryService<super::ContainerStatsRequest>
+                        for ContainerStatsSvc<T>
+                    {
+                        type Response = super::ContainerStatsResponse;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ContainerStatsRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).container_stats(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let interceptor = inner.1.clone();
+                        let inner = inner.0;
+                        let method = ContainerStatsSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = if let Some(interceptor) = interceptor {
+                            tonic::server::Grpc::with_interceptor(codec, interceptor)
+                        } else {
+                            tonic::server::Grpc::new(codec)
+                        };
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/runtime.v1alpha2.RuntimeService/ListContainerStats" => {
+                    #[allow(non_camel_case_types)]
+                    struct ListContainerStatsSvc<T: RuntimeService>(pub Arc<T>);
+                    impl<T: RuntimeService>
+                        tonic::server::UnaryService<super::ListContainerStatsRequest>
+                        for ListContainerStatsSvc<T>
+                    {
+                        type Response = super::ListContainerStatsResponse;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ListContainerStatsRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).list_container_stats(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let interceptor = inner.1.clone();
+                        let inner = inner.0;
+                        let method = ListContainerStatsSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = if let Some(interceptor) = interceptor {
+                            tonic::server::Grpc::with_interceptor(codec, interceptor)
+                        } else {
+                            tonic::server::Grpc::new(codec)
+                        };
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/runtime.v1alpha2.RuntimeService/UpdateRuntimeConfig" => {
+                    #[allow(non_camel_case_types)]
+                    struct UpdateRuntimeConfigSvc<T: RuntimeService>(pub Arc<T>);
+                    impl<T: RuntimeService>
+                        tonic::server::UnaryService<super::UpdateRuntimeConfigRequest>
+                        for UpdateRuntimeConfigSvc<T>
+                    {
+                        type Response = super::UpdateRuntimeConfigResponse;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::UpdateRuntimeConfigRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).update_runtime_config(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let interceptor = inner.1.clone();
+                        let inner = inner.0;
+                        let method = UpdateRuntimeConfigSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = if let Some(interceptor) = interceptor {
+                            tonic::server::Grpc::with_interceptor(codec, interceptor)
+                        } else {
+                            tonic::server::Grpc::new(codec)
+                        };
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/runtime.v1alpha2.RuntimeService/Status" => {
+                    #[allow(non_camel_case_types)]
+                    struct StatusSvc<T: RuntimeService>(pub Arc<T>);
+                    impl<T: RuntimeService> tonic::server::UnaryService<super::StatusRequest> for StatusSvc<T> {
+                        type Response = super::StatusResponse;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::StatusRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).status(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let interceptor = inner.1.clone();
+                        let inner = inner.0;
+                        let method = StatusSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = if let Some(interceptor) = interceptor {
+                            tonic::server::Grpc::with_interceptor(codec, interceptor)
+                        } else {
+                            tonic::server::Grpc::new(codec)
+                        };
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                _ => Box::pin(async move {
+                    Ok(http::Response::builder()
+                        .status(200)
+                        .header("grpc-status", "12")
+                        .body(tonic::body::BoxBody::empty())
+                        .unwrap())
+                }),
+            }
+        }
+    }
+    impl<T: RuntimeService> Clone for RuntimeServiceServer<T> {
+        fn clone(&self) -> Self {
+            let inner = self.inner.clone();
+            Self { inner }
+        }
+    }
+    impl<T: RuntimeService> Clone for _Inner<T> {
+        fn clone(&self) -> Self {
+            Self(self.0.clone(), self.1.clone())
+        }
+    }
+    impl<T: std::fmt::Debug> std::fmt::Debug for _Inner<T> {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            write!(f, "{:?}", self.0)
+        }
+    }
+    impl<T: RuntimeService> tonic::transport::NamedService for RuntimeServiceServer<T> {
+        const NAME: &'static str = "runtime.v1alpha2.RuntimeService";
+    }
+}
+#[doc = r" Generated server implementations."]
+pub mod image_service_server {
+    #![allow(unused_variables, dead_code, missing_docs)]
+    use tonic::codegen::*;
+    #[doc = "Generated trait containing gRPC methods that should be implemented for use with ImageServiceServer."]
+    #[async_trait]
+    pub trait ImageService: Send + Sync + 'static {
+        #[doc = " ListImages lists existing images."]
+        async fn list_images(
+            &self,
+            request: tonic::Request<super::ListImagesRequest>,
+        ) -> Result<tonic::Response<super::ListImagesResponse>, tonic::Status>;
+        #[doc = " ImageStatus returns the status of the image. If the image is not"]
+        #[doc = " present, returns a response with ImageStatusResponse.Image set to"]
+        #[doc = " nil."]
+        async fn image_status(
+            &self,
+            request: tonic::Request<super::ImageStatusRequest>,
+        ) -> Result<tonic::Response<super::ImageStatusResponse>, tonic::Status>;
+        #[doc = " PullImage pulls an image with authentication config."]
+        async fn pull_image(
+            &self,
+            request: tonic::Request<super::PullImageRequest>,
+        ) -> Result<tonic::Response<super::PullImageResponse>, tonic::Status>;
+        #[doc = " RemoveImage removes the image."]
+        #[doc = " This call is idempotent, and must not return an error if the image has"]
+        #[doc = " already been removed."]
+        async fn remove_image(
+            &self,
+            request: tonic::Request<super::RemoveImageRequest>,
+        ) -> Result<tonic::Response<super::RemoveImageResponse>, tonic::Status>;
+        #[doc = " ImageFSInfo returns information of the filesystem that is used to store images."]
+        async fn image_fs_info(
+            &self,
+            request: tonic::Request<super::ImageFsInfoRequest>,
+        ) -> Result<tonic::Response<super::ImageFsInfoResponse>, tonic::Status>;
+    }
+    #[doc = " ImageService defines the public APIs for managing images."]
+    #[derive(Debug)]
+    pub struct ImageServiceServer<T: ImageService> {
+        inner: _Inner<T>,
+    }
+    struct _Inner<T>(Arc<T>, Option<tonic::Interceptor>);
+    impl<T: ImageService> ImageServiceServer<T> {
+        pub fn new(inner: T) -> Self {
+            let inner = Arc::new(inner);
+            let inner = _Inner(inner, None);
+            Self { inner }
+        }
+        pub fn with_interceptor(inner: T, interceptor: impl Into<tonic::Interceptor>) -> Self {
+            let inner = Arc::new(inner);
+            let inner = _Inner(inner, Some(interceptor.into()));
+            Self { inner }
+        }
+    }
+    impl<T, B> Service<http::Request<B>> for ImageServiceServer<T>
+    where
+        T: ImageService,
+        B: HttpBody + Send + Sync + 'static,
+        B::Error: Into<StdError> + Send + 'static,
+    {
+        type Response = http::Response<tonic::body::BoxBody>;
+        type Error = Never;
+        type Future = BoxFuture<Self::Response, Self::Error>;
+        fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
+            Poll::Ready(Ok(()))
+        }
+        fn call(&mut self, req: http::Request<B>) -> Self::Future {
+            let inner = self.inner.clone();
+            match req.uri().path() {
+                "/runtime.v1alpha2.ImageService/ListImages" => {
+                    #[allow(non_camel_case_types)]
+                    struct ListImagesSvc<T: ImageService>(pub Arc<T>);
+                    impl<T: ImageService> tonic::server::UnaryService<super::ListImagesRequest> for ListImagesSvc<T> {
+                        type Response = super::ListImagesResponse;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ListImagesRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).list_images(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let interceptor = inner.1.clone();
+                        let inner = inner.0;
+                        let method = ListImagesSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = if let Some(interceptor) = interceptor {
+                            tonic::server::Grpc::with_interceptor(codec, interceptor)
+                        } else {
+                            tonic::server::Grpc::new(codec)
+                        };
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/runtime.v1alpha2.ImageService/ImageStatus" => {
+                    #[allow(non_camel_case_types)]
+                    struct ImageStatusSvc<T: ImageService>(pub Arc<T>);
+                    impl<T: ImageService> tonic::server::UnaryService<super::ImageStatusRequest> for ImageStatusSvc<T> {
+                        type Response = super::ImageStatusResponse;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ImageStatusRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).image_status(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let interceptor = inner.1.clone();
+                        let inner = inner.0;
+                        let method = ImageStatusSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = if let Some(interceptor) = interceptor {
+                            tonic::server::Grpc::with_interceptor(codec, interceptor)
+                        } else {
+                            tonic::server::Grpc::new(codec)
+                        };
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/runtime.v1alpha2.ImageService/PullImage" => {
+                    #[allow(non_camel_case_types)]
+                    struct PullImageSvc<T: ImageService>(pub Arc<T>);
+                    impl<T: ImageService> tonic::server::UnaryService<super::PullImageRequest> for PullImageSvc<T> {
+                        type Response = super::PullImageResponse;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::PullImageRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).pull_image(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let interceptor = inner.1.clone();
+                        let inner = inner.0;
+                        let method = PullImageSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = if let Some(interceptor) = interceptor {
+                            tonic::server::Grpc::with_interceptor(codec, interceptor)
+                        } else {
+                            tonic::server::Grpc::new(codec)
+                        };
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/runtime.v1alpha2.ImageService/RemoveImage" => {
+                    #[allow(non_camel_case_types)]
+                    struct RemoveImageSvc<T: ImageService>(pub Arc<T>);
+                    impl<T: ImageService> tonic::server::UnaryService<super::RemoveImageRequest> for RemoveImageSvc<T> {
+                        type Response = super::RemoveImageResponse;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::RemoveImageRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).remove_image(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let interceptor = inner.1.clone();
+                        let inner = inner.0;
+                        let method = RemoveImageSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = if let Some(interceptor) = interceptor {
+                            tonic::server::Grpc::with_interceptor(codec, interceptor)
+                        } else {
+                            tonic::server::Grpc::new(codec)
+                        };
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/runtime.v1alpha2.ImageService/ImageFsInfo" => {
+                    #[allow(non_camel_case_types)]
+                    struct ImageFsInfoSvc<T: ImageService>(pub Arc<T>);
+                    impl<T: ImageService> tonic::server::UnaryService<super::ImageFsInfoRequest> for ImageFsInfoSvc<T> {
+                        type Response = super::ImageFsInfoResponse;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ImageFsInfoRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).image_fs_info(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let interceptor = inner.1.clone();
+                        let inner = inner.0;
+                        let method = ImageFsInfoSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = if let Some(interceptor) = interceptor {
+                            tonic::server::Grpc::with_interceptor(codec, interceptor)
+                        } else {
+                            tonic::server::Grpc::new(codec)
+                        };
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                _ => Box::pin(async move {
+                    Ok(http::Response::builder()
+                        .status(200)
+                        .header("grpc-status", "12")
+                        .body(tonic::body::BoxBody::empty())
+                        .unwrap())
+                }),
+            }
+        }
+    }
+    impl<T: ImageService> Clone for ImageServiceServer<T> {
+        fn clone(&self) -> Self {
+            let inner = self.inner.clone();
+            Self { inner }
+        }
+    }
+    impl<T: ImageService> Clone for _Inner<T> {
+        fn clone(&self) -> Self {
+            Self(self.0.clone(), self.1.clone())
+        }
+    }
+    impl<T: std::fmt::Debug> std::fmt::Debug for _Inner<T> {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            write!(f, "{:?}", self.0)
+        }
+    }
+    impl<T: ImageService> tonic::transport::NamedService for ImageServiceServer<T> {
+        const NAME: &'static str = "runtime.v1alpha2.ImageService";
+    }
+}
