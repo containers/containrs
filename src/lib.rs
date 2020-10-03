@@ -5,6 +5,7 @@ mod capability;
 mod config;
 mod cri_service;
 mod criapi;
+pub mod error;
 mod image_service;
 mod network;
 mod oci_spec;

@@ -30,6 +30,11 @@ pub trait PodNetwork {
     fn stop(&mut self, _: &SandboxData) -> Result<()> {
         Ok(())
     }
+
+    /// Cleanup the network implementation on server shutdown.
+    fn cleanup(&mut self) -> Result<()> {
+        Ok(())
+    }
 }
 
 impl<T> Network<T>
@@ -46,6 +51,11 @@ where
     /// Wrapper for the implementations `stop` method.
     pub fn stop(&mut self, sandbox_data: &SandboxData) -> Result<()> {
         self.implementation.stop(sandbox_data)
+    }
+
+    /// Cleanup the network implementation on server shutdown.
+    pub fn cleanup(&mut self) -> Result<()> {
+        self.implementation.cleanup()
     }
 }
 

@@ -15,7 +15,7 @@ use anyhow::{bail, Context, Result};
 use clap::crate_name;
 use env_logger::fmt::Color;
 use futures_util::stream::TryStreamExt;
-use log::{debug, info, LevelFilter};
+use log::{debug, info, trace, LevelFilter};
 use std::{env, io::Write};
 #[cfg(unix)]
 use tokio::net::UnixListener;
@@ -45,7 +45,7 @@ impl Server {
         let storage = DefaultKeyValueStorage::open(&self.config.storage_path())?;
         let cri_service = CRIService::new(storage.clone());
 
-        let _network = self.initialize_network().context("init network")?;
+        let network = self.initialize_network().await.context("init network")?;
 
         // Build a new socket from the config
         let mut uds = self.unix_domain_listener().await?;
@@ -74,7 +74,7 @@ impl Server {
             }
         }
 
-        self.cleanup(storage)
+        self.cleanup(storage, network)
     }
 
     /// Create a new UnixListener from the configs socket path.
@@ -140,25 +140,32 @@ impl Server {
     }
 
     /// Create a new network and initialize it from the internal configuration.
-    fn initialize_network(&self) -> Result<Network<CNI>> {
+    async fn initialize_network(&self) -> Result<Network<CNI>> {
         let mut cni_network = CNIBuilder::default()
             .default_network_name(self.config.cni_default_network().clone())
             .config_paths(self.config.cni_config_paths().clone())
             .plugin_paths(self.config.cni_plugin_paths().clone())
             .build()
             .context("build CNI network data")?;
-        cni_network.initialize().context("initialize CNI network")?;
+
+        cni_network
+            .initialize()
+            .await
+            .context("initialize CNI network")?;
 
         let network = NetworkBuilder::<CNI>::default()
             .implementation(cni_network)
             .build()
             .context("build CNI network")?;
+
         Ok(network)
     }
 
     /// Cleanup the server and persist any data if necessary.
-    fn cleanup(self, mut storage: DefaultKeyValueStorage) -> Result<()> {
+    fn cleanup(self, mut storage: DefaultKeyValueStorage, mut network: Network<CNI>) -> Result<()> {
         debug!("Cleaning up server");
+
+        trace!("Persisting storage");
         storage.persist().context("persist storage")?;
         std::fs::remove_file(self.config.sock_path()).with_context(|| {
             format!(
@@ -166,6 +173,10 @@ impl Server {
                 self.config.sock_path().display()
             )
         })?;
+
+        trace!("Stopping network");
+        network.cleanup().context("clean up network")?;
+
         Ok(())
     }
 }
@@ -216,11 +227,11 @@ mod tests {
         Ok(())
     }
 
-    #[test]
-    fn initialize_network() -> Result<()> {
+    #[tokio::test]
+    async fn initialize_network() -> Result<()> {
         let config = ConfigBuilder::default().build()?;
         let sut = Server::new(config);
-        sut.initialize_network()?;
+        sut.initialize_network().await?;
         Ok(())
     }
 }
