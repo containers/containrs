@@ -6,6 +6,7 @@ use anyhow::Result;
 use derive_builder::Builder;
 use getset::Getters;
 use std::fmt;
+use std::path::PathBuf;
 
 #[derive(Builder)]
 #[builder(pattern = "owned", setter(into))]
@@ -63,6 +64,10 @@ pub struct SandboxData {
     #[get = "pub"]
     /// Hostname of the sandbox.
     hostname: String,
+
+    #[get = "pub"]
+    // Path to the directory on the host in which container log files are stored.
+    log_directory: PathBuf,
 }
 
 pub trait Pod {
@@ -134,6 +139,7 @@ where
             .field("attempt", self.data.attempt())
             .field("linux_namespaces", self.data.linux_namespaces())
             .field("hostname", self.data.hostname())
+            .field("log_directory", self.data.log_directory())
             .finish()
     }
 }
@@ -159,6 +165,7 @@ pub mod tests {
             .attempt(1u32)
             .linux_namespaces(LinuxNamespaces::NET)
             .hostname("hostname")
+            .log_directory("log_directory")
             .build()?)
     }
 
@@ -207,6 +214,9 @@ pub mod tests {
         assert!(sandbox_debug.contains(sandbox.data.id()));
         assert!(sandbox_debug.contains(&sandbox.data.attempt().to_string()));
         assert!(sandbox_debug.contains(sandbox.data.hostname()));
+
+        let log_dir = sandbox.data.log_directory().to_str().unwrap();
+        assert!(sandbox_debug.contains(log_dir));
         Ok(())
     }
 
