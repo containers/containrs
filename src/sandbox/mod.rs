@@ -215,8 +215,8 @@ pub mod tests {
         assert!(sandbox_debug.contains(&sandbox.data.attempt().to_string()));
         assert!(sandbox_debug.contains(sandbox.data.hostname()));
 
-        let log_dir = sandbox.data.log_directory().to_str().unwrap();
-        assert!(sandbox_debug.contains(log_dir));
+        let log_dir = sandbox.data.log_directory().display().to_string();
+        assert!(sandbox_debug.contains(&log_dir));
         Ok(())
     }
 
