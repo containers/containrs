@@ -1,16 +1,25 @@
 //! Linux capability handling
 
-use std::collections::HashSet;
+use std::{collections::HashSet, ops::Deref};
 use strum::{AsRefStr, EnumIter, EnumString, IntoEnumIterator, IntoStaticStr};
 
+#[derive(Debug)]
 /// A set of capabilities.
-struct Capabilities(HashSet<Capability>);
+pub struct Capabilities(HashSet<Capability>);
 
 impl Capabilities {
     #[allow(dead_code)]
     /// Get all capabilities.
     pub fn all() -> Self {
         Self(Capability::iter().collect())
+    }
+}
+
+impl Deref for Capabilities {
+    type Target = HashSet<Capability>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
     }
 }
 

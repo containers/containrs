@@ -10,6 +10,7 @@ mod network;
 mod oci_spec;
 mod runtime_service;
 mod sandbox;
+mod seccomp;
 mod server;
 mod storage;
 mod unix_stream;
