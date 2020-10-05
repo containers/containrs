@@ -147,7 +147,7 @@ impl Server {
         let mut cni_network = CNIBuilder::default()
             .default_network_name(self.config.cni_default_network().clone())
             .config_paths(self.config.cni_config_paths().clone())
-            .plugin_paths(self.config.cni_plugin_paths().clone())
+            .plugin_paths(self.config.cni_plugin_paths())
             .build()
             .context("build CNI network data")?;
 

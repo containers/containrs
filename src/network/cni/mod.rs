@@ -5,12 +5,17 @@ use crate::{
     network::{
         cni::{
             config::{Config, ConfigBuilder, ConfigFile, ConfigListFile},
-            exec::DefaultExec,
+            exec::{DefaultExec, Exec},
+            namespace::Namespace,
+            netlink::Netlink,
+            plugin::{Plugin, PluginBuilder},
         },
         PodNetwork,
     },
+    sandbox::SandboxData,
 };
-use anyhow::{bail, format_err, Context, Result};
+use anyhow::{bail, Context, Result};
+use async_trait::async_trait;
 use crossbeam_channel::Sender;
 use derive_builder::Builder;
 use getset::{Getters, MutGetters};
@@ -25,18 +30,22 @@ use std::{
     fs,
     path::{Path, PathBuf},
     result,
-    sync::{Arc, RwLock, RwLockReadGuard, RwLockWriteGuard},
+    sync::Arc,
 };
+use tokio::sync::{RwLock, RwLockReadGuard};
 
 mod config;
 mod exec;
+mod namespace;
+mod netlink;
+mod plugin;
 
 #[derive(Builder, Default, Getters)]
 #[builder(default, pattern = "owned", setter(into))]
 /// The pod network implementation based on the Container Network Interface.
 pub struct CNI {
     #[get]
-    /// The network name of the default network to be used.
+    /// This is the default CNI network name set by the user.
     default_network_name: Option<String>,
 
     #[get]
@@ -44,8 +53,8 @@ pub struct CNI {
     config_paths: Vec<PathBuf>,
 
     #[get]
-    /// The paths to binary plugins.
-    plugin_paths: Vec<PathBuf>,
+    /// The pugin search paths to be used.
+    plugin_paths: String,
 
     #[get]
     /// The configuration watcher for monitoring config path changes.
@@ -54,44 +63,36 @@ pub struct CNI {
     #[get]
     /// CNI network state.
     state: State,
+
+    #[getset(get, set = "pub")]
+    #[builder(default = "Some(Box::new(DefaultExec))")]
+    /// CNI command execution helper.
+    plugin_exec: Option<Box<dyn Exec>>,
 }
 
-#[derive(Clone, Debug, Default)]
 /// State is the internal state for the CNI which can be shared across threads safely.
-pub struct State(Arc<RwLock<CNIState>>);
-
-impl State {
-    /// Open the state in read-only mode.
-    fn read(&self) -> Result<RwLockReadGuard<CNIState>> {
-        self.0.read().map_err(|e| format_err!("read state: {}", e))
-    }
-
-    /// Open the state in read-write mode.
-    fn write(&self) -> Result<RwLockWriteGuard<CNIState>> {
-        self.0
-            .write()
-            .map_err(|e| format_err!("write state: {}", e))
-    }
-}
+type State = Arc<RwLock<CNIState>>;
 
 #[derive(Builder, Debug, Default, Getters, MutGetters)]
 #[builder(default, pattern = "owned", setter(into))]
+/// The CNI state which will be setup on the `initialize` method call.
 pub struct CNIState {
     #[get]
     /// The current default CNI network.
-    default_network: Option<DefaultConfig>,
+    default_network: Option<Config>,
 
     #[get]
-    /// Indicates if the default CNI network name can change or is user defined.
+    /// This is the default CNI network name set by the user.
     default_network_name: Option<String>,
 
     #[getset(get, get_mut)]
     /// Configuration storage, referenced by their file path on disk.
-    configs: HashMap<PathBuf, DefaultConfig>,
-}
+    configs: HashMap<PathBuf, Config>,
 
-/// DefaultConfig is a config with a default exec.
-type DefaultConfig = Config<DefaultExec>;
+    #[get]
+    /// The plugin search paths to be used.
+    plugin_paths: String,
+}
 
 /// Selector for watcher messages on the receiver channel.
 pub enum WatcherMessage {
@@ -122,7 +123,8 @@ impl CNI {
         if self.plugin_paths().is_empty() {
             bail!("no plugin paths provided")
         }
-        debug!("Plugin paths: {}", path_bufs_to_string(self.plugin_paths()));
+        debug!("Plugin paths: {}", self.plugin_paths());
+        self.state().write().await.plugin_paths = self.plugin_paths().clone();
 
         // Load all network configurations
         info!("Initializing CNI network");
@@ -130,7 +132,7 @@ impl CNI {
             None => info!("No default CNI network name, choosing first one"),
             Some(name) => info!("Using default network name: {}", name),
         };
-        self.state.write()?.default_network_name = self.default_network_name().clone();
+        self.state().write().await.default_network_name = self.default_network_name().clone();
         self.load_networks().await.context("load network configs")?;
 
         // Create a config watcher
@@ -161,7 +163,7 @@ impl CNI {
         self.watcher = Some((watcher, tx));
 
         // Spawn watching thread
-        let state = self.state.clone();
+        let state = self.state().clone();
         tokio::spawn(async move {
             loop {
                 match rx.recv() {
@@ -191,9 +193,13 @@ impl CNI {
                 if Self::is_config_file(&file) =>
             {
                 info!("Created new CNI config file {}", file.display());
-                let config = Self::load_network(&file).await.context("load config")?;
-                Self::insert_config(state, config).context("add config")?;
-                Self::log_networks(state)
+                let config = Self::load_network(&state, &file)
+                    .await
+                    .context("load config")?;
+                Self::insert_config(state, config)
+                    .await
+                    .context("add config")?;
+                Self::log_networks(state).await
             }
 
             // File renaming handling
@@ -204,21 +210,29 @@ impl CNI {
                     new.display()
                 );
                 if Self::has_config_file_extensions(&old) {
-                    Self::remove_config(state, &old).context("remove old config")?;
+                    Self::remove_config(state, &old)
+                        .await
+                        .context("remove old config")?;
                 }
                 if Self::is_config_file(&new) {
-                    let config = Self::load_network(&new).await.context("load new config")?;
-                    Self::insert_config(state, config).context("add new config")?;
+                    let config = Self::load_network(&state, &new)
+                        .await
+                        .context("load new config")?;
+                    Self::insert_config(state, config)
+                        .await
+                        .context("add new config")?;
                 }
-                Self::log_networks(state)
+                Self::log_networks(state).await
             }
 
             // File removal handling
             (EventKind::Remove(RemoveKind::File), Some(file), None)
                 if Self::has_config_file_extensions(&file) =>
             {
-                Self::remove_config(state, &file).context("remove config")?;
-                Self::log_networks(state)
+                Self::remove_config(state, &file)
+                    .await
+                    .context("remove config")?;
+                Self::log_networks(state).await
             }
 
             _ => Ok(()),
@@ -231,22 +245,22 @@ impl CNI {
         debug!("Got network files: {:?}", files);
 
         for file in files {
-            match Self::load_network(&file).await {
+            match Self::load_network(self.state(), &file).await {
                 Err(e) => {
                     warn!("Unable to load network {}: {}", file.display(), chain(e));
                     continue;
                 }
-                Ok(config) => Self::insert_config(&self.state, config)?,
+                Ok(config) => Self::insert_config(self.state(), config).await?,
             }
         }
 
-        Self::log_networks(&self.state)?;
+        Self::log_networks(self.state()).await?;
         Ok(())
     }
 
     /// Log the currently loaded networks by their name
-    fn log_networks(state: &State) -> Result<()> {
-        let state = state.read()?;
+    async fn log_networks(state: &State) -> Result<()> {
+        let state = state.read().await;
         let len = state.configs().len();
         let mut networks = state
             .configs()
@@ -268,7 +282,7 @@ impl CNI {
     }
 
     /// Load a single CNI network for the provided configuration path.
-    async fn load_network(file: &Path) -> Result<DefaultConfig> {
+    async fn load_network(state: &State, file: &Path) -> Result<Config> {
         debug!("Loading network from file {}", file.display());
         let config_file = match file
             .extension()
@@ -296,7 +310,10 @@ impl CNI {
             .context("build CNI config")?;
 
         debug!("Validating network config: {:?}", config);
-        config.validate().await.context("validate CNI config")?;
+        config
+            .validate(state.read().await.plugin_paths())
+            .await
+            .context("validate CNI config")?;
 
         info!(
             "Found valid CNI network config {} (type {}) in {}",
@@ -348,9 +365,9 @@ impl CNI {
     }
 
     /// Insert a new or update an existing config in the provided `configs` HashMap.
-    fn insert_config(state: &State, config: DefaultConfig) -> Result<()> {
+    async fn insert_config(state: &State, config: Config) -> Result<()> {
         trace!("Inserting/updating config {}", config.name());
-        let mut state = state.write()?;
+        let mut state = state.write().await;
 
         // Set the default network if selected by name
         if let Some(name) = state.default_network_name() {
@@ -381,8 +398,8 @@ impl CNI {
     }
 
     /// Remove a config for the provided file path.
-    fn remove_config(state: &State, file: &Path) -> Result<()> {
-        let mut state = state.write()?;
+    async fn remove_config(state: &State, file: &Path) -> Result<()> {
+        let mut state = state.write().await;
 
         info!("Removing CNI config {}", file.display());
         state.configs_mut().remove(file);
@@ -418,9 +435,137 @@ impl CNI {
 
         Ok(())
     }
+
+    /// Retrieve necessary data for network start/stop.
+    async fn get_start_stop_data<'a, 'b>(
+        &'b self,
+        state: &'b RwLockReadGuard<'_, CNIState>,
+        sandbox_data: &'a SandboxData,
+    ) -> Result<(&'a Path, Namespace, &'b Config)> {
+        let network_namespace_path = sandbox_data
+            .network_namespace_path()
+            .as_ref()
+            .context("no network namespace path provided")?;
+
+        let netns = Namespace::new(network_namespace_path)
+            .await
+            .context("create network namespace")?;
+
+        let default_network = state
+            .default_network()
+            .as_ref()
+            .context("no default network available")?;
+
+        Ok((network_namespace_path, netns, default_network))
+    }
+
+    /// Build a CNI plugin for start/stop execution.
+    async fn build_plugin(&self, config: &ConfigFile) -> Result<Plugin> {
+        let mut plugin = PluginBuilder::default()
+            .binary(config.typ())
+            .build()
+            .context("build CNI plugin")?;
+        plugin.set_exec(
+            self.plugin_exec
+                .as_ref()
+                .context("no CNI plugin executor set")?
+                .clone(),
+        );
+        Ok(plugin
+            .find_binary(self.plugin_paths())
+            .context("find plugin binary")?)
+    }
+
+    /// Get an `eth` prefixed interface name for the provided index.
+    fn eth(i: usize) -> String {
+        format!("eth{}", i)
+    }
 }
 
+#[async_trait]
 impl PodNetwork for CNI {
+    /// Start a new network for the provided `SandboxData`.
+    async fn start(&mut self, sandbox_data: &SandboxData) -> Result<()> {
+        info!("Starting CNI network for sandbox {}", sandbox_data.id());
+        // Things intentionally skipped for sake of initial implementation simplicity:
+        //
+        // - host network pod handling
+        // - host port management
+        // - ingress egress bandwidth handling via annotations
+
+        let state = self.state.read().await;
+        let (network_namespace_path, netns, default_network) =
+            self.get_start_stop_data(&state, sandbox_data).await?;
+
+        // Setup loopback interface
+        netns
+            .run(async move {
+                let netlink = Netlink::new().await?;
+                let loopback_link = netlink.loopback().await.context("get loopback link")?;
+                netlink
+                    .set_link_up(&loopback_link)
+                    .await
+                    .context("set loopback link up")
+            })
+            .await
+            .context("init loopback interface")?;
+
+        // Add the network via the CNI plugin
+        for (i, config) in default_network.list().plugins().iter().enumerate() {
+            self.build_plugin(config)
+                .await?
+                .add(
+                    sandbox_data.id(),
+                    &network_namespace_path.display().to_string(),
+                    &Self::eth(i),
+                    config.raw(),
+                )
+                .await
+                .context("add network via plugin")?;
+        }
+
+        debug!("Started CNI network for sandbox {}", sandbox_data.id());
+        Ok(())
+    }
+
+    /// Stop the network of the provided `SandboxData`.
+    async fn stop(&mut self, sandbox_data: &SandboxData) -> Result<()> {
+        info!("Stopping CNI network for sandbox {}", sandbox_data.id());
+        let state = self.state.read().await;
+        let (network_namespace_path, netns, default_network) =
+            self.get_start_stop_data(&state, sandbox_data).await?;
+
+        // Tear down loopback interface
+        netns
+            .run(async move {
+                let netlink = Netlink::new().await?;
+                let loopback_link = netlink.loopback().await.context("get loopback link")?;
+                netlink
+                    .set_link_down(&loopback_link)
+                    .await
+                    .context("set loopback link down")
+            })
+            .await
+            .context("tear down loopback interface")?;
+
+        // Remove the network via the CNI plugin
+        for (i, config) in default_network.list().plugins().iter().enumerate() {
+            self.build_plugin(config)
+                .await?
+                .del(
+                    sandbox_data.id(),
+                    &network_namespace_path.display().to_string(),
+                    &Self::eth(i),
+                    config.raw(),
+                )
+                .await
+                .context("delete network via plugin")?;
+        }
+
+        debug!("Stopped CNI network for sandbox {}", sandbox_data.id());
+        Ok(())
+    }
+
     /// Cleanup the network on server shutdown.
     fn cleanup(&mut self) -> Result<()> {
         trace!("Stopping watcher");
@@ -478,13 +623,13 @@ pub mod tests {
         let mut cni = CNIBuilder::default()
             .default_network_name(Some("network".into()))
             .config_paths(vec![temp_dir.into_path()])
-            .plugin_paths(["c", "d"].iter().map(PathBuf::from).collect::<Vec<_>>())
+            .plugin_paths("c:d")
             .build()?;
 
         assert!(cni.default_network_name().is_some());
         assert_eq!(cni.config_paths().len(), 1);
-        assert_eq!(cni.plugin_paths().len(), 2);
-        assert_eq!(cni.state().read()?.configs().len(), 0);
+        assert_eq!(cni.plugin_paths(), "c:d");
+        assert_eq!(cni.state().read().await.configs().len(), 0);
 
         cni.initialize().await
     }

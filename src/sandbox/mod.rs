@@ -39,7 +39,7 @@ bitflags! {
 }
 
 #[derive(Builder, Getters)]
-#[builder(pattern = "owned", setter(into))]
+#[builder(pattern = "owned", setter(into, strip_option))]
 /// SandboxData holds all the data which will be passed around to the `Pod` trait, too.
 pub struct SandboxData {
     #[get = "pub"]
@@ -74,6 +74,11 @@ pub struct SandboxData {
     #[get = "pub"]
     // Arbitrary metadata of the sandbox.
     annotations: HashMap<String, String>,
+
+    #[get = "pub"]
+    #[builder(default = "None")]
+    // Path to the network namespace.
+    network_namespace_path: Option<PathBuf>,
 }
 
 pub trait Pod {
@@ -147,6 +152,7 @@ where
             .field("hostname", self.data.hostname())
             .field("log_directory", self.data.log_directory())
             .field("annotations", self.data.annotations())
+            .field("network_namespace_path", self.data.network_namespace_path())
             .finish()
     }
 }

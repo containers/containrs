@@ -3,16 +3,26 @@
 use anyhow::{bail, Context, Result};
 use async_trait::async_trait;
 use derive_builder::Builder;
+use dyn_clone::{clone_trait_object, DynClone};
 use getset::Getters;
-use std::{collections::HashMap, path::Path};
-use tokio::process::Command;
+use log::trace;
+use std::{collections::HashMap, fmt::Debug, path::Path, process::Stdio};
+use tokio::{
+    io::{AsyncReadExt, AsyncWriteExt},
+    process::Command,
+};
 
 #[async_trait]
 /// The CNI command execution trait.
-pub trait Exec {
+pub trait Exec: DynClone + Send + Sync {
     /// Run a command and return the output as result.
     async fn run(&self, binary: &Path, args: &Args) -> Result<String>;
+
+    /// Run a command with standard input and return the output as result.
+    async fn run_with_stdin(&self, binary: &Path, args: &Args, stdin: &[u8]) -> Result<String>;
 }
+
+clone_trait_object!(Exec);
 
 #[derive(Clone, Debug, Default)]
 /// DefaultExec is a wrapper which can be used to execute CNI plugins in a standard way.
@@ -20,15 +30,51 @@ pub struct DefaultExec;
 
 #[async_trait]
 impl Exec for DefaultExec {
-    /// Execute a CNI plugin binary with the internally set args.
+    /// Run a command and return the output as result.
     async fn run(&self, binary: &Path, args: &Args) -> Result<String> {
         let output = Command::new(binary).envs(args.envs()).output().await?;
 
         if !output.status.success() {
-            bail!("command executed with failing error code")
+            bail!(
+                "command failed with error: {}",
+                String::from_utf8(output.stdout)?
+            )
         }
 
         Ok(String::from_utf8(output.stdout).context("cannot convert output to string")?)
+    }
+
+    /// Run a command with standard input and return the output as result.
+    async fn run_with_stdin(&self, binary: &Path, args: &Args, stdin: &[u8]) -> Result<String> {
+        let mut child = Command::new(binary)
+            .envs(args.envs())
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .spawn()
+            .context("spawn process")?;
+
+        child
+            .stdin
+            .take()
+            .context("no stdin")?
+            .write_all(stdin)
+            .await
+            .context("write stdin")?;
+
+        let mut output = String::new();
+        child
+            .stdout
+            .take()
+            .context("no stdout")?
+            .read_to_string(&mut output)
+            .await
+            .context("read stdout")?;
+
+        if !child.await?.success() {
+            bail!(output)
+        }
+
+        Ok(output)
     }
 }
 
@@ -71,6 +117,7 @@ impl Args {
         env.insert("CNI_ARGS".into(), self.plugin_args().join(";"));
         env.insert("CNI_IFNAME".into(), self.interface_name().clone());
         env.insert("CNI_PATH".into(), self.path().clone());
+        trace!("Using CNI env: {:?}", env);
         env
     }
 }
@@ -95,6 +142,26 @@ mod tests {
         let binary = PathBuf::from("/should/not/exist");
         let res = DefaultExec
             .run(&binary, &ArgsBuilder::default().build()?)
+            .await;
+        assert!(res.is_err());
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn exec_stdin_success() -> Result<()> {
+        let binary = which::which("cat")?;
+        let output = DefaultExec
+            .run_with_stdin(&binary, &ArgsBuilder::default().build()?, "test".as_bytes())
+            .await?;
+        assert!(output.contains("test"));
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn exec_stdin_failure() -> Result<()> {
+        let binary = PathBuf::from("/should/not/exist");
+        let res = DefaultExec
+            .run_with_stdin(&binary, &ArgsBuilder::default().build()?, "test".as_bytes())
             .await;
         assert!(res.is_err());
         Ok(())
