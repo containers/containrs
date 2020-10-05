@@ -18,6 +18,3 @@ mod unix_stream;
 
 pub use config::Config;
 pub use server::Server;
-
-#[macro_use]
-extern crate bitflags;

@@ -3,6 +3,7 @@
 pub mod pinned;
 
 use anyhow::Result;
+use bitflags::bitflags;
 use derive_builder::Builder;
 use getset::Getters;
 use std::fmt;
