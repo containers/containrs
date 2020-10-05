@@ -5,6 +5,7 @@ pub mod pinned;
 use anyhow::Result;
 use derive_builder::Builder;
 use getset::Getters;
+use std::collections::HashMap;
 use std::fmt;
 use std::path::PathBuf;
 
@@ -68,6 +69,10 @@ pub struct SandboxData {
     #[get = "pub"]
     // Path to the directory on the host in which container log files are stored.
     log_directory: PathBuf,
+
+    #[get = "pub"]
+    // Arbitrary metadata of the sandbox.
+    annotations: HashMap<String, String>,
 }
 
 pub trait Pod {
@@ -140,6 +145,7 @@ where
             .field("linux_namespaces", self.data.linux_namespaces())
             .field("hostname", self.data.hostname())
             .field("log_directory", self.data.log_directory())
+            .field("annotations", self.data.annotations())
             .finish()
     }
 }
@@ -158,6 +164,9 @@ pub mod tests {
     use super::*;
 
     pub fn new_sandbox_data() -> Result<SandboxData> {
+        let mut annotations: HashMap<String, String> = HashMap::new();
+        annotations.insert("annotationkey1".into(), "annotationvalue1".into());
+
         Ok(SandboxDataBuilder::default()
             .id("uid")
             .name("name")
@@ -166,6 +175,7 @@ pub mod tests {
             .linux_namespaces(LinuxNamespaces::NET)
             .hostname("hostname")
             .log_directory("log_directory")
+            .annotations(annotations)
             .build()?)
     }
 
@@ -217,6 +227,12 @@ pub mod tests {
 
         let log_dir = sandbox.data.log_directory().display().to_string();
         assert!(sandbox_debug.contains(&log_dir));
+
+        for (key, val) in sandbox.data.annotations.iter() {
+            assert!(sandbox_debug.contains(key));
+            assert!(sandbox_debug.contains(val));
+        }
+
         Ok(())
     }
 

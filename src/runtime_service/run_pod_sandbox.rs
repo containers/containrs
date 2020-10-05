@@ -4,6 +4,7 @@ use crate::{
     sandbox::{pinned::PinnedSandbox, LinuxNamespaces, SandboxBuilder, SandboxDataBuilder},
 };
 use log::{debug, info};
+use std::collections::HashMap;
 use tonic::{Request, Response, Status};
 
 impl CRIService {
@@ -47,6 +48,11 @@ impl CRIService {
             linux_namespaces |= LinuxNamespaces::PID;
         }
 
+        let mut annotations: HashMap<String, String> = HashMap::new();
+        for (key, val) in config.annotations.iter() {
+            annotations.insert(key.into(), val.into());
+        }
+
         // Build a new sandbox from it
         let mut sandbox = SandboxBuilder::<PinnedSandbox>::default()
             .data(
@@ -58,6 +64,7 @@ impl CRIService {
                     .linux_namespaces(linux_namespaces)
                     .hostname(config.hostname)
                     .log_directory(config.log_directory)
+                    .annotations(annotations)
                     .build()
                     .map_err(|e| {
                         Status::internal(format!("build sandbox data from metadata: {}", e))
