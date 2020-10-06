@@ -58,6 +58,7 @@ impl CRIService {
                     .linux_namespaces(linux_namespaces)
                     .hostname(config.hostname)
                     .log_directory(config.log_directory)
+                    .annotations(config.annotations)
                     .build()
                     .map_err(|e| {
                         Status::internal(format!("build sandbox data from metadata: {}", e))
