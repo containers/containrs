@@ -143,6 +143,17 @@ impl CNI {
         })
         .context("create config watcher")?;
         for config_path in self.config_paths() {
+            // Create the directory if not existing
+            tokio::fs::create_dir_all(config_path)
+                .await
+                .with_context(|| {
+                    format!(
+                        "create not existing CNI config path {}",
+                        config_path.display()
+                    )
+                })?;
+
+            // Add the watcher
             watcher
                 .watch(config_path, RecursiveMode::NonRecursive)
                 .with_context(|| format!("watch path {}", config_path.display()))?;
@@ -237,17 +248,22 @@ impl CNI {
     fn log_networks(state: &State) -> Result<()> {
         let state = state.read()?;
         let len = state.configs().len();
-        info!(
-            "Currently loaded {} network{}: {}",
-            len,
-            if len > 1 { "s" } else { "" },
-            state
-                .configs()
-                .values()
-                .map(|x| x.name().to_string())
-                .collect::<Vec<_>>()
-                .join(", ")
-        );
+        let mut networks = state
+            .configs()
+            .values()
+            .map(|x| x.name().to_string())
+            .collect::<Vec<_>>();
+        networks.sort();
+        if len == 0 {
+            info!("No loaded networks")
+        } else {
+            info!(
+                "Currently loaded {} network{}: {}",
+                len,
+                if len > 1 { "s" } else { "" },
+                networks.join(", ")
+            );
+        }
         Ok(())
     }
 
@@ -388,7 +404,7 @@ impl CNI {
                         }
                         Some(c) => {
                             info!(
-                                "Using {} ({}) as new default network",
+                                "Using {} as new default network ({})",
                                 c.name(),
                                 c.file().display()
                             );

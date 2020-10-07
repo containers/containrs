@@ -152,6 +152,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Install CNI plugins
+        shell: bash
+        run: |
+          curl -sfL -o - https://github.com/containernetworking/plugins/releases/download/$VERSION/cni-plugins-linux-amd64-$VERSION.tgz |
+            sudo tar xfz - -C /usr/local/bin
+          bridge
+        env:
+          VERSION: v0.8.7
       - name: Setup Cache
         uses: actions/cache@v2
         with:

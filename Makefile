@@ -51,7 +51,9 @@ define test
 	$(CARGO) test \
 		--test $(1) $(ARGS) \
 		-- \
-		--nocapture
+		--test-threads=1 \
+		--nocapture \
+		$(FOCUS)
 endef
 
 .PHONY: test-integration
@@ -64,7 +66,7 @@ test-e2e: ## Run the e2e tests
 
 .PHONY: test-unit
 test-unit: ## Run the unit tests
-	$(CARGO) test --lib
+	$(CARGO) test --lib $(FOCUS)
 
 .PHONY: help
 help: ## Display this help
