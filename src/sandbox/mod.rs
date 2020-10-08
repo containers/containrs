@@ -38,7 +38,7 @@ bitflags! {
     }
 }
 
-#[derive(Builder, Getters)]
+#[derive(Builder, Debug, Getters)]
 #[builder(pattern = "owned", setter(into))]
 /// SandboxData holds all the data which will be passed around to the `Pod` trait, too.
 pub struct SandboxData {
@@ -77,7 +77,7 @@ pub struct SandboxData {
 }
 
 pub trait Pod {
-    /// Run a previously created sandbox.
+    /// Run a new sandbox.
     fn run(&mut self, _: &SandboxData) -> Result<()> {
         Ok(())
     }

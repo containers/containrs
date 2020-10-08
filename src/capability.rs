@@ -1,9 +1,11 @@
 //! Linux capability handling
 
+use lazy_static::lazy_static;
+use std::string::ToString;
 use std::{collections::HashSet, ops::Deref};
-use strum::{AsRefStr, EnumIter, EnumString, IntoEnumIterator, IntoStaticStr};
+use strum::{AsRefStr, Display, EnumIter, EnumString, IntoEnumIterator, IntoStaticStr};
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 /// A set of capabilities.
 pub struct Capabilities(HashSet<Capability>);
 
@@ -23,7 +25,43 @@ impl Deref for Capabilities {
     }
 }
 
-#[derive(AsRefStr, IntoStaticStr, Copy, Clone, Debug, EnumIter, EnumString, Eq, Hash, PartialEq)]
+impl Default for Capabilities {
+    fn default() -> Self {
+        DEFAULT_CAPABILITIES.clone()
+    }
+}
+
+impl Into<Vec<String>> for Capabilities {
+    fn into(self) -> Vec<String> {
+        (&self).into()
+    }
+}
+
+impl Into<Vec<String>> for &Capabilities {
+    fn into(self) -> Vec<String> {
+        self.iter().map(ToString::to_string).collect()
+    }
+}
+
+lazy_static! {
+    static ref DEFAULT_CAPABILITIES: Capabilities = {
+        let mut s = HashSet::new();
+        s.insert(Capability::CapChown);
+        s.insert(Capability::CapDacOverride);
+        s.insert(Capability::CapFsetid);
+        s.insert(Capability::CapFowner);
+        s.insert(Capability::CapSetgid);
+        s.insert(Capability::CapSetuid);
+        s.insert(Capability::CapSetpcap);
+        s.insert(Capability::CapNetBindService);
+        s.insert(Capability::CapKill);
+        Capabilities(s)
+    };
+}
+
+#[derive(
+    AsRefStr, IntoStaticStr, Copy, Clone, Debug, Display, EnumIter, EnumString, Eq, Hash, PartialEq,
+)]
 #[strum(serialize_all = "shouty_snake_case")]
 /// All available capabilities.
 pub enum Capability {

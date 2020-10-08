@@ -108,8 +108,8 @@ impl Spec {
     }
 }
 
-#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Builder, Getters)]
-#[builder(pattern = "owned", setter(into, strip_option))]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Default, Builder, Getters)]
+#[builder(default, pattern = "owned", setter(into, strip_option))]
 /// Process contains information to start a specific application inside the container.
 pub struct Process {
     #[getset(get = "pub")]
@@ -243,8 +243,8 @@ pub struct Box {
 }
 
 /// User specifies specific user (and group) information for the container process.
-#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Builder, Getters)]
-#[builder(pattern = "owned", setter(into, strip_option))]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Default, Builder, Getters)]
+#[builder(default, pattern = "owned", setter(into, strip_option))]
 pub struct User {
     #[getset(get_copy = "pub")]
     /// UID is the user id.
