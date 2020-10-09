@@ -15,10 +15,6 @@ license = "Apache-2.0"
 keywords = ["kubernetes", "cri"]
 categories = ["network-programming", "api-bindings"]
 
-[[bin]] # Bin to run the HelloWorld gRPC server
-name = "criserver"
-path = "src/main.rs"
-
 [profile.release]
 lto = true
 opt-level = 'z'

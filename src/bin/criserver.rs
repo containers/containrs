@@ -1,5 +1,8 @@
 use anyhow::Result;
-use cri::{error, Config, Server};
+use cri::{
+    error,
+    server::{Config, Server},
+};
 use std::process::exit;
 
 #[tokio::main]
