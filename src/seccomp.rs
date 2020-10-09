@@ -203,19 +203,17 @@ impl Seccomp {
     /// Returns a list of syscalls for a provided capability name.
     fn capability_to_syscalls(&self, capability: Capability) -> &'static [&'static str] {
         match capability {
-            Capability::CapDacReadSearch => &["open_by_handle_at"],
-            Capability::CapSyslog => &["syslog"],
-            Capability::CapSysBoot => &["reboot"],
-            Capability::CapSysChroot => &["chroot"],
-            Capability::CapSysModule => &["delete_module", "init_module", "finit_module"],
-            Capability::CapSysPacct => &["acct"],
-            Capability::CapSysPtrace => {
-                &["kcmp", "process_vm_readv", "process_vm_writev", "ptrace"]
-            }
-            Capability::CapSysRawio => &["iopl", "ioperm"],
-            Capability::CapSysTime => &["settimeofday", "stime", "clock_settime"],
-            Capability::CapSysTtyConfig => &["vhangup"],
-            Capability::CapSysAdmin => &[
+            Capability::DacReadSearch => &["open_by_handle_at"],
+            Capability::Syslog => &["syslog"],
+            Capability::SysBoot => &["reboot"],
+            Capability::SysChroot => &["chroot"],
+            Capability::SysModule => &["delete_module", "init_module", "finit_module"],
+            Capability::SysPacct => &["acct"],
+            Capability::SysPtrace => &["kcmp", "process_vm_readv", "process_vm_writev", "ptrace"],
+            Capability::SysRawio => &["iopl", "ioperm"],
+            Capability::SysTime => &["settimeofday", "stime", "clock_settime"],
+            Capability::SysTtyConfig => &["vhangup"],
+            Capability::SysAdmin => &[
                 "bpf",
                 "clone",
                 "fanotify_init",
