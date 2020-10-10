@@ -1,5 +1,5 @@
+//! Container Runtime Interface server implementation
 use crate::{
-    config::{Config, LogScope},
     cri_service::CRIService,
     criapi::{
         image_service_server::ImageServiceServer, runtime_service_server::RuntimeServiceServer,
@@ -13,6 +13,7 @@ use crate::{
 };
 use anyhow::{bail, Context, Result};
 use clap::crate_name;
+pub use config::{Config, LogScope};
 use env_logger::fmt::Color;
 use futures_util::stream::TryStreamExt;
 use log::{debug, info, trace, LevelFilter};
@@ -24,6 +25,8 @@ use tokio::{
     signal::unix::{signal, SignalKind},
 };
 use tonic::transport;
+
+mod config;
 
 /// Server is the main instance to run the Container Runtime Interface
 pub struct Server {
@@ -184,7 +187,7 @@ impl Server {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::config::ConfigBuilder;
+    use crate::server::config::ConfigBuilder;
     use tempfile::{tempdir, NamedTempFile};
 
     #[tokio::test]

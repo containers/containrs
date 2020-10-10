@@ -2,7 +2,6 @@
 #![deny(missing_docs)]
 
 mod capability;
-mod config;
 mod cri_service;
 mod criapi;
 pub mod error;
@@ -12,9 +11,6 @@ mod oci_spec;
 mod runtime_service;
 mod sandbox;
 mod seccomp;
-mod server;
+pub mod server;
 mod storage;
 mod unix_stream;
-
-pub use config::Config;
-pub use server::Server;
