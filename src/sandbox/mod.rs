@@ -2,6 +2,7 @@
 
 pub mod pinned;
 
+use async_trait::async_trait;
 use anyhow::Result;
 use bitflags::bitflags;
 use derive_builder::Builder;
@@ -76,9 +77,10 @@ pub struct SandboxData {
     annotations: HashMap<String, String>,
 }
 
+#[async_trait]
 pub trait Pod {
     /// Run a previously created sandbox.
-    fn run(&mut self, _: &SandboxData) -> Result<()> {
+    async fn run(&mut self, _: &SandboxData) -> Result<()> {
         Ok(())
     }
 
@@ -102,7 +104,7 @@ pub trait Pod {
 
 impl<T> Sandbox<T>
 where
-    T: Default + Pod,
+    T: Default + Pod + Send,
 {
     /// Retrieve the unique identifier for the sandbox
     pub fn id(&self) -> &str {
@@ -110,8 +112,8 @@ where
     }
 
     /// Wrapper for the implementations `run` method
-    pub fn run(&mut self) -> Result<()> {
-        self.implementation.run(&self.data)
+    pub async fn run(&mut self) -> Result<()> {
+        Ok(self.implementation.run(&self.data).await?)
     }
 
     #[allow(dead_code)]
@@ -187,8 +189,10 @@ pub mod tests {
         remove_called: bool,
         ready: bool,
     }
+
+    #[async_trait]
     impl Pod for Mock {
-        fn run(&mut self, _: &SandboxData) -> Result<()> {
+        async fn run(&mut self, _: &SandboxData) -> Result<()> {
             self.run_called = true;
             self.ready = true;
             Ok(())
