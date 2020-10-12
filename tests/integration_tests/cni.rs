@@ -1,6 +1,9 @@
 use crate::common::Sut;
 use anyhow::Result;
-use std::fs;
+use std::{
+    fs,
+    path::{Path, PathBuf},
+};
 use tempfile::TempDir;
 
 const LIST: &str = r#"{
@@ -46,6 +49,15 @@ const CONFIG: &str = r#"{
     }
 }"#;
 
+fn add_config(path: &Path, content: &[u8]) -> Result<()> {
+    let mut temp_path: PathBuf = path.into();
+    temp_path.set_extension("bak");
+
+    fs::write(temp_path.display().to_string(), content)?;
+    fs::rename(&temp_path, path)?;
+    Ok(())
+}
+
 #[tokio::test]
 async fn cni_config_lifecycle_no_default_network() -> Result<()> {
     let mut sut = Sut::start().await?;
@@ -53,12 +65,12 @@ async fn cni_config_lifecycle_no_default_network() -> Result<()> {
 
     // New config list added
     let config_list = sut.cni_config_path().join("2-list.conflist");
-    fs::write(config_list.display().to_string(), LIST.as_bytes())?;
+    add_config(&config_list, LIST.as_bytes())?;
     assert!(sut.log_file_contains_line("Currently loaded 2 networks: list, loopback")?);
 
     // New config added
     let config = sut.cni_config_path().join("1-config.conf");
-    fs::write(config.display().to_string(), CONFIG.as_bytes())?;
+    add_config(&config, CONFIG.as_bytes())?;
     assert!(sut.log_file_contains_line("Currently loaded 3 networks: config, list, loopback")?);
 
     // Remove config
@@ -88,12 +100,12 @@ async fn cni_config_lifecycle_with_default_network() -> Result<()> {
 
     // New config list added
     let config_list = sut.cni_config_path().join("2-list.conflist");
-    fs::write(config_list.display().to_string(), LIST.as_bytes())?;
+    add_config(&config_list, LIST.as_bytes())?;
     assert!(sut.log_file_contains_line("Found user selected default network list")?);
 
     // New config added
     let config = sut.cni_config_path().join("1-config.conf");
-    fs::write(config.display().to_string(), CONFIG.as_bytes())?;
+    add_config(&config, CONFIG.as_bytes())?;
     assert!(sut.log_file_contains_line("Currently loaded 3 networks: config, list, loopback")?);
 
     // Remove list

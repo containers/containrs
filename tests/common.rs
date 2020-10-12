@@ -158,7 +158,10 @@ impl Sut {
 
         // Cleanup temp dir
         info!("Removing test dir {}", self.test_dir().display());
-        fs::remove_dir_all(self.test_dir()).context("cleanup test directory")
+        if self.test_dir().exists() {
+            fs::remove_dir_all(self.test_dir()).context("cleanup test directory")?;
+        }
+        Ok(())
     }
 
     fn check_file_for_output(
