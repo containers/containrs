@@ -3,7 +3,7 @@
 
 mod capability;
 mod network;
-mod oci_spec;
+mod oci;
 mod sandbox;
 mod seccomp;
 mod storage;

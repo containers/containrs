@@ -2,7 +2,7 @@
 
 use crate::{
     capability::{Capabilities, Capability},
-    oci_spec::runtime::{
+    oci::spec::runtime::{
         Arch, LinuxSeccomp, LinuxSeccompAction, LinuxSeccompArgBuilder, LinuxSeccompBuilder,
         LinuxSeccompOperator, LinuxSyscall, LinuxSyscallBuilder,
     },
