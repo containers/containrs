@@ -6,12 +6,14 @@ use lazy_static::lazy_static;
 use log::LevelFilter;
 use nix::unistd::{self, Uid};
 use serde::{Deserialize, Serialize};
-use std::path::PathBuf;
+use std::{env, path::PathBuf};
 use strum::{AsRefStr, EnumString};
 
 lazy_static! {
     static ref DEFAULT_SOCK_PATH: String = Config::default_sock_path().display().to_string();
     static ref DEFAULT_STORAGE_PATH: String = Config::default_storage_path().display().to_string();
+    static ref DEFAULT_CNI_PLUGIN_PATHS: String =
+        env::var("PATH").unwrap_or_else(|_| "/opt/cni/bin".into());
 }
 
 #[derive(Builder, Clap, CopyGetters, Getters, Deserialize, Serialize)]
@@ -90,13 +92,13 @@ pub struct Config {
 
     #[get = "pub"]
     #[clap(
-        default_value("/opt/cni/bin"),
+        default_value(&DEFAULT_CNI_PLUGIN_PATHS),
         env("CRI_CNI_PLUGIN_PATHS"),
         long("cni-plugin-paths"),
         value_name("PATH")
     )]
-    /// The paths to the CNI plugin binaries.
-    cni_plugin_paths: Vec<PathBuf>,
+    /// The paths to the CNI plugin binaries, separated by the OS typic separator.
+    cni_plugin_paths: String,
 }
 
 impl Config {
@@ -152,7 +154,7 @@ pub mod tests {
         assert_eq!(c.log_level(), LevelFilter::Info);
         assert!(c.cni_default_network().is_none());
         assert_eq!(c.cni_config_paths().len(), 1);
-        assert_eq!(c.cni_plugin_paths().len(), 1);
+        assert!(!c.cni_plugin_paths().is_empty());
     }
 
     #[test]
@@ -162,12 +164,7 @@ pub mod tests {
             .sock_path("/some/path")
             .cni_default_network("default-network")
             .cni_config_paths(["a", "b"].iter().map(PathBuf::from).collect::<Vec<_>>())
-            .cni_plugin_paths(
-                ["1", "2", "3"]
-                    .iter()
-                    .map(PathBuf::from)
-                    .collect::<Vec<_>>(),
-            )
+            .cni_plugin_paths("1:2:3")
             .log_scope(LogScope::Global)
             .storage_path("/some/other/path")
             .build()?;
@@ -178,7 +175,7 @@ pub mod tests {
         assert_eq!(&c.storage_path().display().to_string(), "/some/other/path");
         assert_eq!(c.cni_default_network(), &Some("default-network".into()));
         assert_eq!(c.cni_config_paths().len(), 2);
-        assert_eq!(c.cni_plugin_paths().len(), 3);
+        assert_eq!(c.cni_plugin_paths(), "1:2:3");
 
         Ok(())
     }

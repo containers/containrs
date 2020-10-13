@@ -1,24 +1,25 @@
 //! CNI network config types
-use crate::network::cni::exec::{ArgsBuilder, Exec};
+use crate::network::cni::{
+    exec::{DefaultExec, Exec},
+    plugin::PluginBuilder,
+};
 use anyhow::{bail, Context, Result};
 use derive_builder::Builder;
-use getset::Getters;
-use log::trace;
+use getset::{Getters, Setters};
 use serde::{Deserialize, Serialize};
 use std::{
     collections::HashMap,
     convert::Into,
+    fmt,
     fs::File,
+    io::Read,
     path::{Path, PathBuf},
 };
 
-#[derive(Clone, Debug, Builder, Getters)]
+#[derive(Clone, Builder, Getters, Setters)]
 #[builder(pattern = "owned", setter(into))]
 /// The CNI plugin definition.
-pub struct Config<T>
-where
-    T: Default,
-{
+pub struct Config {
     #[getset(get = "pub")]
     /// The name of the plugin.
     name: String,
@@ -31,51 +32,50 @@ where
     /// The configuration list.
     list: ConfigListFile,
 
-    #[get]
-    #[builder(default = "T::default()")]
+    #[getset(get, set = "pub")]
+    #[builder(default = "Box::new(DefaultExec)")]
     /// CNI command execution helper.
-    exec: T,
+    plugin_exec: Box<dyn Exec>,
 }
 
-impl<T> Config<T>
-where
-    T: Clone + Default + Exec,
-{
+impl fmt::Debug for Config {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        f.debug_struct("Config")
+            .field("name", self.name())
+            .field("file", self.file())
+            .field("list", self.list())
+            .finish()
+    }
+}
+
+impl Config {
     /// Verifies that a given plugin `name` is supported by the provided `version`.
-    pub async fn validate(&self) -> Result<()> {
+    pub async fn validate(&self, plugin_paths: &str) -> Result<()> {
         let version = self
             .list()
             .cni_version()
             .as_ref()
             .context("no config `cniVersion` provided")?;
 
-        let args = ArgsBuilder::default()
-            .command("VERSION")
-            .build()
-            .context("build CNI exec args")?;
+        for plugin_config in self.list().plugins() {
+            let mut plugin = PluginBuilder::default()
+                .binary(plugin_config.typ())
+                .build()
+                .context("build CNI plugin")?;
+            plugin.set_exec(self.plugin_exec.clone());
 
-        for plugin in self.list().plugins() {
-            let binary = which::which(plugin.typ())
-                .with_context(|| format!("find plugin binary {} in $PATH", plugin.typ()))?;
-            trace!("Using plugin binary {}", binary.display());
-
-            trace!("Using CNI args {:?}", args);
-
-            let output = self
-                .exec()
-                .run(&binary, &args)
+            if !plugin
+                .find_binary(plugin_paths)
+                .context("find plugin binary")?
+                .version()
                 .await
-                .context("exec CNI plugin")?;
-            trace!("Got CNI ouput {}", output);
-
-            if !serde_json::from_str::<VersionResult>(&output)
-                .context("unmarshal CNI output")?
+                .context("get plugin version")?
                 .supported_versions()
                 .contains(&version.into())
             {
                 bail!(
                     "plugin {} does not support config version {}",
-                    plugin.typ(),
+                    plugin_config.typ(),
                     version
                 )
             }
@@ -85,21 +85,7 @@ where
     }
 }
 
-#[derive(Clone, Serialize, Deserialize, Debug, Default, Getters)]
-/// VersionResult is the result which is returned when calling the `VERSION` CNI command.
-pub struct VersionResult {
-    #[get]
-    #[serde(rename = "cniVersion")]
-    /// The current CNI version of this plugin.
-    current: String,
-
-    #[get]
-    #[serde(rename = "supportedVersions")]
-    /// All supported versions by this plugin.
-    supported_versions: Vec<String>,
-}
-
-#[derive(Clone, Serialize, Deserialize, Debug, Default, Builder, Getters)]
+#[derive(Clone, Serialize, Deserialize, Default, Builder, Getters)]
 #[builder(default, pattern = "owned", setter(into, strip_option))]
 // Config describes a CNI network configuration.
 pub struct ConfigFile {
@@ -132,21 +118,40 @@ pub struct ConfigFile {
     dns: DNS,
 
     #[getset(get = "pub")]
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        rename = "prevResult"
-    )]
-    raw_prev_result: Option<HashMap<String, Vec<u8>>>,
+    #[serde(skip)]
+    raw: Vec<u8>,
+}
+
+impl fmt::Debug for ConfigFile {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        f.debug_struct("Config")
+            .field("cni_version", self.cni_version())
+            .field("name", self.name())
+            .field("type", self.typ())
+            .field("capabilities", self.capabilities())
+            .field("ipam", self.ipam())
+            .field("dns", self.dns())
+            .finish()
+    }
 }
 
 impl ConfigFile {
     /// Load a new ConfigFile from the provided file `Path`.
     pub fn from(path: &Path) -> Result<Self> {
-        let file = File::open(path).with_context(|| format!("open file {}", path.display()))?;
-        let mut config: Self = serde_json::from_reader(file)
+        // Read the file.
+        let mut raw = Vec::new();
+        File::open(path)
+            .with_context(|| format!("open file {}", path.display()))?
+            .read_to_end(&mut raw)?;
+
+        // Deserialize the config.
+        let mut config: Self = serde_json::from_slice(&raw)
             .with_context(|| format!("deserialize CNI config from file {}", path.display()))?;
 
+        // Save the raw content as well for later passing to the CNI plugin.
+        config.raw = raw;
+
+        // Use a fallback name if necessary.
         if config.name().is_none() {
             config.name = Some(config.typ().clone());
         }
@@ -235,24 +240,11 @@ pub struct DNS {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::network::cni::exec::Args;
-    use async_trait::async_trait;
+    use crate::network::cni::plugin::{tests::ExecMock, VersionResult};
     use std::io::Write;
     use tempfile::NamedTempFile;
 
-    #[derive(Clone, Default)]
-    struct Mock {
-        result: String,
-    }
-
     const VERSION: &str = "0.4.0";
-
-    #[async_trait]
-    impl Exec for Mock {
-        async fn run(&self, _binary: &Path, _args: &Args) -> Result<String> {
-            Ok(self.result.clone())
-        }
-    }
 
     fn new_list() -> Result<ConfigListFile> {
         Ok(ConfigListFileBuilder::default()
@@ -263,58 +255,48 @@ mod tests {
 
     #[tokio::test]
     async fn config_validate_success() -> Result<()> {
-        let mock = Mock {
-            result: serde_json::to_string(&VersionResult {
-                current: VERSION.into(),
-                supported_versions: vec![VERSION.into()],
-            })?,
-        };
-        let config = ConfigBuilder::<Mock>::default()
-            .exec(mock)
+        let mock = ExecMock::boxed()?;
+        let mut config = ConfigBuilder::default()
             .name("name")
             .file("file")
             .list(new_list()?)
             .build()?;
-        config.validate().await
+        config.set_plugin_exec(mock);
+        config.validate("").await
     }
 
     #[tokio::test]
     async fn config_validate_failure_unsupported_version() -> Result<()> {
-        let mock = Mock {
-            result: serde_json::to_string(&VersionResult::default())?,
-        };
-        let config = ConfigBuilder::<Mock>::default()
-            .exec(mock)
+        let mut mock = ExecMock::boxed()?;
+        mock.result = Ok(serde_json::to_string(&VersionResult::default())?);
+        let mut config = ConfigBuilder::default()
             .name("name")
             .file("file")
             .list(new_list()?)
             .build()?;
-        assert!(config.validate().await.is_err());
+        config.set_plugin_exec(mock);
+        assert!(config.validate("").await.is_err());
         Ok(())
     }
 
     #[tokio::test]
     async fn config_validate_failure_wrong_json_result() -> Result<()> {
-        let mock = Mock {
-            result: "wrong".into(),
-        };
-        let config = ConfigBuilder::<Mock>::default()
-            .exec(mock)
+        let mut mock = ExecMock::boxed()?;
+        mock.result = Ok("wrong".into());
+        let mut config = ConfigBuilder::default()
             .name("name")
             .file("file")
             .list(new_list()?)
             .build()?;
-        assert!(config.validate().await.is_err());
+        config.set_plugin_exec(mock);
+        assert!(config.validate("").await.is_err());
         Ok(())
     }
 
     #[tokio::test]
     async fn config_validate_failure_wrong_type() -> Result<()> {
-        let mock = Mock {
-            result: "wrong".into(),
-        };
-        let config = ConfigBuilder::<Mock>::default()
-            .exec(mock)
+        let mock = ExecMock::boxed()?;
+        let mut config = ConfigBuilder::default()
             .name("name")
             .file("file")
             .list(
@@ -326,22 +308,21 @@ mod tests {
                     .build()?,
             )
             .build()?;
-        assert!(config.validate().await.is_err());
+        config.set_plugin_exec(mock);
+        assert!(config.validate("").await.is_err());
         Ok(())
     }
 
     #[tokio::test]
     async fn config_validate_failure_no_version() -> Result<()> {
-        let mock = Mock {
-            result: "wrong".into(),
-        };
-        let config = ConfigBuilder::<Mock>::default()
-            .exec(mock)
+        let mock = ExecMock::boxed()?;
+        let mut config = ConfigBuilder::default()
             .name("name")
             .file("file")
             .list(ConfigListFileBuilder::default().build()?)
             .build()?;
-        assert!(config.validate().await.is_err());
+        config.set_plugin_exec(mock);
+        assert!(config.validate("").await.is_err());
         Ok(())
     }
 
