@@ -6,13 +6,13 @@ authors = [
     "Sascha Grunert <mail@saschagrunert.de>",
 ]
 edition = "2018"
-description = "Kubernetes Container Runtime Interface implementation"
+description = "Container Runtime library for Kubernetes (CRI) and friends"
 documentation = "https://docs.rs/cri"
 readme = "README.md"
 homepage = "https://github.com/cri-o/cri"
 repository = "https://github.com/cri-o/cri"
 license = "Apache-2.0"
-keywords = ["kubernetes", "cri"]
+keywords = ["runtime", "kubernetes", "cri", "container", "pod"]
 categories = ["network-programming", "api-bindings"]
 
 [profile.release]

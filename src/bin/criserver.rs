@@ -1,7 +1,7 @@
 use anyhow::Result;
 use cri::{
     error,
-    server::{Config, Server},
+    kubernetes::server::{Config, Server},
 };
 use std::process::exit;
 
