@@ -70,9 +70,7 @@ impl CRIService {
         debug!("Created pod sandbox {:?}", sandbox);
 
         // Run the sandbox
-        sandbox
-            .run()
-            .map_err(|e| Status::internal(format!("run pod sandbox: {}", e)))?;
+        sandbox.run().await.map_err(|e| Status::internal(format!("run pod sandbox: {}", e)))?;
         info!("Started pod sandbox {}", sandbox);
 
         // Build and return the response
