@@ -2,6 +2,7 @@
 
 [![ci](https://github.com/cri-o/cri/workflows/ci/badge.svg)](https://github.com/cri-o/cri/actions)
 [![codecov](https://codecov.io/gh/cri-o/cri/branch/master/graph/badge.svg)](https://codecov.io/gh/cri-o/cri)
+[![docs](https://img.shields.io/badge/docs-master-blue.svg)](https://cri-o.github.io/cri/cri)
 
 This repository is a hacking space for a new container runtime in Rust. 
 
