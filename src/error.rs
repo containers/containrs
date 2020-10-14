@@ -1,11 +1,12 @@
 //! Error handling helpers and primitives.
 
 use anyhow::Error;
+use std::string::ToString;
 
 /// Chain creates a string from an error stack.
 pub fn chain(res: Error) -> String {
     res.chain()
-        .map(|x| x.to_string())
+        .map(ToString::to_string)
         .collect::<Vec<_>>()
         .join(": ")
 }

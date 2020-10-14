@@ -10,7 +10,7 @@ use crate::{
 use anyhow::{bail, format_err, Context, Result};
 use derive_builder::Builder;
 use log::debug;
-use std::{convert::AsRef, fmt::Display, fs::File, path::PathBuf};
+use std::{convert::AsRef, fmt::Display, fs::File, path::PathBuf, string::ToString};
 
 #[derive(Builder, Debug, Default)]
 #[builder(default, pattern = "owned", setter(into, strip_option))]
@@ -107,7 +107,7 @@ impl Seccomp {
                         .names(
                             self.capability_to_syscalls(*capability)
                                 .iter()
-                                .map(|x| x.to_string())
+                                .map(ToString::to_string)
                                 .collect::<Vec<_>>(),
                         )
                         .build()
@@ -135,7 +135,7 @@ impl Seccomp {
             .names(
                 DEFAULT_SYSCALLS
                     .iter()
-                    .map(|x| x.to_string())
+                    .map(ToString::to_string)
                     .collect::<Vec<_>>(),
             )
             .build()
@@ -170,7 +170,7 @@ impl Seccomp {
                     "set_tls",
                 ]
                 .iter()
-                .map(|x| x.to_string())
+                .map(ToString::to_string)
                 .collect::<Vec<_>>(),
             )
             .build()
@@ -184,7 +184,7 @@ impl Seccomp {
             .names(
                 ["arch_prctl", "modify_ldt"]
                     .iter()
-                    .map(|x| x.to_string())
+                    .map(ToString::to_string)
                     .collect::<Vec<_>>(),
             )
             .build()
