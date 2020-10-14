@@ -20,7 +20,7 @@ use tonic::transport::{Channel, Endpoint, Uri};
 use tower::service_fn;
 
 pub mod criapi {
-    include!("../src/criapi/runtime.v1alpha2.rs");
+    include!("../src/kubernetes/cri/api/runtime.v1alpha2.rs");
 }
 
 const TIMEOUT: u64 = 2000;
