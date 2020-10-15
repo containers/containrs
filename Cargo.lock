@@ -212,7 +212,7 @@ dependencies = [
  "sled",
  "strum",
  "tempfile",
- "tokio",
+ "tokio 0.2.22",
  "tokio-test",
  "tonic",
  "tonic-build",
@@ -588,7 +588,7 @@ dependencies = [
  "http",
  "indexmap",
  "slab",
- "tokio",
+ "tokio 0.2.22",
  "tokio-util 0.3.1",
  "tracing",
 ]
@@ -677,7 +677,7 @@ dependencies = [
  "itoa",
  "pin-project",
  "socket2",
- "tokio",
+ "tokio 0.2.22",
  "tower-service",
  "tracing",
  "want",
@@ -971,7 +971,7 @@ dependencies = [
  "log",
  "netlink-packet-core",
  "netlink-sys",
- "tokio",
+ "tokio 0.2.22",
  "tokio-util 0.2.0",
 ]
 
@@ -985,7 +985,7 @@ dependencies = [
  "libc",
  "log",
  "mio",
- "tokio",
+ "tokio 0.2.22",
 ]
 
 [[package]]
@@ -1580,6 +1580,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "tokio"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7137dbb0abee577362ccdc7df21605cfcbb949243aeab47dac9ea6ef7d830e21"
+dependencies = [
+ "bytes",
+ "fnv",
+ "futures-core",
+ "pin-project-lite",
+ "slab",
+]
+
+[[package]]
 name = "tokio-macros"
 version = "0.2.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1592,13 +1605,13 @@ dependencies = [
 
 [[package]]
 name = "tokio-test"
-version = "0.2.1"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ed0049c119b6d505c4447f5c64873636c7af6c75ab0d45fd9f618d82acb8016d"
+checksum = "7edc5a2b13a713b9134debc9aa1265b0a1ccf6a81fa05af2ba26e4aee56cdf1a"
 dependencies = [
  "bytes",
  "futures-core",
- "tokio",
+ "tokio 0.3.0",
 ]
 
 [[package]]
@@ -1612,7 +1625,7 @@ dependencies = [
  "futures-sink",
  "log",
  "pin-project-lite",
- "tokio",
+ "tokio 0.2.22",
 ]
 
 [[package]]
@@ -1626,7 +1639,7 @@ dependencies = [
  "futures-sink",
  "log",
  "pin-project-lite",
- "tokio",
+ "tokio 0.2.22",
 ]
 
 [[package]]
@@ -1648,7 +1661,7 @@ dependencies = [
  "pin-project",
  "prost",
  "prost-derive",
- "tokio",
+ "tokio 0.2.22",
  "tokio-util 0.3.1",
  "tower",
  "tower-balance",
@@ -1701,7 +1714,7 @@ dependencies = [
  "pin-project",
  "rand",
  "slab",
- "tokio",
+ "tokio 0.2.22",
  "tower-discover",
  "tower-layer",
  "tower-load",
@@ -1719,7 +1732,7 @@ checksum = "c4887dc2a65d464c8b9b66e0e4d51c2fd6cf5b3373afc72805b0a60bce00446a"
 dependencies = [
  "futures-core",
  "pin-project",
- "tokio",
+ "tokio 0.2.22",
  "tower-layer",
  "tower-service",
  "tracing",
@@ -1750,7 +1763,7 @@ checksum = "92c3040c5dbed68abffaa0d4517ac1a454cd741044f33ab0eefab6b8d1361404"
 dependencies = [
  "futures-core",
  "pin-project",
- "tokio",
+ "tokio 0.2.22",
  "tower-layer",
  "tower-load",
  "tower-service",
@@ -1765,7 +1778,7 @@ dependencies = [
  "futures-core",
  "log",
  "pin-project",
- "tokio",
+ "tokio 0.2.22",
  "tower-discover",
  "tower-service",
 ]
@@ -1788,7 +1801,7 @@ version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ce50370d644a0364bf4877ffd4f76404156a248d104e2cc234cd391ea5cdc965"
 dependencies = [
- "tokio",
+ "tokio 0.2.22",
  "tower-service",
 ]
 
@@ -1802,7 +1815,7 @@ dependencies = [
  "futures-util",
  "indexmap",
  "log",
- "tokio",
+ "tokio 0.2.22",
  "tower-service",
 ]
 
@@ -1814,7 +1827,7 @@ checksum = "e6727956aaa2f8957d4d9232b308fe8e4e65d99db30f42b225646e86c9b6a952"
 dependencies = [
  "futures-core",
  "pin-project",
- "tokio",
+ "tokio 0.2.22",
  "tower-layer",
  "tower-service",
 ]
@@ -1832,7 +1845,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "127b8924b357be938823eaaec0608c482d40add25609481027b96198b2e4b31e"
 dependencies = [
  "pin-project",
- "tokio",
+ "tokio 0.2.22",
  "tower-layer",
  "tower-service",
 ]
