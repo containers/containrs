@@ -1,7 +1,7 @@
 use crate::{
     kubernetes::cri::{
         api::{NamespaceMode, RunPodSandboxRequest, RunPodSandboxResponse},
-        cri_service::CRIService,
+        cri_service::{CRIService, OptionStatus, ResultStatus},
     },
     sandbox::{pinned::PinnedSandbox, LinuxNamespaces, SandboxBuilder, SandboxDataBuilder},
 };
@@ -20,24 +20,24 @@ impl CRIService {
             .into_inner()
             .config
             .take()
-            .ok_or_else(|| Status::invalid_argument("no pod sandbox config provided"))?;
+            .ok_or_invalid("no pod sandbox config provided")?;
 
         // Verify that the metadata exists
         let metadata = config
             .metadata
-            .ok_or_else(|| Status::invalid_argument("no pod sandbox metadata provided"))?;
+            .ok_or_invalid("no pod sandbox metadata provided")?;
 
         let linux_config = config
             .linux
-            .ok_or_else(|| Status::invalid_argument("no linux configuration provided"))?;
+            .ok_or_invalid("no linux configuration provided")?;
 
         let security_context = linux_config
             .security_context
-            .ok_or_else(|| Status::invalid_argument("no linux security context provided"))?;
+            .ok_or_invalid("no linux security context provided")?;
 
         let namespace_options = security_context
             .namespace_options
-            .ok_or_else(|| Status::invalid_argument("no namespace options provided"))?;
+            .ok_or_invalid("no namespace options provided")?;
 
         let mut linux_namespaces = LinuxNamespaces::empty();
         if namespace_options.network == NamespaceMode::Pod as i32 {
@@ -64,19 +64,15 @@ impl CRIService {
                     .log_directory(config.log_directory)
                     .annotations(config.annotations)
                     .build()
-                    .map_err(|e| {
-                        Status::internal(format!("build sandbox data from metadata: {}", e))
-                    })?,
+                    .map_internal("build sandbox data from metadata")?,
             )
             .build()
-            .map_err(|e| Status::internal(format!("build sandbox from config: {}", e)))?;
+            .map_internal("build sandbox from config")?;
 
         debug!("Created pod sandbox {:?}", sandbox);
 
         // Run the sandbox
-        sandbox
-            .run()
-            .map_err(|e| Status::internal(format!("run pod sandbox: {}", e)))?;
+        sandbox.run().map_internal("run pod sandbox")?;
         info!("Started pod sandbox {}", sandbox);
 
         // Build and return the response
