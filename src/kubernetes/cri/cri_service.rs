@@ -2,22 +2,20 @@
 
 use crate::storage::default_key_value_storage::DefaultKeyValueStorage;
 use anyhow::Result;
+use derive_builder::Builder;
 use log::debug;
 use std::fmt::{Debug, Display};
 use tonic::{Request, Response, Status};
 
-#[derive(Clone)]
+#[derive(Clone, Builder)]
+#[builder(pattern = "owned", setter(into))]
 /// The service implementation for the CRI API
 pub struct CRIService {
+    /// Storage used by the service.
     storage: DefaultKeyValueStorage,
 }
 
 impl CRIService {
-    /// Create a new CRIService with the provided storage.
-    pub fn new(storage: DefaultKeyValueStorage) -> Self {
-        Self { storage }
-    }
-
     /// Debug log a request.
     pub fn debug_request<T>(&self, request: &Request<T>)
     where

@@ -2,35 +2,48 @@
 
 use crate::storage::KeyValueStorage;
 use anyhow::{Context, Result};
+use getset::Getters;
+use log::trace;
 use serde::{de::DeserializeOwned, Serialize};
 use sled::Db;
 use std::{convert::AsRef, path::Path};
 
-#[derive(Clone)]
+#[derive(Debug, Clone, Getters)]
 /// A default key value storage implementation
 pub struct DefaultKeyValueStorage {
+    #[get]
+    /// The internal database.
     db: Db,
 }
 
 impl KeyValueStorage for DefaultKeyValueStorage {
     /// Open the database, whereas the `Path` has to be a directory.
     fn open(path: &Path) -> Result<Self> {
+        trace!("Opening storage {}", path.display());
         Ok(Self {
             db: sled::open(path)
                 .with_context(|| format!("failed to open storage path {}", path.display()))?,
         })
     }
 
-    fn get<K, V>(&mut self, key: K) -> Result<Option<V>>
+    fn get<K, V>(&self, key: K) -> Result<Option<V>>
     where
         K: AsRef<[u8]>,
         V: DeserializeOwned,
     {
-        Ok(self
-            .db
+        match self
+            .db()
             .get(key)
             .context("failed to retrieve value for key")?
-            .and_then(|x| bincode::deserialize(&x).ok()))
+        {
+            None => Ok(None),
+            Some(value) => {
+                trace!("Got result from storage (len = {})", value.len());
+                Ok(Some(
+                    rmp_serde::from_slice(&value).context("deserialize value")?,
+                ))
+            }
+        }
     }
 
     fn insert<K, V>(&mut self, key: K, value: V) -> Result<()>
@@ -38,14 +51,13 @@ impl KeyValueStorage for DefaultKeyValueStorage {
         K: AsRef<[u8]>,
         V: Serialize,
     {
-        self.db
+        self.db()
             .insert(
                 key,
-                bincode::serialize(&value)
-                    .context("failed to serialize value")?
-                    .as_slice(),
+                rmp_serde::to_vec(&value).context("failed to serialize value")?,
             )
             .context("failed to insert key and value")?;
+        trace!("Inserted item into storage (count = {})", self.db().len());
         Ok(())
     }
 
@@ -53,12 +65,14 @@ impl KeyValueStorage for DefaultKeyValueStorage {
     where
         K: AsRef<[u8]>,
     {
-        self.db.remove(key)?.context("failed to remove value")?;
+        self.db().remove(key)?.context("failed to remove value")?;
+        trace!("Removed item from storage (count = {})", self.db().len());
         Ok(())
     }
 
     fn persist(&mut self) -> Result<()> {
-        self.db.flush().context("failed to persist db")?;
+        self.db().flush().context("failed to persist db")?;
+        trace!("Persisted storage");
         Ok(())
     }
 }

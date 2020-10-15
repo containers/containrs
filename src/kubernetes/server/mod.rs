@@ -4,7 +4,7 @@ use crate::{
         api::{
             image_service_server::ImageServiceServer, runtime_service_server::RuntimeServiceServer,
         },
-        cri_service::CRIService,
+        cri_service::CRIServiceBuilder,
     },
     network::{
         cni::{CNIBuilder, CNI},
@@ -47,8 +47,11 @@ impl Server {
             .context("set logging verbosity")?;
 
         // Setup the storage and pass it to the service
-        let storage = DefaultKeyValueStorage::open(&self.config.storage_path())?;
-        let cri_service = CRIService::new(storage.clone());
+        let storage =
+            DefaultKeyValueStorage::open(&self.config.storage_path().join("cri-service"))?;
+        let cri_service = CRIServiceBuilder::default()
+            .storage(storage.clone())
+            .build()?;
 
         let network = self.initialize_network().await.context("init network")?;
 
@@ -79,7 +82,7 @@ impl Server {
             }
         }
 
-        self.cleanup(storage, network)
+        self.cleanup(storage, network).await
     }
 
     /// Create a new UnixListener from the configs socket path.
@@ -150,6 +153,7 @@ impl Server {
             .default_network_name(self.config.cni_default_network().clone())
             .config_paths(self.config.cni_config_paths().clone())
             .plugin_paths(self.config.cni_plugin_paths())
+            .storage_path(self.config.storage_path().join("cni"))
             .build()
             .context("build CNI network data")?;
 
@@ -167,7 +171,11 @@ impl Server {
     }
 
     /// Cleanup the server and persist any data if necessary.
-    fn cleanup(self, mut storage: DefaultKeyValueStorage, mut network: Network<CNI>) -> Result<()> {
+    async fn cleanup(
+        self,
+        mut storage: DefaultKeyValueStorage,
+        mut network: Network<CNI>,
+    ) -> Result<()> {
         debug!("Cleaning up server");
 
         trace!("Persisting storage");
@@ -182,7 +190,7 @@ impl Server {
         })?;
 
         trace!("Stopping network");
-        network.cleanup().context("clean up network")?;
+        network.cleanup().await.context("clean up network")?;
 
         trace!("Server shut down");
         Ok(())
@@ -236,10 +244,22 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn initialize_network() -> Result<()> {
-        let config = ConfigBuilder::default().build()?;
+    async fn initialize_network_success() -> Result<()> {
+        let config = ConfigBuilder::default()
+            .storage_path(tempdir()?.path())
+            .build()?;
         let sut = Server::new(config);
         sut.initialize_network().await?;
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn initialize_network_wrong_storage_path() -> Result<()> {
+        let config = ConfigBuilder::default()
+            .storage_path("/proc/storage")
+            .build()?;
+        let sut = Server::new(config);
+        assert!(sut.initialize_network().await.is_err());
         Ok(())
     }
 }

@@ -14,7 +14,7 @@ pub trait KeyValueStorage {
         Self: Sized;
 
     /// Get an arbitrary item from the storage.
-    fn get<K, V>(&mut self, key: K) -> Result<Option<V>>
+    fn get<K, V>(&self, key: K) -> Result<Option<V>>
     where
         K: AsRef<[u8]>,
         V: DeserializeOwned;
