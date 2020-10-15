@@ -172,6 +172,8 @@ impl Server {
 
         trace!("Persisting storage");
         storage.persist().context("persist storage")?;
+
+        trace!("Removing socket path");
         std::fs::remove_file(self.config.sock_path()).with_context(|| {
             format!(
                 "unable to remove socket path {}",
@@ -182,6 +184,7 @@ impl Server {
         trace!("Stopping network");
         network.cleanup().context("clean up network")?;
 
+        trace!("Server shut down");
         Ok(())
     }
 }

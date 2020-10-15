@@ -170,6 +170,8 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
       - name: Integration Tests
         run: make test-integration
+        env:
+          RUST_TEST_THREADS: '1'
 
   test-e2e:
     runs-on: ubuntu-latest

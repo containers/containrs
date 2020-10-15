@@ -23,7 +23,7 @@ pub mod criapi {
     include!("../src/kubernetes/cri/api/runtime.v1alpha2.rs");
 }
 
-const TIMEOUT: u64 = 2000;
+const TIMEOUT: u64 = 10;
 const BINARY_PATH: &str = "target/debug/criserver";
 
 static INIT: Once = Once::new();
@@ -89,7 +89,7 @@ impl Sut {
         info!("Starting server");
         let sock_path = test_dir.join("test.sock");
         let child = Command::new(BINARY_PATH)
-            .arg("--log-level=debug")
+            .arg("--log-level=trace")
             .arg(format!("--sock-path={}", sock_path.display()))
             .arg(format!(
                 "--storage-path={}",
@@ -108,7 +108,7 @@ impl Sut {
         if !Self::check_file_for_output(
             &mut log_file_reader,
             &test_dir.display().to_string(),
-            "Unable to run server",
+            Some("Unable to run server"),
         )? {
             bail!("server did not become ready")
         }
@@ -156,18 +156,21 @@ impl Sut {
         info!("Killing server pid {}", self.pid);
         Command::new("kill").arg(self.pid.to_string()).status()?;
 
-        // Cleanup temp dir
-        info!("Removing test dir {}", self.test_dir().display());
-        if self.test_dir().exists() {
-            fs::remove_dir_all(self.test_dir()).context("cleanup test directory")?;
+        if !Self::check_file_for_output(&mut self.log_file_reader, "Server shut down", None)? {
+            bail!("server did not shutdown correctly")
         }
+
+        // Remove the temp dir
+        info!("Removing test dir {}", self.test_dir().display());
+        fs::remove_dir_all(self.test_dir()).context("cleanup test directory")?;
+
         Ok(())
     }
 
     fn check_file_for_output(
         file_reader: &mut BufReader<File>,
         success_pattern: &str,
-        failure_pattern: &str,
+        failure_pattern: Option<&str>,
     ) -> Result<bool> {
         let mut success = false;
         let now = Instant::now();
@@ -181,8 +184,10 @@ impl Sut {
                     success = true;
                     break;
                 }
-                if line.contains(failure_pattern) {
-                    break;
+                if let Some(failure_pattern) = failure_pattern {
+                    if line.contains(failure_pattern) {
+                        break;
+                    }
                 }
             }
         }
