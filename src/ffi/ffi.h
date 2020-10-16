@@ -8,7 +8,7 @@
 /**
  * An enum representing the available verbosity level filters of the logger.
  */
-typedef enum {
+typedef enum LogLevel {
   /**
    * A level lower than all log levels.
    */
@@ -61,4 +61,4 @@ int last_error_message(char *buffer, int length);
  * Init the log level by the provided level string.
  * Populates the last error on any failure.
  */
-void log_init(LogLevel level);
+void log_init(enum LogLevel level);

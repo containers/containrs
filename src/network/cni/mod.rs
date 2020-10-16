@@ -6,7 +6,7 @@ use crate::{
             config::{Config, ConfigBuilder, ConfigFile, ConfigListFile},
             exec::{DefaultExec, Exec},
             namespace::Namespace,
-            netlink::Netlink,
+            netlink::{DefaultNetlink, Netlink},
             plugin::{CNIResult, Plugin, PluginBuilder},
         },
         PodNetwork,
@@ -37,9 +37,12 @@ use tokio::sync::RwLock;
 
 mod config;
 mod exec;
+mod iptables;
 mod namespace;
 mod netlink;
 mod plugin;
+
+pub mod port;
 
 #[derive(Builder, Default, Getters)]
 #[builder(default, pattern = "owned", setter(into))]
@@ -105,7 +108,10 @@ pub struct CNIState {
 
 /// Selector for watcher messages on the receiver channel.
 pub enum WatcherMessage {
+    /// A notification evened message.
     Handle(result::Result<Event, NotifyError>),
+
+    /// A message indicating that the watching should end.
     Exit,
 }
 
@@ -536,7 +542,7 @@ impl PodNetwork for CNI {
         trace!("Setup loopback interface");
         netns
             .run(async move {
-                let netlink = Netlink::new().await?;
+                let netlink = DefaultNetlink::new().await?;
                 let loopback_link = netlink.loopback().await.context("get loopback link")?;
                 netlink
                     .set_link_up(&loopback_link)
@@ -592,7 +598,7 @@ impl PodNetwork for CNI {
         trace!("Stopping loopback interface");
         netns
             .run(async move {
-                let netlink = Netlink::new().await?;
+                let netlink = DefaultNetlink::new().await?;
                 let loopback_link = netlink.loopback().await.context("get loopback link")?;
                 netlink
                     .set_link_down(&loopback_link)

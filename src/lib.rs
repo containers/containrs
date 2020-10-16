@@ -3,7 +3,6 @@
 
 mod capability;
 mod ffi;
-mod network;
 mod oci;
 mod sandbox;
 mod seccomp;
@@ -11,3 +10,4 @@ mod storage;
 mod unix_stream;
 
 pub mod kubernetes;
+pub mod network;

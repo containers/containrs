@@ -40,6 +40,7 @@ lazy_static = "1.4.0"
 libc = "0.2.86"
 log = { version = "0.4.14", features = ["serde", "std"] }
 nix = "0.20.0"
+netlink-packet-route = "0.6.0"
 notify = { version = "5.0.0-pre.5", features = ["serde"] }
 prost = "0.7.0"
 rmp-serde = "0.15.4"
@@ -50,6 +51,7 @@ sled = "0.34.6"
 strum = { version = "0.20.0", features = ["derive"] }
 tokio = { version = "1.2.0", features = ["full"] }
 tonic = "0.4.0"
+sysctl = "0.4.0"
 which = "4.0.2"
 
 [build-dependencies]
@@ -62,3 +64,4 @@ ctor = "0.1.19"
 tempfile = "3.2.0"
 tokio-test = "0.4.0"
 tower = { version = "0.4.4", features = ["util"] }
+uuid = { version = "0.8.1", features = ["v4"]}
