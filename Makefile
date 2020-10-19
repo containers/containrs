@@ -1,4 +1,4 @@
-CARGO ?= cargo
+CARGO ?= cargo +nightly
 
 export RUST_TEST_NOCAPTURE=1
 
@@ -81,5 +81,8 @@ help: ## Display this help
 			} \
 			/^##@/ { \
 				printf "\n%s%s%s\n", col, substr($$0, 5), nocol \
+			} \
+			END  { \
+				printf "\nNote: requires rust nightly to build!\n"; \
 			} \
 		' $(MAKEFILE_LIST)
