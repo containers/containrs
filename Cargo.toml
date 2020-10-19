@@ -27,7 +27,7 @@ bitflags = "1.2.1"
 clap = { git = "https://github.com/clap-rs/clap", features = ["wrap_help"] }
 crossbeam-channel = "0.5.0"
 derive_builder = { git = "https://github.com/colin-kiegel/rust-derive-builder" }
-dyn-clone = "1.0.2"
+dyn-clone = "1.0.3"
 env_logger = "0.8.1"
 futures = "0.3.6"
 futures-util = "0.3.6"
