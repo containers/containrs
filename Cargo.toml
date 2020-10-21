@@ -15,6 +15,9 @@ license = "Apache-2.0"
 keywords = ["runtime", "kubernetes", "cri", "container", "pod"]
 categories = ["network-programming", "api-bindings"]
 
+[lib]
+crate-type = ["rlib", "staticlib"]
+
 [profile.release]
 lto = true
 opt-level = 'z'
@@ -49,6 +52,7 @@ which = "4.0.2"
 
 [build-dependencies]
 anyhow = "1.0.33"
+cbindgen = "0.15.0"
 tonic-build = "0.3.1"
 
 [dev-dependencies]

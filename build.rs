@@ -1,5 +1,6 @@
 use anyhow::{Context, Result};
-use std::path::PathBuf;
+use cbindgen::{Builder, Language};
+use std::{env, path::PathBuf};
 
 const PROTO_FILE: &str = "src/kubernetes/cri/proto/criapi.proto";
 
@@ -14,5 +15,14 @@ fn main() -> Result<()> {
                 .display()
                 .to_string()],
         )
-        .context("compile CRI protocol buffers")
+        .context("compile CRI protocol buffers")?;
+
+    Builder::new()
+        .with_crate(env::var("CARGO_MANIFEST_DIR")?)
+        .with_language(Language::C)
+        .generate()
+        .context("generate bindings")?
+        .write_to_file("src/ffi/ffi.h");
+
+    Ok(())
 }
