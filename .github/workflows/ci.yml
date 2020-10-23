@@ -42,12 +42,22 @@ jobs:
         with:
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
-      - name: Create artifact tarball
+      - name: Create and upload artifact tarball
         shell: bash
         run: |
             cp src/ffi/ffi.h .
             cp target/release/libcri.a .
-            tar cfz lib-$(git rev-parse --short HEAD).tar.gz ffi.h libcri.a
+
+            VERSION=$(
+              git describe --tags --exact-match 2>/dev/null ||
+              git rev-parse --short HEAD
+            )
+            TARBALL=lib-$VERSION.tar.gz
+
+            tar cfz $TARBALL ffi.h libcri.a
+            gsutil -m cp -n $TARBALL gs://$GCS_BUCKET/lib || true
+        env:
+          GCS_BUCKET: k8s-conform-cri-o
       - uses: actions/upload-artifact@v2
         with:
           name: lib
