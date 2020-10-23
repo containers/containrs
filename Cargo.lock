@@ -246,6 +246,7 @@ dependencies = [
  "getset",
  "ipnetwork",
  "lazy_static",
+ "libc",
  "log",
  "nix",
  "notify",

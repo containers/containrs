@@ -1,7 +1,6 @@
 //! A network implementation which does work with the Kubernetes Container Network Interface (CNI).
 
 use crate::{
-    error::chain,
     network::{
         cni::{
             config::{Config, ConfigBuilder, ConfigFile, ConfigListFile},
@@ -173,7 +172,7 @@ impl CNI {
                     }
                     Ok(WatcherMessage::Handle(Ok(event))) => {
                         if let Err(e) = Self::handle_event(&state, event).await {
-                            error!("Unable to handle event: {}", chain(e))
+                            error!("Unable to handle event: {:#}", e)
                         }
                     }
                     _ => {}
@@ -247,7 +246,7 @@ impl CNI {
         for file in files {
             match Self::load_network(self.state(), &file).await {
                 Err(e) => {
-                    warn!("Unable to load network {}: {}", file.display(), chain(e));
+                    warn!("Unable to load network {}: {:#}", file.display(), e);
                     continue;
                 }
                 Ok(config) => Self::insert_config(self.state(), config).await?,

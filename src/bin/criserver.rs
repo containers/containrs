@@ -1,8 +1,5 @@
 use anyhow::Result;
-use cri::{
-    error,
-    kubernetes::server::{Config, Server},
-};
+use cri::kubernetes::server::{Config, Server};
 use std::process::exit;
 
 #[tokio::main]
@@ -15,7 +12,7 @@ async fn main() -> Result<()> {
         // Collect all errors and chain them together. Do not use the logger
         // for printing here, because it could be possible that it fails before
         // initializing it.
-        println!("Unable to run server: {}", error::chain(e));
+        println!("Unable to run server: {:#}", e);
         exit(1);
     }
 
