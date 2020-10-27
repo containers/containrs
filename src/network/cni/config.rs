@@ -118,7 +118,7 @@ pub struct ConfigFile {
     dns: DNS,
 
     #[getset(get = "pub")]
-    #[serde(skip)]
+    #[serde(default)]
     raw: Vec<u8>,
 }
 

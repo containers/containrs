@@ -34,7 +34,7 @@ pub trait PodNetwork {
     }
 
     /// Cleanup the network implementation on server shutdown.
-    fn cleanup(&mut self) -> Result<()> {
+    async fn cleanup(&mut self) -> Result<()> {
         Ok(())
     }
 }
@@ -56,8 +56,8 @@ where
     }
 
     /// Cleanup the network implementation on server shutdown.
-    pub fn cleanup(&mut self) -> Result<()> {
-        self.implementation.cleanup()
+    pub async fn cleanup(&mut self) -> Result<()> {
+        self.implementation.cleanup().await
     }
 }
 

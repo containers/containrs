@@ -7,11 +7,12 @@ use crate::{
             exec::{DefaultExec, Exec},
             namespace::Namespace,
             netlink::Netlink,
-            plugin::{Plugin, PluginBuilder},
+            plugin::{CNIResult, Plugin, PluginBuilder},
         },
         PodNetwork,
     },
     sandbox::SandboxData,
+    storage::{default_key_value_storage::DefaultKeyValueStorage, KeyValueStorage},
 };
 use anyhow::{bail, Context, Result};
 use async_trait::async_trait;
@@ -23,6 +24,7 @@ use notify::{
     event::{CreateKind, ModifyKind, RemoveKind},
     Error as NotifyError, Event, EventKind, RecommendedWatcher, RecursiveMode, Watcher,
 };
+use serde::{Deserialize, Serialize};
 use std::{
     collections::HashMap,
     ffi::OsStr,
@@ -31,7 +33,7 @@ use std::{
     result,
     sync::Arc,
 };
-use tokio::sync::{RwLock, RwLockReadGuard};
+use tokio::sync::RwLock;
 
 mod config;
 mod exec;
@@ -54,6 +56,10 @@ pub struct CNI {
     #[get]
     /// The pugin search paths to be used.
     plugin_paths: String,
+
+    #[get]
+    /// The storage path to be used for persisting CNI results.
+    storage_path: Option<PathBuf>,
 
     #[get]
     /// The configuration watcher for monitoring config path changes.
@@ -91,6 +97,10 @@ pub struct CNIState {
     #[get]
     /// The plugin search paths to be used.
     plugin_paths: String,
+
+    #[getset(get_mut)]
+    /// The storage instance to be used for persisting CNI results.
+    storage: Option<DefaultKeyValueStorage>,
 }
 
 /// Selector for watcher messages on the receiver channel.
@@ -133,6 +143,16 @@ impl CNI {
         };
         self.state().write().await.default_network_name = self.default_network_name().clone();
         self.load_networks().await.context("load network configs")?;
+
+        // Setup the storage if a path is set
+        match self.storage_path() {
+            Some(path) => {
+                trace!("Setup CNI storage in {}", path.display());
+                self.state().write().await.storage =
+                    Some(DefaultKeyValueStorage::open(path).context("open storage path")?)
+            }
+            None => warn!("Not using CNI storage, cannot persist network results"),
+        }
 
         // Create a config watcher
         let (tx, rx) = crossbeam_channel::unbounded();
@@ -438,9 +458,8 @@ impl CNI {
     /// Retrieve necessary data for network start/stop.
     async fn get_start_stop_data<'a, 'b>(
         &'b self,
-        state: &'b RwLockReadGuard<'_, CNIState>,
         sandbox_data: &'a SandboxData,
-    ) -> Result<(&'a Path, Namespace, &'b Config)> {
+    ) -> Result<(&'a Path, Namespace)> {
         let network_namespace_path = sandbox_data
             .network_namespace_path()
             .as_ref()
@@ -450,18 +469,13 @@ impl CNI {
             .await
             .context("create network namespace")?;
 
-        let default_network = state
-            .default_network()
-            .as_ref()
-            .context("no default network available")?;
-
-        Ok((network_namespace_path, netns, default_network))
+        Ok((network_namespace_path, netns))
     }
 
     /// Build a CNI plugin for start/stop execution.
-    async fn build_plugin(&self, config: &ConfigFile) -> Result<Plugin> {
+    async fn build_plugin(&self, binary: &str) -> Result<Plugin> {
         let mut plugin = PluginBuilder::default()
-            .binary(config.typ())
+            .binary(binary)
             .build()
             .context("build CNI plugin")?;
         plugin.set_exec(
@@ -481,6 +495,26 @@ impl CNI {
     }
 }
 
+/// A value to be safed in the CNI network storage.
+type StorageValues = Vec<StorageValue>;
+
+#[derive(Builder, Default, Getters, Serialize, Deserialize)]
+#[builder(default, pattern = "owned", setter(into))]
+/// A single storage value.
+struct StorageValue {
+    #[get]
+    /// CNI Plugin binary name.
+    binary_name: String,
+
+    #[get]
+    /// Raw CNI config.
+    raw_cni_config: Vec<u8>,
+
+    #[get]
+    /// The CNI add result.
+    cni_result: CNIResult,
+}
+
 #[async_trait]
 impl PodNetwork for CNI {
     /// Start a new network for the provided `SandboxData`.
@@ -488,15 +522,18 @@ impl PodNetwork for CNI {
         info!("Starting CNI network for sandbox {}", sandbox_data.id());
         // Things intentionally skipped for sake of initial implementation simplicity:
         //
-        // - host network pod handling
         // - host port management
         // - ingress egress bandwidth handling via annotations
 
-        let state = self.state.read().await;
-        let (network_namespace_path, netns, default_network) =
-            self.get_start_stop_data(&state, sandbox_data).await?;
+        let mut state = self.state.write().await;
+        let (network_namespace_path, netns) = self.get_start_stop_data(sandbox_data).await?;
 
-        // Setup loopback interface
+        let default_network = state
+            .default_network()
+            .as_ref()
+            .context("no default network available")?;
+
+        trace!("Setup loopback interface");
         netns
             .run(async move {
                 let netlink = Netlink::new().await?;
@@ -509,9 +546,12 @@ impl PodNetwork for CNI {
             .await
             .context("init loopback interface")?;
 
-        // Add the network via the CNI plugin
+        trace!("Adding networks via plugins");
+        let mut value = vec![];
         for (i, config) in default_network.list().plugins().iter().enumerate() {
-            self.build_plugin(config)
+            // Add the network via the CNI plugin
+            let cni_result = self
+                .build_plugin(config.typ())
                 .await?
                 .add(
                     sandbox_data.id(),
@@ -521,6 +561,22 @@ impl PodNetwork for CNI {
                 )
                 .await
                 .context("add network via plugin")?;
+
+            value.push(
+                StorageValueBuilder::default()
+                    .binary_name(config.typ())
+                    .raw_cni_config(config.raw().as_slice())
+                    .cni_result(cni_result)
+                    .build()
+                    .context("build storage value")?,
+            );
+        }
+
+        if let Some(storage) = state.storage_mut() {
+            trace!("Storing CNI result");
+            storage
+                .insert(sandbox_data.id(), value)
+                .context("insert CNI result into storage")?;
         }
 
         debug!("Started CNI network for sandbox {}", sandbox_data.id());
@@ -530,11 +586,10 @@ impl PodNetwork for CNI {
     /// Stop the network of the provided `SandboxData`.
     async fn stop(&mut self, sandbox_data: &SandboxData) -> Result<()> {
         info!("Stopping CNI network for sandbox {}", sandbox_data.id());
-        let state = self.state.read().await;
-        let (network_namespace_path, netns, default_network) =
-            self.get_start_stop_data(&state, sandbox_data).await?;
+        let mut state = self.state.write().await;
+        let (network_namespace_path, netns) = self.get_start_stop_data(sandbox_data).await?;
 
-        // Tear down loopback interface
+        trace!("Stopping loopback interface");
         netns
             .run(async move {
                 let netlink = Netlink::new().await?;
@@ -547,18 +602,38 @@ impl PodNetwork for CNI {
             .await
             .context("tear down loopback interface")?;
 
-        // Remove the network via the CNI plugin
-        for (i, config) in default_network.list().plugins().iter().enumerate() {
-            self.build_plugin(config)
-                .await?
-                .del(
-                    sandbox_data.id(),
-                    &network_namespace_path.display().to_string(),
-                    &Self::eth(i),
-                    config.raw(),
-                )
-                .await
-                .context("delete network via plugin")?;
+        if let Some(storage) = state.storage_mut() {
+            trace!("Removing all networks");
+
+            let storage_values: StorageValues = storage
+                .get(sandbox_data.id())
+                .context("retrieve sandbox from storage")?
+                .context("sandbox already removed")?;
+
+            trace!(
+                "Got {} networks for sandbox {}",
+                storage_values.len(),
+                sandbox_data.id()
+            );
+
+            for (i, value) in storage_values.iter().enumerate() {
+                // Remove the network via the CNI plugin
+                self.build_plugin(value.binary_name())
+                    .await?
+                    .del(
+                        sandbox_data.id(),
+                        &network_namespace_path.display().to_string(),
+                        &Self::eth(i),
+                        value.raw_cni_config(),
+                    )
+                    .await
+                    .context("delete network via plugin")?;
+            }
+
+            trace!("Removing sandbox from storage");
+            storage
+                .remove(sandbox_data.id())
+                .context("remove sandbox from storage")?;
         }
 
         debug!("Stopped CNI network for sandbox {}", sandbox_data.id());
@@ -566,7 +641,7 @@ impl PodNetwork for CNI {
     }
 
     /// Cleanup the network on server shutdown.
-    fn cleanup(&mut self) -> Result<()> {
+    async fn cleanup(&mut self) -> Result<()> {
         trace!("Stopping watcher");
         self.watcher
             .as_ref()
@@ -574,6 +649,12 @@ impl PodNetwork for CNI {
             .1
             .send(WatcherMessage::Exit)
             .context("send exit signal to watcher thread")?;
+
+        if let Some(storage) = self.state().write().await.storage_mut() {
+            trace!("Persisting CNI storage");
+            storage.persist().context("persist storage")?;
+        }
+
         Ok(())
     }
 }
