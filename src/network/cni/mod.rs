@@ -495,7 +495,7 @@ impl CNI {
     }
 }
 
-/// A value to be safed in the CNI network storage.
+/// A value to be saved in the CNI network storage.
 type StorageValues = Vec<StorageValue>;
 
 #[derive(Builder, Default, Getters, Serialize, Deserialize)]
