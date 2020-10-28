@@ -19,7 +19,7 @@ build-release-static: ## Build the main binary in release mode statically linked
 		-v "$(shell pwd)":/volume \
 		-v ~/.cargo/git:/root/.cargo/git \
 		-v ~/.cargo/registry:/root/.cargo/registry \
-		clux/muslrust \
+		clux/muslrust:stable \
 		bash -c "\
 			rustup component add rustfmt && \
 			make build-release && \

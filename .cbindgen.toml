@@ -1,0 +1,8 @@
+language = "C"
+pragma_once = true
+line_length = 80
+documentation_style = "doxy"
+
+[enum]
+rename_variants = "SnakeCase"
+prefix_with_name = true
