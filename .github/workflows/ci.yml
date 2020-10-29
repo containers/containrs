@@ -8,7 +8,7 @@ env:
   CARGO_TERM_COLOR: always
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -24,7 +24,7 @@ jobs:
         run: make
 
   build-release:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -64,17 +64,8 @@ jobs:
           path: lib-*.tar.gz
 
   build-static:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
-      - name: Install Podman
-        run: |
-          . /etc/os-release
-          echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
-          curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key | sudo apt-key add -
-          sudo apt-get update
-          sudo apt-get -y upgrade
-          sudo apt-get -y install podman
-          mkdir -p ~/.cargo/git
       - name: Checkout
         uses: actions/checkout@v2
       - name: Setup Cache
@@ -93,7 +84,7 @@ jobs:
           path: target/x86_64-unknown-linux-musl/release/criserver
 
   doc:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -109,7 +100,7 @@ jobs:
         run: make doc
 
   lint-clippy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -125,7 +116,7 @@ jobs:
         run: make lint-clippy
 
   lint-rustfmt:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -133,18 +124,10 @@ jobs:
         run: make lint-rustfmt
 
   test-coverage:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Select Nighly Toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: nightly
-          override: true
-      - name: Install rustfmt
-        shell: bash
-        run: rustup component add rustfmt
       - name: Unit tests
         uses: actions-rs/cargo@v1
         with:
@@ -160,7 +143,7 @@ jobs:
         uses: codecov/codecov-action@v1
 
   test-unit:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -176,18 +159,10 @@ jobs:
         run: make test-unit
 
   test-integration:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Install CNI plugins
-        shell: bash
-        run: |
-          curl -sfL -o - https://github.com/containernetworking/plugins/releases/download/$VERSION/cni-plugins-linux-amd64-$VERSION.tgz |
-            sudo tar xfz - -C /usr/local/bin
-          bridge
-        env:
-          VERSION: v0.8.7
       - name: Setup Cache
         uses: actions/cache@v2
         with:
@@ -202,7 +177,7 @@ jobs:
           RUST_TEST_THREADS: '1'
 
   test-e2e:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout
         uses: actions/checkout@v2
