@@ -1,0 +1,13 @@
+version: 2
+updates:
+- package-ecosystem: cargo
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  labels:
+  - kind/dependency-change
+  - release-note-none
+  allow:
+  - dependency-type: direct
+  - dependency-type: indirect
