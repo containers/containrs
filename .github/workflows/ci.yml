@@ -23,11 +23,23 @@ jobs:
       - name: Build
         run: make
 
-  build-release:
+  build-lib:
+    strategy:
+      matrix:
+        target:
+          - x86_64-unknown-linux-gnu
+          - i686-unknown-linux-gnu
+          - aarch64-unknown-linux-gnu
+    name: build-lib-release-${{ matrix.target }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{ matrix.target }}
+          override: true
       - name: Setup Cache
         uses: actions/cache@v2
         with:
@@ -35,9 +47,12 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: ${{ runner.os }}-cargo-release-${{ hashFiles('**/Cargo.lock') }}
-      - name: Build Release
-        run: make build-release
+          key: build-lib-release-${{ matrix.target }}-${{ hashFiles('**/Cargo.lock') }}
+      - uses: actions-rs/cargo@v1
+        with:
+          use-cross: true
+          command: build
+          args: --release --target ${{ matrix.target }}
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
           service_account_key: ${{ secrets.GCP_SA_KEY }}
@@ -46,13 +61,13 @@ jobs:
         shell: bash
         run: |
             cp src/ffi/ffi.h .
-            cp target/release/libcontainrs.a .
+            cp target/${{ matrix.target }}/release/libcontainrs.a .
 
             VERSION=$(
               git describe --tags --exact-match 2>/dev/null ||
               git rev-parse --short HEAD
             )
-            TARBALL=lib-$VERSION.tar.gz
+            TARBALL=lib-$VERSION-${{ matrix.target }}.tar.gz
 
             tar cfz $TARBALL ffi.h libcontainrs.a
             gsutil -m cp -n $TARBALL gs://$GCS_BUCKET/lib || true
@@ -63,7 +78,7 @@ jobs:
           name: lib
           path: lib-*.tar.gz
 
-  build-static:
+  build-bin-release-static:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -79,7 +94,7 @@ jobs:
       - name: Build Release Static
         run: |
           mkdir -p ~/.cargo/git
-          sudo make build-release-static
+          sudo make build-bin-release-static
           sudo chown -R $(id -u):$(id -g) ~/.cargo target
       - uses: actions/upload-artifact@v2
         with:
