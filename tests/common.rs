@@ -24,7 +24,7 @@ pub mod criapi {
 }
 
 const TIMEOUT: u64 = 10;
-const BINARY_PATH: &str = "target/debug/criserver";
+const BINARY_PATH: &str = "target/debug/server";
 
 static INIT: Once = Once::new();
 

@@ -22,7 +22,7 @@ build-release-static: ## Build the main binary in release mode statically linked
 		bash -c "\
 			rustup component add rustfmt && \
 			make build-release && \
-			strip -s target/x86_64-unknown-linux-musl/release/criserver"
+			strip -s target/x86_64-unknown-linux-musl/release/server"
 
 .PHONY: clean
 clean: ## Clean the work tree
