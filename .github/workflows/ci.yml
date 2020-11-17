@@ -46,7 +46,7 @@ jobs:
         shell: bash
         run: |
             cp src/ffi/ffi.h .
-            cp target/release/libcri.a .
+            cp target/release/libcontainrs.a .
 
             VERSION=$(
               git describe --tags --exact-match 2>/dev/null ||
@@ -54,7 +54,7 @@ jobs:
             )
             TARBALL=lib-$VERSION.tar.gz
 
-            tar cfz $TARBALL ffi.h libcri.a
+            tar cfz $TARBALL ffi.h libcontainrs.a
             gsutil -m cp -n $TARBALL gs://$GCS_BUCKET/lib || true
         env:
           GCS_BUCKET: k8s-conform-cri-o
@@ -89,8 +89,8 @@ jobs:
         run: make build-release-static
       - uses: actions/upload-artifact@v2
         with:
-          name: criserver
-          path: target/x86_64-unknown-linux-musl/release/criserver
+          name: server
+          path: target/x86_64-unknown-linux-musl/release/server
 
   doc:
     runs-on: ubuntu-latest
