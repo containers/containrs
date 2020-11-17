@@ -6,9 +6,7 @@ use anyhow::Result;
 use bitflags::bitflags;
 use derive_builder::Builder;
 use getset::Getters;
-use std::collections::HashMap;
-use std::fmt;
-use std::path::PathBuf;
+use std::{collections::HashMap, fmt, path::PathBuf};
 
 #[derive(Builder)]
 #[builder(pattern = "owned", setter(into))]
