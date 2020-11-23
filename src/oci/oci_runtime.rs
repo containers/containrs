@@ -20,7 +20,7 @@ use tokio::process::Command;
 
 #[derive(Builder, Debug, Getters, Setters)]
 #[builder(pattern = "owned", setter(into))]
-// oci_runtime is the main structure to be used when interacting with the container runtime.
+// OCIRuntime is the main structure to be used when interacting with the container runtime.
 pub struct OCIRuntime {
     #[getset(get, set)]
     #[builder(private, default = "Box::new(DefaultOCIRuntimeExecCommand)")]
@@ -44,7 +44,7 @@ impl OCIRuntime {
 }
 
 #[derive(Clone, Default, Debug)]
-/// Defaultoci_runtimeExecCommand is a wrapper which can be used to execute oci_runtime in a standard way.
+/// DefaultOCIRuntimeExecCommand is a wrapper which can be used to execute OCIRuntime in a standard way.
 struct DefaultOCIRuntimeExecCommand;
 
 impl ExecCommand for DefaultOCIRuntimeExecCommand {}
@@ -69,43 +69,45 @@ trait ExecCommand: Debug + DynClone + Send + Sync {
 
 clone_trait_object!(ExecCommand);
 
+type ContainerId = String;
+
 #[derive(AsRefStr, Clone, Debug, Hash, Eq, PartialEq)]
 #[strum(serialize_all = "kebab_case")]
 pub enum Subcommand {
     /// Checkpoint a running container
-    Checkpoint((String, Vec<CheckpointArgs>)),
+    Checkpoint((ContainerId, Vec<CheckpointArgs>)),
     /// Create a container
-    Create((String, Vec<CreateArgs>)),
+    Create((ContainerId, Vec<CreateArgs>)),
     /// Delete any resources held by the container often used with detached container
-    Delete(String),
+    Delete(ContainerId),
     /// Display container events such as OOM notifications, cpu, memory, and IO usage statistics
-    Events((String, Vec<EventsArgs>)),
+    Events((ContainerId, Vec<EventsArgs>)),
     /// Execute new process inside the container
-    Exec((String, Vec<ExecArgs>)),
+    Exec((ContainerId, Vec<ExecArgs>)),
     /// Initialize the namespaces and launch the process (do not call it outside of runc)
-    Init(),
+    Init,
     /// Kill sends the specified signal (default: SIGTERM) to the container's init process
-    Kill((String, Vec<KillArgs>)),
+    Kill((ContainerId, Vec<KillArgs>)),
     /// Lists containers started by runc with the given root
     List(Vec<ListArgs>),
     /// Pause suspends all processes inside the container
-    Pause(String),
+    Pause(ContainerId),
     /// Ps displays the processes running inside a container
-    Ps((String, Vec<PsArgs>)),
+    Ps((ContainerId, Vec<PsArgs>)),
     /// Restore a container from a previous checkpoint
-    Restore((String, Vec<RestoreArgs>)),
+    Restore((ContainerId, Vec<RestoreArgs>)),
     /// Resumes all processes that have been previously paused
-    Resume(String),
+    Resume(ContainerId),
     /// Create and run a container
-    Run((String, Vec<RunArgs>)),
+    Run((ContainerId, Vec<RunArgs>)),
     /// Create a new specification file
     Spec(Vec<SpecArgs>),
     /// Executes the user defined process in a created container
-    Start(String),
+    Start(ContainerId),
     /// Output the state of a container
-    State(String),
+    State(ContainerId),
     /// Update container resource constraints
-    Update((String, Vec<UpdateArgs>)),
+    Update((ContainerId, Vec<UpdateArgs>)),
 }
 
 impl Subcommand {
@@ -157,7 +159,7 @@ impl Subcommand {
                 args.iter().map(ToString::to_string).collect(),
                 Some(String::from(container_id)),
             ),
-            Init() => self.build_cmd_vec(Vec::new(), None),
+            Init => self.build_cmd_vec(Vec::new(), None),
             List(args) => self.build_cmd_vec(args.iter().map(ToString::to_string).collect(), None),
             Spec(args) => self.build_cmd_vec(args.iter().map(ToString::to_string).collect(), None),
         }
@@ -410,8 +412,7 @@ pub enum KillArgs {
 
 impl fmt::Display for KillArgs {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "--")?;
-        write!(f, "{}", self.as_ref())
+        write!(f, "--{}", self.as_ref())
     }
 }
 
