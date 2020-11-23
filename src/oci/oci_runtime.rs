@@ -15,7 +15,7 @@ use std::{
     process::Output,
     string::ToString,
 };
-use strum::AsRefStr;
+use strum::{AsRefStr, Display};
 use tokio::process::Command;
 
 #[derive(Builder, Debug, Getters, Setters)]
@@ -71,8 +71,8 @@ clone_trait_object!(ExecCommand);
 
 type ContainerId = String;
 
-#[derive(AsRefStr, Clone, Debug, Hash, Eq, PartialEq)]
-#[strum(serialize_all = "kebab_case")]
+#[derive(AsRefStr, Clone, Debug, Hash, Eq, PartialEq, Display)]
+#[strum(serialize_all = "lowercase")]
 pub enum Subcommand {
     /// Checkpoint a running container
     Checkpoint((ContainerId, Vec<CheckpointArgs>)),
@@ -178,10 +178,21 @@ impl Subcommand {
     }
 }
 
-impl fmt::Display for Subcommand {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.as_ref())
-    }
+#[derive(AsRefStr, Clone, Debug, Hash, Eq, PartialEq, Display)]
+#[strum(serialize_all = "lowercase")]
+/// Available global arguments for oci_runtime.
+pub enum RootlessArgs {
+    True,
+    False,
+    Auto,
+}
+
+#[derive(AsRefStr, Clone, Debug, Hash, Eq, PartialEq, Display)]
+#[strum(serialize_all = "lowercase")]
+/// Available global arguments for oci_runtime.
+pub enum LogFormatArgs {
+    Text,
+    Json,
 }
 
 #[derive(AsRefStr, Clone, Debug, Hash, Eq, PartialEq)]
@@ -195,7 +206,7 @@ pub enum GlobalArgs {
     Log(PathBuf),
 
     /// Set the format used by logs ('text' (default), or 'json') (default: "text")
-    LogFormat(String),
+    LogFormat(LogFormatArgs),
 
     /// Root directory for storage of container state (this should be located in tmpfs) (default: "/run/user/1000/runc")
     Root(PathBuf),
@@ -207,7 +218,7 @@ pub enum GlobalArgs {
     SystemdCgroup(String),
 
     /// Ignore cgroup permission errors ('true', 'false', or 'auto') (default: "auto")
-    Rootless(String),
+    Rootless(RootlessArgs),
 
     /// Print the version
     Version,
@@ -236,6 +247,15 @@ impl fmt::Display for GlobalArgs {
             _ => write!(f, "{}", self.as_ref()),
         }
     }
+}
+
+#[derive(AsRefStr, Clone, Debug, Hash, Eq, PartialEq, Display)]
+#[strum(serialize_all = "lowercase")]
+/// Available arguments for 'oci_runtime checkpoint'.
+pub enum ManageCgroupsModeArgs {
+    Soft,
+    Full,
+    Strict,
 }
 
 #[derive(AsRefStr, Clone, Debug, Hash, Eq, PartialEq)]
@@ -267,7 +287,7 @@ pub enum CheckpointArgs {
     /// Dump container's memory information only, leave the container running after this
     PreDump,
     /// cgroups mode: 'soft' (default), 'full' and 'strict'
-    ManageCgroupsMode(String),
+    ManageCgroupsMode(ManageCgroupsModeArgs),
     /// Create a namespace, but don't restore its properties
     EmptyNs(String),
     /// Enable auto deduplication of memory images
@@ -416,12 +436,19 @@ impl fmt::Display for KillArgs {
     }
 }
 
+#[derive(AsRefStr, Clone, Debug, Hash, Eq, PartialEq, Display)]
+#[strum(serialize_all = "lowercase")]
+pub enum FormatArgs {
+    Table,
+    Json,
+}
+
 #[derive(AsRefStr, Clone, Debug, Hash, Eq, PartialEq)]
 #[strum(serialize_all = "kebab_case")]
 /// Available arguments for 'oci_runtime list'.
 pub enum ListArgs {
     /// One of: table or json (default: "table")
-    Format(String),
+    Format(FormatArgs),
     /// Display only container IDs
     Quiet,
 }
@@ -443,7 +470,7 @@ impl fmt::Display for ListArgs {
 /// Available arguments for 'oci_runtime ps'.
 pub enum PsArgs {
     ///one of: table or json (default: "table")
-    Format(String),
+    Format(FormatArgs),
 }
 
 impl fmt::Display for PsArgs {
@@ -476,7 +503,7 @@ pub enum RestoreArgs {
     /// Handle file locks, for safety
     FileLocks,
     /// cgroups mode: 'soft' (default), 'full' and 'strict'
-    ManageCgroupsMode(String),
+    ManageCgroupsMode(ManageCgroupsModeArgs),
     /// Path to the root of the bundle directory
     Bundle(PathBuf),
     /// Detach from the container's process
@@ -716,6 +743,10 @@ mod tests {
     #[test]
     fn oci_runtime_success_arg_to_string() {
         assert_eq!(&GlobalArgs::Debug.to_string(), "--debug");
+        assert_eq!(
+            &GlobalArgs::Rootless(RootlessArgs::Auto).to_string(),
+            "--rootless=auto"
+        );
         assert_eq!(&CheckpointArgs::LeaveRunning.to_string(), "--leave-running");
         assert_eq!(
             &CheckpointArgs::ImagePath("/test/path".into()).to_string(),
@@ -731,5 +762,14 @@ mod tests {
         );
         assert_eq!(&SpecArgs::Rootless.to_string(), "--rootless");
         assert_eq!(&RestoreArgs::LazyPages.to_string(), "--lazy-pages");
+        assert_eq!(&FormatArgs::Json.to_string(), "json");
+        assert_eq!(
+            &CheckpointArgs::ManageCgroupsMode(ManageCgroupsModeArgs::Full).to_string(),
+            "--manage-cgroups-mode=full"
+        );
+        assert_eq!(
+            &ListArgs::Format(FormatArgs::Table).to_string(),
+            "--format=table"
+        );
     }
 }
