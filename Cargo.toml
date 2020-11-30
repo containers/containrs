@@ -38,7 +38,7 @@ ipnetwork = "0.17.0"
 lazy_static = "1.4.0"
 libc = "0.2.80"
 log = { version = "0.4.11", features = ["serde", "std"] }
-nix = "0.19.0"
+nix = "0.19.1"
 notify = { version = "5.0.0-pre.4", features = ["serde"] }
 prost = "0.6.1"
 rmp-serde = "0.14.4"
