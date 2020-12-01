@@ -966,7 +966,7 @@ dependencies = [
  "anyhow",
  "byteorder",
  "libc",
- "netlink-packet-utils 0.3.0",
+ "netlink-packet-utils",
 ]
 
 [[package]]
@@ -980,19 +980,7 @@ dependencies = [
  "byteorder",
  "libc",
  "netlink-packet-core",
- "netlink-packet-utils 0.4.0",
-]
-
-[[package]]
-name = "netlink-packet-utils"
-version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c26039404424c9f7cc6a04b6c585da999f3471d309dd2c41cb65e0ce5c505626"
-dependencies = [
- "anyhow",
- "byteorder",
- "paste",
- "thiserror",
+ "netlink-packet-utils",
 ]
 
 [[package]]
