@@ -23,7 +23,7 @@ lto = true
 opt-level = 'z'
 
 [dependencies]
-anyhow = "1.0.35"
+anyhow = "1.0.37"
 async-trait = "0.1.42"
 bitflags = "1.2.1"
 clap = { git = "https://github.com/clap-rs/clap", features = ["wrap_help"] }
@@ -52,7 +52,7 @@ tonic = "0.3.1"
 which = "4.0.2"
 
 [build-dependencies]
-anyhow = "1.0.35"
+anyhow = "1.0.37"
 cbindgen = "0.15.0"
 tonic-build = "0.3.1"
 
