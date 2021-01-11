@@ -53,7 +53,7 @@ which = "4.0.2"
 
 [build-dependencies]
 anyhow = "1.0.38"
-cbindgen = "0.15.0"
+cbindgen = "0.16.0"
 tonic-build = "0.3.1"
 
 [dev-dependencies]
