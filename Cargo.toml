@@ -23,7 +23,7 @@ lto = true
 opt-level = 'z'
 
 [dependencies]
-anyhow = "1.0.35"
+anyhow = "1.0.38"
 async-trait = "0.1.42"
 bitflags = "1.2.1"
 clap = { git = "https://github.com/clap-rs/clap", features = ["wrap_help"] }
@@ -31,7 +31,7 @@ crossbeam-channel = "0.5.0"
 derive_builder = { git = "https://github.com/colin-kiegel/rust-derive-builder" }
 dyn-clone = "1.0.3"
 env_logger = "0.8.2"
-futures = "0.3.8"
+futures = "0.3.9"
 futures-util = "0.3.7"
 getset = "0.1.1"
 ipnetwork = "0.17.0"
@@ -52,7 +52,7 @@ tonic = "0.3.1"
 which = "4.0.2"
 
 [build-dependencies]
-anyhow = "1.0.35"
+anyhow = "1.0.38"
 cbindgen = "0.15.0"
 tonic-build = "0.3.1"
 
