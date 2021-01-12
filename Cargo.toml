@@ -57,7 +57,7 @@ cbindgen = "0.16.0"
 tonic-build = "0.3.1"
 
 [dev-dependencies]
-ctor = "0.1.16"
+ctor = "0.1.18"
 tempfile = "3.2.0"
 tokio-test = "0.3.0"
 tower = "0.4.2"
