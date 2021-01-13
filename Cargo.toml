@@ -40,7 +40,7 @@ libc = "0.2.82"
 log = { version = "0.4.13", features = ["serde", "std"] }
 nix = "0.19.1"
 notify = { version = "5.0.0-pre.4", features = ["serde"] }
-prost = "0.6.1"
+prost = "0.7.0"
 rmp-serde = "0.15.1"
 rtnetlink = "0.6.0"
 serde = { version = "1.0.119", features = ["derive"] }
