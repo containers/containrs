@@ -66,15 +66,6 @@ jobs:
   build-static:
     runs-on: ubuntu-latest
     steps:
-      - name: Install Podman
-        run: |
-          . /etc/os-release
-          echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
-          curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key | sudo apt-key add -
-          sudo apt-get update
-          sudo apt-get -y upgrade
-          sudo apt-get -y install podman
-          mkdir -p ~/.cargo/git
       - name: Checkout
         uses: actions/checkout@v2
       - name: Setup Cache
@@ -86,7 +77,10 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-release-static-${{ hashFiles('**/Cargo.lock') }}
       - name: Build Release Static
-        run: make build-release-static
+        run: |
+          mkdir -p ~/.cargo/git
+          sudo make build-release-static
+          sudo chown -R $(id -u):$(id -g) ~/.cargo target
       - uses: actions/upload-artifact@v2
         with:
           name: server
