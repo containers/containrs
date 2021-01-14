@@ -344,9 +344,9 @@ dependencies = [
 
 [[package]]
 name = "darling"
-version = "0.10.2"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0d706e75d87e35569db781a9b5e2416cff1236a47ed380831f959382ccd5f858"
+checksum = "11947000d710ff98138229f633039982f0fef2d9a3f546c21d610fee5f8631d5"
 dependencies = [
  "darling_core",
  "darling_macro",
@@ -354,23 +354,23 @@ dependencies = [
 
 [[package]]
 name = "darling_core"
-version = "0.10.2"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f0c960ae2da4de88a91b2d920c2a7233b400bc33cb28453a2987822d8392519b"
+checksum = "ae53b4d9cc89c40314ccf2bf9e6ff1eb19c31e3434542445a41893dbf041aec2"
 dependencies = [
  "fnv",
  "ident_case",
  "proc-macro2",
  "quote",
- "strsim 0.9.3",
+ "strsim 0.10.0",
  "syn",
 ]
 
 [[package]]
 name = "darling_macro"
-version = "0.10.2"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d9b5a2f4ac4969822c62224815d069952656cadc7084fdca9751e6d959189b72"
+checksum = "e9cd9ac4d50d023af5e710cae1501afb063efcd917bd3fc026e8ed6493cc9755"
 dependencies = [
  "darling_core",
  "quote",
@@ -380,7 +380,7 @@ dependencies = [
 [[package]]
 name = "derive_builder"
 version = "0.10.0-alpha"
-source = "git+https://github.com/colin-kiegel/rust-derive-builder#0e5d2663cf01c991d5a3abff04fffff60adff678"
+source = "git+https://github.com/colin-kiegel/rust-derive-builder#ee13c513e97cf61ea4871b3b6233c833fb1aed37"
 dependencies = [
  "derive_builder_core",
  "derive_builder_macro",
@@ -389,10 +389,9 @@ dependencies = [
 [[package]]
 name = "derive_builder_core"
 version = "0.10.0-alpha"
-source = "git+https://github.com/colin-kiegel/rust-derive-builder#0e5d2663cf01c991d5a3abff04fffff60adff678"
+source = "git+https://github.com/colin-kiegel/rust-derive-builder#ee13c513e97cf61ea4871b3b6233c833fb1aed37"
 dependencies = [
  "darling",
- "log",
  "proc-macro2",
  "quote",
  "syn",
@@ -401,7 +400,7 @@ dependencies = [
 [[package]]
 name = "derive_builder_macro"
 version = "0.10.0-alpha"
-source = "git+https://github.com/colin-kiegel/rust-derive-builder#0e5d2663cf01c991d5a3abff04fffff60adff678"
+source = "git+https://github.com/colin-kiegel/rust-derive-builder#ee13c513e97cf61ea4871b3b6233c833fb1aed37"
 dependencies = [
  "derive_builder_core",
  "syn",
@@ -1604,12 +1603,6 @@ name = "strsim"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8ea5119cdb4c55b55d432abb513a0429384878c15dde60cc77b1c99de1a95a6a"
-
-[[package]]
-name = "strsim"
-version = "0.9.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6446ced80d6c486436db5c078dde11a9f73d42b57fb273121e160b84f63d894c"
 
 [[package]]
 name = "strsim"
