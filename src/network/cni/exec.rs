@@ -70,7 +70,7 @@ impl Exec for DefaultExec {
             .await
             .context("read stdout")?;
 
-        if !child.await?.success() {
+        if !child.wait().await?.success() {
             bail!(output)
         }
 

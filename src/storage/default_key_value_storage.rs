@@ -98,7 +98,7 @@ mod tests {
     #[test]
     fn get_nonexisting_value() -> Result<()> {
         let dir = TempDir::new()?;
-        let mut db = DefaultKeyValueStorage::open(dir.path())?;
+        let db = DefaultKeyValueStorage::open(dir.path())?;
 
         assert!(db.get::<_, String>("key")?.is_none());
         Ok(())
@@ -159,7 +159,7 @@ mod tests {
         let dir = TempDir::new()?;
 
         let mut db1 = DefaultKeyValueStorage::open(dir.path())?;
-        let mut db2 = db1.clone();
+        let db2 = db1.clone();
 
         let (k, v) = ("key", "value");
 

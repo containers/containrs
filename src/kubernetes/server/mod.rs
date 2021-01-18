@@ -11,13 +11,13 @@ use crate::{
         Network, NetworkBuilder,
     },
     storage::{default_key_value_storage::DefaultKeyValueStorage, KeyValueStorage},
-    unix_stream,
+    unix_stream::UnixStream,
 };
 use anyhow::{bail, Context, Result};
 use clap::crate_name;
 pub use config::{Config, LogScope};
 use env_logger::fmt::Color;
-use futures_util::stream::TryStreamExt;
+use futures::TryFutureExt;
 use log::{debug, info, trace, LevelFilter};
 use std::{env, io::Write};
 #[cfg(unix)]
@@ -56,7 +56,7 @@ impl Server {
         let network = self.initialize_network().await.context("init network")?;
 
         // Build a new socket from the config
-        let mut uds = self.unix_domain_listener().await?;
+        let uds = self.unix_domain_listener().await?;
 
         // Handle shutdown based on signals
         let mut shutdown_terminate = signal(SignalKind::terminate())?;
@@ -67,11 +67,17 @@ impl Server {
             self.config.sock_path().display()
         );
 
+        let incoming = async_stream::stream! {
+            while let item = uds.accept().map_ok(|(st, _)| UnixStream(st)).await {
+                yield item;
+            }
+        };
+
         tokio::select! {
             res = transport::Server::builder()
                 .add_service(RuntimeServiceServer::new(cri_service.clone()))
                 .add_service(ImageServiceServer::new(cri_service))
-                .serve_with_incoming(uds.incoming().map_ok(unix_stream::UnixStream)) => {
+                .serve_with_incoming(incoming) => {
                 res.context("run GRPC server")?
             }
             _ = shutdown_interrupt.recv() => {
