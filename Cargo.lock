@@ -251,7 +251,7 @@ dependencies = [
  "log",
  "nix",
  "notify",
- "prost",
+ "prost 0.6.1",
  "rmp-serde",
  "rtnetlink",
  "serde",
@@ -264,7 +264,7 @@ dependencies = [
  "tonic",
  "tonic-build",
  "tower 0.4.3",
- "which 4.0.2",
+ "which",
 ]
 
 [[package]]
@@ -818,6 +818,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "itertools"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "284f18f85651fe11e8a991b2adb42cb078325c996ed026d994719efcfca1d54b"
+dependencies = [
+ "either",
+]
+
+[[package]]
 name = "itoa"
 version = "0.4.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1277,25 +1286,35 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ce49aefe0a6144a45de32927c77bd2859a5f7677b55f220ae5b744e87389c212"
 dependencies = [
  "bytes 0.5.6",
- "prost-derive",
+ "prost-derive 0.6.1",
+]
+
+[[package]]
+name = "prost"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9e6984d2f1a23009bd270b8bb56d0926810a3d483f59c987d77969e9d8e840b2"
+dependencies = [
+ "bytes 1.0.1",
+ "prost-derive 0.7.0",
 ]
 
 [[package]]
 name = "prost-build"
-version = "0.6.1"
+version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "02b10678c913ecbd69350e8535c3aef91a8676c0773fc1d7b95cdd196d7f2f26"
+checksum = "32d3ebd75ac2679c2af3a92246639f9fcc8a442ee420719cc4fe195b98dd5fa3"
 dependencies = [
- "bytes 0.5.6",
+ "bytes 1.0.1",
  "heck",
- "itertools",
+ "itertools 0.9.0",
  "log",
  "multimap",
  "petgraph",
- "prost",
+ "prost 0.7.0",
  "prost-types",
  "tempfile",
- "which 3.1.1",
+ "which",
 ]
 
 [[package]]
@@ -1305,7 +1324,20 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "537aa19b95acde10a12fec4301466386f757403de4cd4e5b4fa78fb5ecb18f72"
 dependencies = [
  "anyhow",
- "itertools",
+ "itertools 0.8.2",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "prost-derive"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "169a15f3008ecb5160cba7d37bcd690a7601b6d30cfb87a117d45e59d52af5d4"
+dependencies = [
+ "anyhow",
+ "itertools 0.9.0",
  "proc-macro2",
  "quote",
  "syn",
@@ -1313,12 +1345,12 @@ dependencies = [
 
 [[package]]
 name = "prost-types"
-version = "0.6.1"
+version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1834f67c0697c001304b75be76f67add9c89742eda3a085ad8ee0bb38c3417aa"
+checksum = "b518d7cdd93dab1d1122cf07fa9a60771836c668dde9d9e2a139f957f0d9f1bb"
 dependencies = [
- "bytes 0.5.6",
- "prost",
+ "bytes 1.0.1",
+ "prost 0.7.0",
 ]
 
 [[package]]
@@ -1846,8 +1878,8 @@ dependencies = [
  "hyper",
  "percent-encoding",
  "pin-project 0.4.27",
- "prost",
- "prost-derive",
+ "prost 0.6.1",
+ "prost-derive 0.6.1",
  "tokio 0.2.24",
  "tokio-util 0.3.1",
  "tower 0.3.1",
@@ -1861,9 +1893,9 @@ dependencies = [
 
 [[package]]
 name = "tonic-build"
-version = "0.3.1"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "19970cf58f3acc820962be74c4021b8bbc8e8a1c4e3a02095d0aa60cde5f3633"
+checksum = "c1e8546fd40d56d28089835c0a81bb396848103b00f888aea42d46eb5974df07"
 dependencies = [
  "proc-macro2",
  "prost-build",
@@ -2174,15 +2206,6 @@ name = "wasi"
 version = "0.10.1+wasi-snapshot-preview1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "93c6c3420963c5c64bca373b25e77acb562081b9bb4dd5bb864187742186cea9"
-
-[[package]]
-name = "which"
-version = "3.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d011071ae14a2f6671d0b74080ae0cd8ebf3a6f8c9589a2cd45f23126fe29724"
-dependencies = [
- "libc",
-]
 
 [[package]]
 name = "which"
