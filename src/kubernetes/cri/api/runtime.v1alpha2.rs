@@ -2,38 +2,38 @@
 pub struct VersionRequest {
     /// Version of the kubelet runtime API.
     #[prost(string, tag = "1")]
-    pub version: std::string::String,
+    pub version: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct VersionResponse {
     /// Version of the kubelet runtime API.
     #[prost(string, tag = "1")]
-    pub version: std::string::String,
+    pub version: ::prost::alloc::string::String,
     /// Name of the container runtime.
     #[prost(string, tag = "2")]
-    pub runtime_name: std::string::String,
+    pub runtime_name: ::prost::alloc::string::String,
     /// Version of the container runtime. The string must be
     /// semver-compatible.
     #[prost(string, tag = "3")]
-    pub runtime_version: std::string::String,
+    pub runtime_version: ::prost::alloc::string::String,
     /// API version of the container runtime. The string must be
     /// semver-compatible.
     #[prost(string, tag = "4")]
-    pub runtime_api_version: std::string::String,
+    pub runtime_api_version: ::prost::alloc::string::String,
 }
 /// DNSConfig specifies the DNS servers and search domains of a sandbox.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct DnsConfig {
     /// List of DNS servers of the cluster.
     #[prost(string, repeated, tag = "1")]
-    pub servers: ::std::vec::Vec<std::string::String>,
+    pub servers: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
     /// List of DNS search domains of the cluster.
     #[prost(string, repeated, tag = "2")]
-    pub searches: ::std::vec::Vec<std::string::String>,
+    pub searches: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
     /// List of DNS options. See https://linux.die.net/man/5/resolv.conf
     /// for all available options.
     #[prost(string, repeated, tag = "3")]
-    pub options: ::std::vec::Vec<std::string::String>,
+    pub options: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
 }
 /// PortMapping specifies the port mapping configurations of a sandbox.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -49,19 +49,19 @@ pub struct PortMapping {
     pub host_port: i32,
     /// Host IP.
     #[prost(string, tag = "4")]
-    pub host_ip: std::string::String,
+    pub host_ip: ::prost::alloc::string::String,
 }
 /// Mount specifies a host volume to mount into a container.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Mount {
     /// Path of the mount within the container.
     #[prost(string, tag = "1")]
-    pub container_path: std::string::String,
+    pub container_path: ::prost::alloc::string::String,
     /// Path of the mount on the host. If the hostPath doesn't exist, then runtimes
     /// should report error. If the hostpath is a symbolic link, runtimes should
     /// follow the symlink and mount the real destination to container.
     #[prost(string, tag = "2")]
-    pub host_path: std::string::String,
+    pub host_path: ::prost::alloc::string::String,
     /// If set, the mount is read-only.
     #[prost(bool, tag = "3")]
     pub readonly: bool,
@@ -95,7 +95,7 @@ pub struct NamespaceOption {
     /// previously created in the same pod. It is not possible to specify different targets
     /// for each namespace.
     #[prost(string, tag = "4")]
-    pub target_id: std::string::String,
+    pub target_id: ::prost::alloc::string::String,
 }
 /// Int64Value is the wrapper of int64.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -114,24 +114,24 @@ pub struct LinuxSandboxSecurityContext {
     /// Configurations for the sandbox's namespaces.
     /// This will be used only if the PodSandbox uses namespace for isolation.
     #[prost(message, optional, tag = "1")]
-    pub namespace_options: ::std::option::Option<NamespaceOption>,
+    pub namespace_options: ::core::option::Option<NamespaceOption>,
     /// Optional SELinux context to be applied.
     #[prost(message, optional, tag = "2")]
-    pub selinux_options: ::std::option::Option<SeLinuxOption>,
+    pub selinux_options: ::core::option::Option<SeLinuxOption>,
     /// UID to run sandbox processes as, when applicable.
     #[prost(message, optional, tag = "3")]
-    pub run_as_user: ::std::option::Option<Int64Value>,
+    pub run_as_user: ::core::option::Option<Int64Value>,
     /// GID to run sandbox processes as, when applicable. run_as_group should only
     /// be specified when run_as_user is specified; otherwise, the runtime MUST error.
     #[prost(message, optional, tag = "8")]
-    pub run_as_group: ::std::option::Option<Int64Value>,
+    pub run_as_group: ::core::option::Option<Int64Value>,
     /// If set, the root filesystem of the sandbox is read-only.
     #[prost(bool, tag = "4")]
     pub readonly_rootfs: bool,
     /// List of groups applied to the first process run in the sandbox, in
     /// addition to the sandbox's primary GID.
     #[prost(int64, repeated, tag = "5")]
-    pub supplemental_groups: ::std::vec::Vec<i64>,
+    pub supplemental_groups: ::prost::alloc::vec::Vec<i64>,
     /// Indicates whether the sandbox will be asked to run a privileged
     /// container. If a privileged container is to be executed within it, this
     /// MUST be true.
@@ -146,7 +146,7 @@ pub struct LinuxSandboxSecurityContext {
     ///   <full-path-to-profile> is the full path of the profile.
     /// Default: "", which is identical with unconfined.
     #[prost(string, tag = "7")]
-    pub seccomp_profile_path: std::string::String,
+    pub seccomp_profile_path: ::prost::alloc::string::String,
 }
 /// LinuxPodSandboxConfig holds platform-specific configurations for Linux
 /// host platforms and Linux-based containers.
@@ -156,13 +156,14 @@ pub struct LinuxPodSandboxConfig {
     /// The cgroupfs style syntax will be used, but the container runtime can
     /// convert it to systemd semantics if needed.
     #[prost(string, tag = "1")]
-    pub cgroup_parent: std::string::String,
+    pub cgroup_parent: ::prost::alloc::string::String,
     /// LinuxSandboxSecurityContext holds sandbox security attributes.
     #[prost(message, optional, tag = "2")]
-    pub security_context: ::std::option::Option<LinuxSandboxSecurityContext>,
+    pub security_context: ::core::option::Option<LinuxSandboxSecurityContext>,
     /// Sysctls holds linux sysctls config for the sandbox.
     #[prost(map = "string, string", tag = "3")]
-    pub sysctls: ::std::collections::HashMap<std::string::String, std::string::String>,
+    pub sysctls:
+        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
 }
 /// PodSandboxMetadata holds all necessary information for building the sandbox name.
 /// The container runtime is encouraged to expose the metadata associated with the
@@ -172,13 +173,13 @@ pub struct LinuxPodSandboxConfig {
 pub struct PodSandboxMetadata {
     /// Pod name of the sandbox. Same as the pod name in the Pod ObjectMeta.
     #[prost(string, tag = "1")]
-    pub name: std::string::String,
+    pub name: ::prost::alloc::string::String,
     /// Pod UID of the sandbox. Same as the pod UID in the Pod ObjectMeta.
     #[prost(string, tag = "2")]
-    pub uid: std::string::String,
+    pub uid: ::prost::alloc::string::String,
     /// Pod namespace of the sandbox. Same as the pod namespace in the Pod ObjectMeta.
     #[prost(string, tag = "3")]
-    pub namespace: std::string::String,
+    pub namespace: ::prost::alloc::string::String,
     /// Attempt number of creating the sandbox. Default: 0.
     #[prost(uint32, tag = "4")]
     pub attempt: u32,
@@ -192,11 +193,11 @@ pub struct PodSandboxConfig {
     /// operation. The runtime may also use this information to improve UX, such
     /// as by constructing a readable name.
     #[prost(message, optional, tag = "1")]
-    pub metadata: ::std::option::Option<PodSandboxMetadata>,
+    pub metadata: ::core::option::Option<PodSandboxMetadata>,
     /// Hostname of the sandbox. Hostname could only be empty when the pod
     /// network namespace is NODE.
     #[prost(string, tag = "2")]
-    pub hostname: std::string::String,
+    pub hostname: ::prost::alloc::string::String,
     /// Path to the directory on the host in which container log files are
     /// stored.
     /// By default the log of a container going into the LogDirectory will be
@@ -213,16 +214,17 @@ pub struct PodSandboxConfig {
     /// https://issues.k8s.io/24677. There *may* be future change of direction
     /// for logging as the discussion carries on.
     #[prost(string, tag = "3")]
-    pub log_directory: std::string::String,
+    pub log_directory: ::prost::alloc::string::String,
     /// DNS config for the sandbox.
     #[prost(message, optional, tag = "4")]
-    pub dns_config: ::std::option::Option<DnsConfig>,
+    pub dns_config: ::core::option::Option<DnsConfig>,
     /// Port mappings for the sandbox.
     #[prost(message, repeated, tag = "5")]
-    pub port_mappings: ::std::vec::Vec<PortMapping>,
+    pub port_mappings: ::prost::alloc::vec::Vec<PortMapping>,
     /// Key-value pairs that may be used to scope and select individual resources.
     #[prost(map = "string, string", tag = "6")]
-    pub labels: ::std::collections::HashMap<std::string::String, std::string::String>,
+    pub labels:
+        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
     /// Unstructured key-value map that may be set by the kubelet to store and
     /// retrieve arbitrary metadata. This will include any annotations set on a
     /// pod through the Kubernetes API.
@@ -240,35 +242,36 @@ pub struct PodSandboxConfig {
     /// and the CRI). Whenever possible, however, runtime authors SHOULD
     /// consider proposing new typed fields for any new features instead.
     #[prost(map = "string, string", tag = "7")]
-    pub annotations: ::std::collections::HashMap<std::string::String, std::string::String>,
+    pub annotations:
+        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
     /// Optional configurations specific to Linux hosts.
     #[prost(message, optional, tag = "8")]
-    pub linux: ::std::option::Option<LinuxPodSandboxConfig>,
+    pub linux: ::core::option::Option<LinuxPodSandboxConfig>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct RunPodSandboxRequest {
     /// Configuration for creating a PodSandbox.
     #[prost(message, optional, tag = "1")]
-    pub config: ::std::option::Option<PodSandboxConfig>,
+    pub config: ::core::option::Option<PodSandboxConfig>,
     /// Named runtime configuration to use for this PodSandbox.
     /// If the runtime handler is unknown, this request should be rejected.  An
     /// empty string should select the default handler, equivalent to the
     /// behavior before this feature was added.
     /// See https://git.k8s.io/enhancements/keps/sig-node/runtime-class.md
     #[prost(string, tag = "2")]
-    pub runtime_handler: std::string::String,
+    pub runtime_handler: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct RunPodSandboxResponse {
     /// ID of the PodSandbox to run.
     #[prost(string, tag = "1")]
-    pub pod_sandbox_id: std::string::String,
+    pub pod_sandbox_id: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct StopPodSandboxRequest {
     /// ID of the PodSandbox to stop.
     #[prost(string, tag = "1")]
-    pub pod_sandbox_id: std::string::String,
+    pub pod_sandbox_id: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct StopPodSandboxResponse {}
@@ -276,7 +279,7 @@ pub struct StopPodSandboxResponse {}
 pub struct RemovePodSandboxRequest {
     /// ID of the PodSandbox to remove.
     #[prost(string, tag = "1")]
-    pub pod_sandbox_id: std::string::String,
+    pub pod_sandbox_id: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct RemovePodSandboxResponse {}
@@ -284,7 +287,7 @@ pub struct RemovePodSandboxResponse {}
 pub struct PodSandboxStatusRequest {
     /// ID of the PodSandbox for which to retrieve status.
     #[prost(string, tag = "1")]
-    pub pod_sandbox_id: std::string::String,
+    pub pod_sandbox_id: ::prost::alloc::string::String,
     /// Verbose indicates whether to return extra information about the pod sandbox.
     #[prost(bool, tag = "2")]
     pub verbose: bool,
@@ -294,41 +297,41 @@ pub struct PodSandboxStatusRequest {
 pub struct PodIp {
     /// an ip is a string representation of an IPv4 or an IPv6
     #[prost(string, tag = "1")]
-    pub ip: std::string::String,
+    pub ip: ::prost::alloc::string::String,
 }
 /// PodSandboxNetworkStatus is the status of the network for a PodSandbox.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PodSandboxNetworkStatus {
     /// IP address of the PodSandbox.
     #[prost(string, tag = "1")]
-    pub ip: std::string::String,
+    pub ip: ::prost::alloc::string::String,
     /// list of additional ips (not inclusive of PodSandboxNetworkStatus.Ip) of the PodSandBoxNetworkStatus
     #[prost(message, repeated, tag = "2")]
-    pub additional_ips: ::std::vec::Vec<PodIp>,
+    pub additional_ips: ::prost::alloc::vec::Vec<PodIp>,
 }
 /// Namespace contains paths to the namespaces.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Namespace {
     /// Namespace options for Linux namespaces.
     #[prost(message, optional, tag = "2")]
-    pub options: ::std::option::Option<NamespaceOption>,
+    pub options: ::core::option::Option<NamespaceOption>,
 }
 /// LinuxSandboxStatus contains status specific to Linux sandboxes.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct LinuxPodSandboxStatus {
     /// Paths to the sandbox's namespaces.
     #[prost(message, optional, tag = "1")]
-    pub namespaces: ::std::option::Option<Namespace>,
+    pub namespaces: ::core::option::Option<Namespace>,
 }
 /// PodSandboxStatus contains the status of the PodSandbox.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PodSandboxStatus {
     /// ID of the sandbox.
     #[prost(string, tag = "1")]
-    pub id: std::string::String,
+    pub id: ::prost::alloc::string::String,
     /// Metadata of the sandbox.
     #[prost(message, optional, tag = "2")]
-    pub metadata: ::std::option::Option<PodSandboxMetadata>,
+    pub metadata: ::core::option::Option<PodSandboxMetadata>,
     /// State of the sandbox.
     #[prost(enumeration = "PodSandboxState", tag = "3")]
     pub state: i32,
@@ -337,34 +340,37 @@ pub struct PodSandboxStatus {
     pub created_at: i64,
     /// Network contains network status if network is handled by the runtime.
     #[prost(message, optional, tag = "5")]
-    pub network: ::std::option::Option<PodSandboxNetworkStatus>,
+    pub network: ::core::option::Option<PodSandboxNetworkStatus>,
     /// Linux-specific status to a pod sandbox.
     #[prost(message, optional, tag = "6")]
-    pub linux: ::std::option::Option<LinuxPodSandboxStatus>,
+    pub linux: ::core::option::Option<LinuxPodSandboxStatus>,
     /// Labels are key-value pairs that may be used to scope and select individual resources.
     #[prost(map = "string, string", tag = "7")]
-    pub labels: ::std::collections::HashMap<std::string::String, std::string::String>,
+    pub labels:
+        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
     /// Unstructured key-value map holding arbitrary metadata.
     /// Annotations MUST NOT be altered by the runtime; the value of this field
     /// MUST be identical to that of the corresponding PodSandboxConfig used to
     /// instantiate the pod sandbox this status represents.
     #[prost(map = "string, string", tag = "8")]
-    pub annotations: ::std::collections::HashMap<std::string::String, std::string::String>,
+    pub annotations:
+        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
     /// runtime configuration used for this PodSandbox.
     #[prost(string, tag = "9")]
-    pub runtime_handler: std::string::String,
+    pub runtime_handler: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PodSandboxStatusResponse {
     /// Status of the PodSandbox.
     #[prost(message, optional, tag = "1")]
-    pub status: ::std::option::Option<PodSandboxStatus>,
+    pub status: ::core::option::Option<PodSandboxStatus>,
     /// Info is extra information of the PodSandbox. The key could be arbitrary string, and
     /// value should be in json format. The information could include anything useful for
     /// debug, e.g. network namespace for linux container based container runtime.
     /// It should only be returned non-empty when Verbose is true.
     #[prost(map = "string, string", tag = "2")]
-    pub info: ::std::collections::HashMap<std::string::String, std::string::String>,
+    pub info:
+        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
 }
 /// PodSandboxStateValue is the wrapper of PodSandboxState.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -379,31 +385,32 @@ pub struct PodSandboxStateValue {
 pub struct PodSandboxFilter {
     /// ID of the sandbox.
     #[prost(string, tag = "1")]
-    pub id: std::string::String,
+    pub id: ::prost::alloc::string::String,
     /// State of the sandbox.
     #[prost(message, optional, tag = "2")]
-    pub state: ::std::option::Option<PodSandboxStateValue>,
+    pub state: ::core::option::Option<PodSandboxStateValue>,
     /// LabelSelector to select matches.
     /// Only api.MatchLabels is supported for now and the requirements
     /// are ANDed. MatchExpressions is not supported yet.
     #[prost(map = "string, string", tag = "3")]
-    pub label_selector: ::std::collections::HashMap<std::string::String, std::string::String>,
+    pub label_selector:
+        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ListPodSandboxRequest {
     /// PodSandboxFilter to filter a list of PodSandboxes.
     #[prost(message, optional, tag = "1")]
-    pub filter: ::std::option::Option<PodSandboxFilter>,
+    pub filter: ::core::option::Option<PodSandboxFilter>,
 }
 /// PodSandbox contains minimal information about a sandbox.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PodSandbox {
     /// ID of the PodSandbox.
     #[prost(string, tag = "1")]
-    pub id: std::string::String,
+    pub id: ::prost::alloc::string::String,
     /// Metadata of the PodSandbox.
     #[prost(message, optional, tag = "2")]
-    pub metadata: ::std::option::Option<PodSandboxMetadata>,
+    pub metadata: ::core::option::Option<PodSandboxMetadata>,
     /// State of the PodSandbox.
     #[prost(enumeration = "PodSandboxState", tag = "3")]
     pub state: i32,
@@ -412,41 +419,44 @@ pub struct PodSandbox {
     pub created_at: i64,
     /// Labels of the PodSandbox.
     #[prost(map = "string, string", tag = "5")]
-    pub labels: ::std::collections::HashMap<std::string::String, std::string::String>,
+    pub labels:
+        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
     /// Unstructured key-value map holding arbitrary metadata.
     /// Annotations MUST NOT be altered by the runtime; the value of this field
     /// MUST be identical to that of the corresponding PodSandboxConfig used to
     /// instantiate this PodSandbox.
     #[prost(map = "string, string", tag = "6")]
-    pub annotations: ::std::collections::HashMap<std::string::String, std::string::String>,
+    pub annotations:
+        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
     /// runtime configuration used for this PodSandbox.
     #[prost(string, tag = "7")]
-    pub runtime_handler: std::string::String,
+    pub runtime_handler: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ListPodSandboxResponse {
     /// List of PodSandboxes.
     #[prost(message, repeated, tag = "1")]
-    pub items: ::std::vec::Vec<PodSandbox>,
+    pub items: ::prost::alloc::vec::Vec<PodSandbox>,
 }
 /// ImageSpec is an internal representation of an image.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ImageSpec {
     /// Container's Image field (e.g. imageID or imageDigest).
     #[prost(string, tag = "1")]
-    pub image: std::string::String,
+    pub image: ::prost::alloc::string::String,
     /// Unstructured key-value map holding arbitrary metadata.
     /// ImageSpec Annotations can be used to help the runtime target specific
     /// images in multi-arch images.
     #[prost(map = "string, string", tag = "2")]
-    pub annotations: ::std::collections::HashMap<std::string::String, std::string::String>,
+    pub annotations:
+        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeyValue {
     #[prost(string, tag = "1")]
-    pub key: std::string::String,
+    pub key: ::prost::alloc::string::String,
     #[prost(string, tag = "2")]
-    pub value: std::string::String,
+    pub value: ::prost::alloc::string::String,
 }
 /// LinuxContainerResources specifies Linux specific configuration for
 /// resources.
@@ -471,13 +481,13 @@ pub struct LinuxContainerResources {
     pub oom_score_adj: i64,
     /// CpusetCpus constrains the allowed set of logical CPUs. Default: "" (not specified).
     #[prost(string, tag = "6")]
-    pub cpuset_cpus: std::string::String,
+    pub cpuset_cpus: ::prost::alloc::string::String,
     /// CpusetMems constrains the allowed set of memory nodes. Default: "" (not specified).
     #[prost(string, tag = "7")]
-    pub cpuset_mems: std::string::String,
+    pub cpuset_mems: ::prost::alloc::string::String,
     /// List of HugepageLimits to limit the HugeTLB usage of container per page size. Default: nil (not specified).
     #[prost(message, repeated, tag = "8")]
-    pub hugepage_limits: ::std::vec::Vec<HugepageLimit>,
+    pub hugepage_limits: ::prost::alloc::vec::Vec<HugepageLimit>,
 }
 /// HugepageLimit corresponds to the file`hugetlb.<hugepagesize>.limit_in_byte` in container level cgroup.
 /// For example, `PageSize=1GB`, `Limit=1073741824` means setting `1073741824` bytes to hugetlb.1GB.limit_in_bytes.
@@ -487,7 +497,7 @@ pub struct HugepageLimit {
     /// and must match the <hugepagesize> of the corresponding control file found in `hugetlb.<hugepagesize>.limit_in_bytes`.
     /// The values of <unit-prefix> are intended to be parsed using base 1024("1KB" = 1024, "1MB" = 1048576, etc).
     #[prost(string, tag = "1")]
-    pub page_size: std::string::String,
+    pub page_size: ::prost::alloc::string::String,
     /// limit in bytes of hugepagesize HugeTLB usage.
     #[prost(uint64, tag = "2")]
     pub limit: u64,
@@ -496,30 +506,30 @@ pub struct HugepageLimit {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SeLinuxOption {
     #[prost(string, tag = "1")]
-    pub user: std::string::String,
+    pub user: ::prost::alloc::string::String,
     #[prost(string, tag = "2")]
-    pub role: std::string::String,
+    pub role: ::prost::alloc::string::String,
     #[prost(string, tag = "3")]
-    pub r#type: std::string::String,
+    pub r#type: ::prost::alloc::string::String,
     #[prost(string, tag = "4")]
-    pub level: std::string::String,
+    pub level: ::prost::alloc::string::String,
 }
 /// Capability contains the container capabilities to add or drop
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Capability {
     /// List of capabilities to add.
     #[prost(string, repeated, tag = "1")]
-    pub add_capabilities: ::std::vec::Vec<std::string::String>,
+    pub add_capabilities: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
     /// List of capabilities to drop.
     #[prost(string, repeated, tag = "2")]
-    pub drop_capabilities: ::std::vec::Vec<std::string::String>,
+    pub drop_capabilities: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
 }
 /// LinuxContainerSecurityContext holds linux security configuration that will be applied to a container.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct LinuxContainerSecurityContext {
     /// Capabilities to add or drop.
     #[prost(message, optional, tag = "1")]
-    pub capabilities: ::std::option::Option<Capability>,
+    pub capabilities: ::core::option::Option<Capability>,
     /// If set, run container in privileged mode.
     /// Privileged mode is incompatible with the following options. If
     /// privileged is set, the following features MAY have no effect:
@@ -542,31 +552,31 @@ pub struct LinuxContainerSecurityContext {
     /// Configurations for the container's namespaces.
     /// Only used if the container uses namespace for isolation.
     #[prost(message, optional, tag = "3")]
-    pub namespace_options: ::std::option::Option<NamespaceOption>,
+    pub namespace_options: ::core::option::Option<NamespaceOption>,
     /// SELinux context to be optionally applied.
     #[prost(message, optional, tag = "4")]
-    pub selinux_options: ::std::option::Option<SeLinuxOption>,
+    pub selinux_options: ::core::option::Option<SeLinuxOption>,
     /// UID to run the container process as. Only one of run_as_user and
     /// run_as_username can be specified at a time.
     #[prost(message, optional, tag = "5")]
-    pub run_as_user: ::std::option::Option<Int64Value>,
+    pub run_as_user: ::core::option::Option<Int64Value>,
     /// GID to run the container process as. run_as_group should only be specified
     /// when run_as_user or run_as_username is specified; otherwise, the runtime
     /// MUST error.
     #[prost(message, optional, tag = "12")]
-    pub run_as_group: ::std::option::Option<Int64Value>,
+    pub run_as_group: ::core::option::Option<Int64Value>,
     /// User name to run the container process as. If specified, the user MUST
     /// exist in the container image (i.e. in the /etc/passwd inside the image),
     /// and be resolved there by the runtime; otherwise, the runtime MUST error.
     #[prost(string, tag = "6")]
-    pub run_as_username: std::string::String,
+    pub run_as_username: ::prost::alloc::string::String,
     /// If set, the root filesystem of the container is read-only.
     #[prost(bool, tag = "7")]
     pub readonly_rootfs: bool,
     /// List of groups applied to the first process run in the container, in
     /// addition to the container's primary GID.
     #[prost(int64, repeated, tag = "8")]
-    pub supplemental_groups: ::std::vec::Vec<i64>,
+    pub supplemental_groups: ::prost::alloc::vec::Vec<i64>,
     /// AppArmor profile for the container, candidate values are:
     /// * runtime/default: equivalent to not specifying a profile.
     /// * unconfined: no profiles are loaded
@@ -574,7 +584,7 @@ pub struct LinuxContainerSecurityContext {
     ///    (localhost) by name. The possible profile names are detailed at
     ///    http://wiki.apparmor.net/index.php/AppArmor_Core_Policy_Reference
     #[prost(string, tag = "9")]
-    pub apparmor_profile: std::string::String,
+    pub apparmor_profile: ::prost::alloc::string::String,
     /// Seccomp profile for the container, candidate values are:
     /// * runtime/default: the default profile for the container runtime
     /// * unconfined: unconfined profile, ie, no seccomp sandboxing
@@ -582,7 +592,7 @@ pub struct LinuxContainerSecurityContext {
     ///   <full-path-to-profile> is the full path of the profile.
     /// Default: "", which is identical with unconfined.
     #[prost(string, tag = "10")]
-    pub seccomp_profile_path: std::string::String,
+    pub seccomp_profile_path: ::prost::alloc::string::String,
     /// no_new_privs defines if the flag for no_new_privs should be set on the
     /// container.
     #[prost(bool, tag = "11")]
@@ -590,11 +600,11 @@ pub struct LinuxContainerSecurityContext {
     /// masked_paths is a slice of paths that should be masked by the container
     /// runtime, this can be passed directly to the OCI spec.
     #[prost(string, repeated, tag = "13")]
-    pub masked_paths: ::std::vec::Vec<std::string::String>,
+    pub masked_paths: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
     /// readonly_paths is a slice of paths that should be set as readonly by the
     /// container runtime, this can be passed directly to the OCI spec.
     #[prost(string, repeated, tag = "14")]
-    pub readonly_paths: ::std::vec::Vec<std::string::String>,
+    pub readonly_paths: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
 }
 /// LinuxContainerConfig contains platform-specific configuration for
 /// Linux-based containers.
@@ -602,10 +612,10 @@ pub struct LinuxContainerSecurityContext {
 pub struct LinuxContainerConfig {
     /// Resources specification for the container.
     #[prost(message, optional, tag = "1")]
-    pub resources: ::std::option::Option<LinuxContainerResources>,
+    pub resources: ::core::option::Option<LinuxContainerResources>,
     /// LinuxContainerSecurityContext configuration for the container.
     #[prost(message, optional, tag = "2")]
-    pub security_context: ::std::option::Option<LinuxContainerSecurityContext>,
+    pub security_context: ::core::option::Option<LinuxContainerSecurityContext>,
 }
 /// WindowsContainerSecurityContext holds windows security configuration that will be applied to a container.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -614,10 +624,10 @@ pub struct WindowsContainerSecurityContext {
     /// exist in the container image and be resolved there by the runtime;
     /// otherwise, the runtime MUST return error.
     #[prost(string, tag = "1")]
-    pub run_as_username: std::string::String,
+    pub run_as_username: ::prost::alloc::string::String,
     /// The contents of the GMSA credential spec to use to run this container.
     #[prost(string, tag = "2")]
-    pub credential_spec: std::string::String,
+    pub credential_spec: ::prost::alloc::string::String,
 }
 /// WindowsContainerConfig contains platform-specific configuration for
 /// Windows-based containers.
@@ -625,10 +635,10 @@ pub struct WindowsContainerSecurityContext {
 pub struct WindowsContainerConfig {
     /// Resources specification for the container.
     #[prost(message, optional, tag = "1")]
-    pub resources: ::std::option::Option<WindowsContainerResources>,
+    pub resources: ::core::option::Option<WindowsContainerResources>,
     /// WindowsContainerSecurityContext configuration for the container.
     #[prost(message, optional, tag = "2")]
-    pub security_context: ::std::option::Option<WindowsContainerSecurityContext>,
+    pub security_context: ::core::option::Option<WindowsContainerSecurityContext>,
 }
 /// WindowsContainerResources specifies Windows specific configuration for
 /// resources.
@@ -656,7 +666,7 @@ pub struct WindowsContainerResources {
 pub struct ContainerMetadata {
     /// Name of the container. Same as the container name in the PodSpec.
     #[prost(string, tag = "1")]
-    pub name: std::string::String,
+    pub name: ::prost::alloc::string::String,
     /// Attempt number of creating the container. Default: 0.
     #[prost(uint32, tag = "2")]
     pub attempt: u32,
@@ -666,16 +676,16 @@ pub struct ContainerMetadata {
 pub struct Device {
     /// Path of the device within the container.
     #[prost(string, tag = "1")]
-    pub container_path: std::string::String,
+    pub container_path: ::prost::alloc::string::String,
     /// Path of the device on the host.
     #[prost(string, tag = "2")]
-    pub host_path: std::string::String,
+    pub host_path: ::prost::alloc::string::String,
     /// Cgroups permissions of the device, candidates are one or more of
     /// * r - allows container to read from the specified device.
     /// * w - allows container to write to the specified device.
     /// * m - allows container to create device files that do not yet exist.
     #[prost(string, tag = "3")]
-    pub permissions: std::string::String,
+    pub permissions: ::prost::alloc::string::String,
 }
 /// ContainerConfig holds all the required and optional fields for creating a
 /// container.
@@ -686,28 +696,28 @@ pub struct ContainerConfig {
     /// operation. The runtime may also use this information to improve UX, such
     /// as by constructing a readable name.
     #[prost(message, optional, tag = "1")]
-    pub metadata: ::std::option::Option<ContainerMetadata>,
+    pub metadata: ::core::option::Option<ContainerMetadata>,
     /// Image to use.
     #[prost(message, optional, tag = "2")]
-    pub image: ::std::option::Option<ImageSpec>,
+    pub image: ::core::option::Option<ImageSpec>,
     /// Command to execute (i.e., entrypoint for docker)
     #[prost(string, repeated, tag = "3")]
-    pub command: ::std::vec::Vec<std::string::String>,
+    pub command: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
     /// Args for the Command (i.e., command for docker)
     #[prost(string, repeated, tag = "4")]
-    pub args: ::std::vec::Vec<std::string::String>,
+    pub args: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
     /// Current working directory of the command.
     #[prost(string, tag = "5")]
-    pub working_dir: std::string::String,
+    pub working_dir: ::prost::alloc::string::String,
     /// List of environment variable to set in the container.
     #[prost(message, repeated, tag = "6")]
-    pub envs: ::std::vec::Vec<KeyValue>,
+    pub envs: ::prost::alloc::vec::Vec<KeyValue>,
     /// Mounts for the container.
     #[prost(message, repeated, tag = "7")]
-    pub mounts: ::std::vec::Vec<Mount>,
+    pub mounts: ::prost::alloc::vec::Vec<Mount>,
     /// Devices for the container.
     #[prost(message, repeated, tag = "8")]
-    pub devices: ::std::vec::Vec<Device>,
+    pub devices: ::prost::alloc::vec::Vec<Device>,
     /// Key-value pairs that may be used to scope and select individual resources.
     /// Label keys are of the form:
     ///     label-key ::= prefixed-name | name
@@ -715,7 +725,8 @@ pub struct ContainerConfig {
     ///     prefix ::= DNS_SUBDOMAIN
     ///     name ::= DNS_LABEL
     #[prost(map = "string, string", tag = "9")]
-    pub labels: ::std::collections::HashMap<std::string::String, std::string::String>,
+    pub labels:
+        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
     /// Unstructured key-value map that may be used by the kubelet to store and
     /// retrieve arbitrary metadata.
     ///
@@ -727,7 +738,8 @@ pub struct ContainerConfig {
     /// kubelet and the container runtime, annotations SHOULD NOT influence
     /// runtime behaviour.
     #[prost(map = "string, string", tag = "10")]
-    pub annotations: ::std::collections::HashMap<std::string::String, std::string::String>,
+    pub annotations:
+        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
     /// Path relative to PodSandboxConfig.LogDirectory for container to store
     /// the log (STDOUT and STDERR) on the host.
     /// E.g.,
@@ -739,7 +751,7 @@ pub struct ContainerConfig {
     /// https://issues.k8s.io/24677. There *may* be future change of direction
     /// for logging as the discussion carries on.
     #[prost(string, tag = "11")]
-    pub log_path: std::string::String,
+    pub log_path: ::prost::alloc::string::String,
     /// Variables for interactive containers, these have very specialized
     /// use-cases (e.g. debugging).
     /// TODO: Determine if we need to continue supporting these fields that are
@@ -752,37 +764,37 @@ pub struct ContainerConfig {
     pub tty: bool,
     /// Configuration specific to Linux containers.
     #[prost(message, optional, tag = "15")]
-    pub linux: ::std::option::Option<LinuxContainerConfig>,
+    pub linux: ::core::option::Option<LinuxContainerConfig>,
     /// Configuration specific to Windows containers.
     #[prost(message, optional, tag = "16")]
-    pub windows: ::std::option::Option<WindowsContainerConfig>,
+    pub windows: ::core::option::Option<WindowsContainerConfig>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CreateContainerRequest {
     /// ID of the PodSandbox in which the container should be created.
     #[prost(string, tag = "1")]
-    pub pod_sandbox_id: std::string::String,
+    pub pod_sandbox_id: ::prost::alloc::string::String,
     /// Config of the container.
     #[prost(message, optional, tag = "2")]
-    pub config: ::std::option::Option<ContainerConfig>,
+    pub config: ::core::option::Option<ContainerConfig>,
     /// Config of the PodSandbox. This is the same config that was passed
     /// to RunPodSandboxRequest to create the PodSandbox. It is passed again
     /// here just for easy reference. The PodSandboxConfig is immutable and
     /// remains the same throughout the lifetime of the pod.
     #[prost(message, optional, tag = "3")]
-    pub sandbox_config: ::std::option::Option<PodSandboxConfig>,
+    pub sandbox_config: ::core::option::Option<PodSandboxConfig>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CreateContainerResponse {
     /// ID of the created container.
     #[prost(string, tag = "1")]
-    pub container_id: std::string::String,
+    pub container_id: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct StartContainerRequest {
     /// ID of the container to start.
     #[prost(string, tag = "1")]
-    pub container_id: std::string::String,
+    pub container_id: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct StartContainerResponse {}
@@ -790,7 +802,7 @@ pub struct StartContainerResponse {}
 pub struct StopContainerRequest {
     /// ID of the container to stop.
     #[prost(string, tag = "1")]
-    pub container_id: std::string::String,
+    pub container_id: ::prost::alloc::string::String,
     /// Timeout in seconds to wait for the container to stop before forcibly
     /// terminating it. Default: 0 (forcibly terminate the container immediately)
     #[prost(int64, tag = "2")]
@@ -802,7 +814,7 @@ pub struct StopContainerResponse {}
 pub struct RemoveContainerRequest {
     /// ID of the container to remove.
     #[prost(string, tag = "1")]
-    pub container_id: std::string::String,
+    pub container_id: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct RemoveContainerResponse {}
@@ -819,23 +831,24 @@ pub struct ContainerStateValue {
 pub struct ContainerFilter {
     /// ID of the container.
     #[prost(string, tag = "1")]
-    pub id: std::string::String,
+    pub id: ::prost::alloc::string::String,
     /// State of the container.
     #[prost(message, optional, tag = "2")]
-    pub state: ::std::option::Option<ContainerStateValue>,
+    pub state: ::core::option::Option<ContainerStateValue>,
     /// ID of the PodSandbox.
     #[prost(string, tag = "3")]
-    pub pod_sandbox_id: std::string::String,
+    pub pod_sandbox_id: ::prost::alloc::string::String,
     /// LabelSelector to select matches.
     /// Only api.MatchLabels is supported for now and the requirements
     /// are ANDed. MatchExpressions is not supported yet.
     #[prost(map = "string, string", tag = "4")]
-    pub label_selector: ::std::collections::HashMap<std::string::String, std::string::String>,
+    pub label_selector:
+        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ListContainersRequest {
     #[prost(message, optional, tag = "1")]
-    pub filter: ::std::option::Option<ContainerFilter>,
+    pub filter: ::core::option::Option<ContainerFilter>,
 }
 /// Container provides the runtime information for a container, such as ID, hash,
 /// state of the container.
@@ -844,20 +857,20 @@ pub struct Container {
     /// ID of the container, used by the container runtime to identify
     /// a container.
     #[prost(string, tag = "1")]
-    pub id: std::string::String,
+    pub id: ::prost::alloc::string::String,
     /// ID of the sandbox to which this container belongs.
     #[prost(string, tag = "2")]
-    pub pod_sandbox_id: std::string::String,
+    pub pod_sandbox_id: ::prost::alloc::string::String,
     /// Metadata of the container.
     #[prost(message, optional, tag = "3")]
-    pub metadata: ::std::option::Option<ContainerMetadata>,
+    pub metadata: ::core::option::Option<ContainerMetadata>,
     /// Spec of the image.
     #[prost(message, optional, tag = "4")]
-    pub image: ::std::option::Option<ImageSpec>,
+    pub image: ::core::option::Option<ImageSpec>,
     /// Reference to the image in use. For most runtimes, this should be an
     /// image ID.
     #[prost(string, tag = "5")]
-    pub image_ref: std::string::String,
+    pub image_ref: ::prost::alloc::string::String,
     /// State of the container.
     #[prost(enumeration = "ContainerState", tag = "6")]
     pub state: i32,
@@ -866,25 +879,27 @@ pub struct Container {
     pub created_at: i64,
     /// Key-value pairs that may be used to scope and select individual resources.
     #[prost(map = "string, string", tag = "8")]
-    pub labels: ::std::collections::HashMap<std::string::String, std::string::String>,
+    pub labels:
+        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
     /// Unstructured key-value map holding arbitrary metadata.
     /// Annotations MUST NOT be altered by the runtime; the value of this field
     /// MUST be identical to that of the corresponding ContainerConfig used to
     /// instantiate this Container.
     #[prost(map = "string, string", tag = "9")]
-    pub annotations: ::std::collections::HashMap<std::string::String, std::string::String>,
+    pub annotations:
+        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ListContainersResponse {
     /// List of containers.
     #[prost(message, repeated, tag = "1")]
-    pub containers: ::std::vec::Vec<Container>,
+    pub containers: ::prost::alloc::vec::Vec<Container>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ContainerStatusRequest {
     /// ID of the container for which to retrieve status.
     #[prost(string, tag = "1")]
-    pub container_id: std::string::String,
+    pub container_id: ::prost::alloc::string::String,
     /// Verbose indicates whether to return extra information about the container.
     #[prost(bool, tag = "2")]
     pub verbose: bool,
@@ -894,10 +909,10 @@ pub struct ContainerStatusRequest {
 pub struct ContainerStatus {
     /// ID of the container.
     #[prost(string, tag = "1")]
-    pub id: std::string::String,
+    pub id: ::prost::alloc::string::String,
     /// Metadata of the container.
     #[prost(message, optional, tag = "2")]
-    pub metadata: ::std::option::Option<ContainerMetadata>,
+    pub metadata: ::core::option::Option<ContainerMetadata>,
     /// Status of the container.
     #[prost(enumeration = "ContainerState", tag = "3")]
     pub state: i32,
@@ -915,54 +930,57 @@ pub struct ContainerStatus {
     pub exit_code: i32,
     /// Spec of the image.
     #[prost(message, optional, tag = "8")]
-    pub image: ::std::option::Option<ImageSpec>,
+    pub image: ::core::option::Option<ImageSpec>,
     /// Reference to the image in use. For most runtimes, this should be an
     /// image ID
     #[prost(string, tag = "9")]
-    pub image_ref: std::string::String,
+    pub image_ref: ::prost::alloc::string::String,
     /// Brief CamelCase string explaining why container is in its current state.
     #[prost(string, tag = "10")]
-    pub reason: std::string::String,
+    pub reason: ::prost::alloc::string::String,
     /// Human-readable message indicating details about why container is in its
     /// current state.
     #[prost(string, tag = "11")]
-    pub message: std::string::String,
+    pub message: ::prost::alloc::string::String,
     /// Key-value pairs that may be used to scope and select individual resources.
     #[prost(map = "string, string", tag = "12")]
-    pub labels: ::std::collections::HashMap<std::string::String, std::string::String>,
+    pub labels:
+        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
     /// Unstructured key-value map holding arbitrary metadata.
     /// Annotations MUST NOT be altered by the runtime; the value of this field
     /// MUST be identical to that of the corresponding ContainerConfig used to
     /// instantiate the Container this status represents.
     #[prost(map = "string, string", tag = "13")]
-    pub annotations: ::std::collections::HashMap<std::string::String, std::string::String>,
+    pub annotations:
+        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
     /// Mounts for the container.
     #[prost(message, repeated, tag = "14")]
-    pub mounts: ::std::vec::Vec<Mount>,
+    pub mounts: ::prost::alloc::vec::Vec<Mount>,
     /// Log path of container.
     #[prost(string, tag = "15")]
-    pub log_path: std::string::String,
+    pub log_path: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ContainerStatusResponse {
     /// Status of the container.
     #[prost(message, optional, tag = "1")]
-    pub status: ::std::option::Option<ContainerStatus>,
+    pub status: ::core::option::Option<ContainerStatus>,
     /// Info is extra information of the Container. The key could be arbitrary string, and
     /// value should be in json format. The information could include anything useful for
     /// debug, e.g. pid for linux container based container runtime.
     /// It should only be returned non-empty when Verbose is true.
     #[prost(map = "string, string", tag = "2")]
-    pub info: ::std::collections::HashMap<std::string::String, std::string::String>,
+    pub info:
+        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct UpdateContainerResourcesRequest {
     /// ID of the container to update.
     #[prost(string, tag = "1")]
-    pub container_id: std::string::String,
+    pub container_id: ::prost::alloc::string::String,
     /// Resource configuration specific to Linux containers.
     #[prost(message, optional, tag = "2")]
-    pub linux: ::std::option::Option<LinuxContainerResources>,
+    pub linux: ::core::option::Option<LinuxContainerResources>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct UpdateContainerResourcesResponse {}
@@ -970,10 +988,10 @@ pub struct UpdateContainerResourcesResponse {}
 pub struct ExecSyncRequest {
     /// ID of the container.
     #[prost(string, tag = "1")]
-    pub container_id: std::string::String,
+    pub container_id: ::prost::alloc::string::String,
     /// Command to execute.
     #[prost(string, repeated, tag = "2")]
-    pub cmd: ::std::vec::Vec<std::string::String>,
+    pub cmd: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
     /// Timeout in seconds to stop the command. Default: 0 (run forever).
     #[prost(int64, tag = "3")]
     pub timeout: i64,
@@ -981,11 +999,11 @@ pub struct ExecSyncRequest {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ExecSyncResponse {
     /// Captured command stdout output.
-    #[prost(bytes, tag = "1")]
-    pub stdout: std::vec::Vec<u8>,
+    #[prost(bytes = "vec", tag = "1")]
+    pub stdout: ::prost::alloc::vec::Vec<u8>,
     /// Captured command stderr output.
-    #[prost(bytes, tag = "2")]
-    pub stderr: std::vec::Vec<u8>,
+    #[prost(bytes = "vec", tag = "2")]
+    pub stderr: ::prost::alloc::vec::Vec<u8>,
     /// Exit code the command finished with. Default: 0 (success).
     #[prost(int32, tag = "3")]
     pub exit_code: i32,
@@ -994,10 +1012,10 @@ pub struct ExecSyncResponse {
 pub struct ExecRequest {
     /// ID of the container in which to execute the command.
     #[prost(string, tag = "1")]
-    pub container_id: std::string::String,
+    pub container_id: ::prost::alloc::string::String,
     /// Command to execute.
     #[prost(string, repeated, tag = "2")]
-    pub cmd: ::std::vec::Vec<std::string::String>,
+    pub cmd: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
     /// Whether to exec the command in a TTY.
     #[prost(bool, tag = "3")]
     pub tty: bool,
@@ -1021,13 +1039,13 @@ pub struct ExecRequest {
 pub struct ExecResponse {
     /// Fully qualified URL of the exec streaming server.
     #[prost(string, tag = "1")]
-    pub url: std::string::String,
+    pub url: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AttachRequest {
     /// ID of the container to which to attach.
     #[prost(string, tag = "1")]
-    pub container_id: std::string::String,
+    pub container_id: ::prost::alloc::string::String,
     /// Whether to stream stdin.
     /// One of `stdin`, `stdout`, and `stderr` MUST be true.
     #[prost(bool, tag = "2")]
@@ -1052,47 +1070,47 @@ pub struct AttachRequest {
 pub struct AttachResponse {
     /// Fully qualified URL of the attach streaming server.
     #[prost(string, tag = "1")]
-    pub url: std::string::String,
+    pub url: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PortForwardRequest {
     /// ID of the container to which to forward the port.
     #[prost(string, tag = "1")]
-    pub pod_sandbox_id: std::string::String,
+    pub pod_sandbox_id: ::prost::alloc::string::String,
     /// Port to forward.
     #[prost(int32, repeated, tag = "2")]
-    pub port: ::std::vec::Vec<i32>,
+    pub port: ::prost::alloc::vec::Vec<i32>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PortForwardResponse {
     /// Fully qualified URL of the port-forward streaming server.
     #[prost(string, tag = "1")]
-    pub url: std::string::String,
+    pub url: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ImageFilter {
     /// Spec of the image.
     #[prost(message, optional, tag = "1")]
-    pub image: ::std::option::Option<ImageSpec>,
+    pub image: ::core::option::Option<ImageSpec>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ListImagesRequest {
     /// Filter to list images.
     #[prost(message, optional, tag = "1")]
-    pub filter: ::std::option::Option<ImageFilter>,
+    pub filter: ::core::option::Option<ImageFilter>,
 }
 /// Basic information about a container image.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Image {
     /// ID of the image.
     #[prost(string, tag = "1")]
-    pub id: std::string::String,
+    pub id: ::prost::alloc::string::String,
     /// Other names by which this image is known.
     #[prost(string, repeated, tag = "2")]
-    pub repo_tags: ::std::vec::Vec<std::string::String>,
+    pub repo_tags: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
     /// Digests by which this image is known.
     #[prost(string, repeated, tag = "3")]
-    pub repo_digests: ::std::vec::Vec<std::string::String>,
+    pub repo_digests: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
     /// Size of the image in bytes. Must be > 0.
     #[prost(uint64, tag = "4")]
     pub size: u64,
@@ -1100,26 +1118,26 @@ pub struct Image {
     /// specified when creating the container. UID and the following user name
     /// are mutually exclusive.
     #[prost(message, optional, tag = "5")]
-    pub uid: ::std::option::Option<Int64Value>,
+    pub uid: ::core::option::Option<Int64Value>,
     /// User name that will run the command(s). This is used if UID is not set
     /// and no user is specified when creating container.
     #[prost(string, tag = "6")]
-    pub username: std::string::String,
+    pub username: ::prost::alloc::string::String,
     /// ImageSpec for image which includes annotations
     #[prost(message, optional, tag = "7")]
-    pub spec: ::std::option::Option<ImageSpec>,
+    pub spec: ::core::option::Option<ImageSpec>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ListImagesResponse {
     /// List of images.
     #[prost(message, repeated, tag = "1")]
-    pub images: ::std::vec::Vec<Image>,
+    pub images: ::prost::alloc::vec::Vec<Image>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ImageStatusRequest {
     /// Spec of the image.
     #[prost(message, optional, tag = "1")]
-    pub image: ::std::option::Option<ImageSpec>,
+    pub image: ::core::option::Option<ImageSpec>,
     /// Verbose indicates whether to return extra information about the image.
     #[prost(bool, tag = "2")]
     pub verbose: bool,
@@ -1128,57 +1146,58 @@ pub struct ImageStatusRequest {
 pub struct ImageStatusResponse {
     /// Status of the image.
     #[prost(message, optional, tag = "1")]
-    pub image: ::std::option::Option<Image>,
+    pub image: ::core::option::Option<Image>,
     /// Info is extra information of the Image. The key could be arbitrary string, and
     /// value should be in json format. The information could include anything useful
     /// for debug, e.g. image config for oci image based container runtime.
     /// It should only be returned non-empty when Verbose is true.
     #[prost(map = "string, string", tag = "2")]
-    pub info: ::std::collections::HashMap<std::string::String, std::string::String>,
+    pub info:
+        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
 }
 /// AuthConfig contains authorization information for connecting to a registry.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AuthConfig {
     #[prost(string, tag = "1")]
-    pub username: std::string::String,
+    pub username: ::prost::alloc::string::String,
     #[prost(string, tag = "2")]
-    pub password: std::string::String,
+    pub password: ::prost::alloc::string::String,
     #[prost(string, tag = "3")]
-    pub auth: std::string::String,
+    pub auth: ::prost::alloc::string::String,
     #[prost(string, tag = "4")]
-    pub server_address: std::string::String,
+    pub server_address: ::prost::alloc::string::String,
     /// IdentityToken is used to authenticate the user and get
     /// an access token for the registry.
     #[prost(string, tag = "5")]
-    pub identity_token: std::string::String,
+    pub identity_token: ::prost::alloc::string::String,
     /// RegistryToken is a bearer token to be sent to a registry
     #[prost(string, tag = "6")]
-    pub registry_token: std::string::String,
+    pub registry_token: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PullImageRequest {
     /// Spec of the image.
     #[prost(message, optional, tag = "1")]
-    pub image: ::std::option::Option<ImageSpec>,
+    pub image: ::core::option::Option<ImageSpec>,
     /// Authentication configuration for pulling the image.
     #[prost(message, optional, tag = "2")]
-    pub auth: ::std::option::Option<AuthConfig>,
+    pub auth: ::core::option::Option<AuthConfig>,
     /// Config of the PodSandbox, which is used to pull image in PodSandbox context.
     #[prost(message, optional, tag = "3")]
-    pub sandbox_config: ::std::option::Option<PodSandboxConfig>,
+    pub sandbox_config: ::core::option::Option<PodSandboxConfig>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PullImageResponse {
     /// Reference to the image in use. For most runtimes, this should be an
     /// image ID or digest.
     #[prost(string, tag = "1")]
-    pub image_ref: std::string::String,
+    pub image_ref: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct RemoveImageRequest {
     /// Spec of the image to remove.
     #[prost(message, optional, tag = "1")]
-    pub image: ::std::option::Option<ImageSpec>,
+    pub image: ::core::option::Option<ImageSpec>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct RemoveImageResponse {}
@@ -1187,17 +1206,17 @@ pub struct NetworkConfig {
     /// CIDR to use for pod IP addresses. If the CIDR is empty, runtimes
     /// should omit it.
     #[prost(string, tag = "1")]
-    pub pod_cidr: std::string::String,
+    pub pod_cidr: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct RuntimeConfig {
     #[prost(message, optional, tag = "1")]
-    pub network_config: ::std::option::Option<NetworkConfig>,
+    pub network_config: ::core::option::Option<NetworkConfig>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct UpdateRuntimeConfigRequest {
     #[prost(message, optional, tag = "1")]
-    pub runtime_config: ::std::option::Option<RuntimeConfig>,
+    pub runtime_config: ::core::option::Option<RuntimeConfig>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct UpdateRuntimeConfigResponse {}
@@ -1218,23 +1237,23 @@ pub struct UpdateRuntimeConfigResponse {}
 pub struct RuntimeCondition {
     /// Type of runtime condition.
     #[prost(string, tag = "1")]
-    pub r#type: std::string::String,
+    pub r#type: ::prost::alloc::string::String,
     /// Status of the condition, one of true/false. Default: false.
     #[prost(bool, tag = "2")]
     pub status: bool,
     /// Brief CamelCase string containing reason for the condition's last transition.
     #[prost(string, tag = "3")]
-    pub reason: std::string::String,
+    pub reason: ::prost::alloc::string::String,
     /// Human-readable message indicating details about last transition.
     #[prost(string, tag = "4")]
-    pub message: std::string::String,
+    pub message: ::prost::alloc::string::String,
 }
 /// RuntimeStatus is information about the current status of the runtime.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct RuntimeStatus {
     /// List of current observed runtime conditions.
     #[prost(message, repeated, tag = "1")]
-    pub conditions: ::std::vec::Vec<RuntimeCondition>,
+    pub conditions: ::prost::alloc::vec::Vec<RuntimeCondition>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct StatusRequest {
@@ -1246,13 +1265,14 @@ pub struct StatusRequest {
 pub struct StatusResponse {
     /// Status of the Runtime.
     #[prost(message, optional, tag = "1")]
-    pub status: ::std::option::Option<RuntimeStatus>,
+    pub status: ::core::option::Option<RuntimeStatus>,
     /// Info is extra information of the Runtime. The key could be arbitrary string, and
     /// value should be in json format. The information could include anything useful for
     /// debug, e.g. plugins used by the container runtime.
     /// It should only be returned non-empty when Verbose is true.
     #[prost(map = "string, string", tag = "2")]
-    pub info: ::std::collections::HashMap<std::string::String, std::string::String>,
+    pub info:
+        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ImageFsInfoRequest {}
@@ -1268,7 +1288,7 @@ pub struct UInt64Value {
 pub struct FilesystemIdentifier {
     /// Mountpoint of a filesystem.
     #[prost(string, tag = "1")]
-    pub mountpoint: std::string::String,
+    pub mountpoint: ::prost::alloc::string::String,
 }
 /// FilesystemUsage provides the filesystem usage information.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -1278,41 +1298,41 @@ pub struct FilesystemUsage {
     pub timestamp: i64,
     /// The unique identifier of the filesystem.
     #[prost(message, optional, tag = "2")]
-    pub fs_id: ::std::option::Option<FilesystemIdentifier>,
+    pub fs_id: ::core::option::Option<FilesystemIdentifier>,
     /// UsedBytes represents the bytes used for images on the filesystem.
     /// This may differ from the total bytes used on the filesystem and may not
     /// equal CapacityBytes - AvailableBytes.
     #[prost(message, optional, tag = "3")]
-    pub used_bytes: ::std::option::Option<UInt64Value>,
+    pub used_bytes: ::core::option::Option<UInt64Value>,
     /// InodesUsed represents the inodes used by the images.
     /// This may not equal InodesCapacity - InodesAvailable because the underlying
     /// filesystem may also be used for purposes other than storing images.
     #[prost(message, optional, tag = "4")]
-    pub inodes_used: ::std::option::Option<UInt64Value>,
+    pub inodes_used: ::core::option::Option<UInt64Value>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ImageFsInfoResponse {
     /// Information of image filesystem(s).
     #[prost(message, repeated, tag = "1")]
-    pub image_filesystems: ::std::vec::Vec<FilesystemUsage>,
+    pub image_filesystems: ::prost::alloc::vec::Vec<FilesystemUsage>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ContainerStatsRequest {
     /// ID of the container for which to retrieve stats.
     #[prost(string, tag = "1")]
-    pub container_id: std::string::String,
+    pub container_id: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ContainerStatsResponse {
     /// Stats of the container.
     #[prost(message, optional, tag = "1")]
-    pub stats: ::std::option::Option<ContainerStats>,
+    pub stats: ::core::option::Option<ContainerStats>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ListContainerStatsRequest {
     /// Filter for the list request.
     #[prost(message, optional, tag = "1")]
-    pub filter: ::std::option::Option<ContainerStatsFilter>,
+    pub filter: ::core::option::Option<ContainerStatsFilter>,
 }
 /// ContainerStatsFilter is used to filter containers.
 /// All those fields are combined with 'AND'
@@ -1320,56 +1340,59 @@ pub struct ListContainerStatsRequest {
 pub struct ContainerStatsFilter {
     /// ID of the container.
     #[prost(string, tag = "1")]
-    pub id: std::string::String,
+    pub id: ::prost::alloc::string::String,
     /// ID of the PodSandbox.
     #[prost(string, tag = "2")]
-    pub pod_sandbox_id: std::string::String,
+    pub pod_sandbox_id: ::prost::alloc::string::String,
     /// LabelSelector to select matches.
     /// Only api.MatchLabels is supported for now and the requirements
     /// are ANDed. MatchExpressions is not supported yet.
     #[prost(map = "string, string", tag = "3")]
-    pub label_selector: ::std::collections::HashMap<std::string::String, std::string::String>,
+    pub label_selector:
+        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ListContainerStatsResponse {
     /// Stats of the container.
     #[prost(message, repeated, tag = "1")]
-    pub stats: ::std::vec::Vec<ContainerStats>,
+    pub stats: ::prost::alloc::vec::Vec<ContainerStats>,
 }
 /// ContainerAttributes provides basic information of the container.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ContainerAttributes {
     /// ID of the container.
     #[prost(string, tag = "1")]
-    pub id: std::string::String,
+    pub id: ::prost::alloc::string::String,
     /// Metadata of the container.
     #[prost(message, optional, tag = "2")]
-    pub metadata: ::std::option::Option<ContainerMetadata>,
+    pub metadata: ::core::option::Option<ContainerMetadata>,
     /// Key-value pairs that may be used to scope and select individual resources.
     #[prost(map = "string, string", tag = "3")]
-    pub labels: ::std::collections::HashMap<std::string::String, std::string::String>,
+    pub labels:
+        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
     /// Unstructured key-value map holding arbitrary metadata.
     /// Annotations MUST NOT be altered by the runtime; the value of this field
     /// MUST be identical to that of the corresponding ContainerConfig used to
     /// instantiate the Container this status represents.
     #[prost(map = "string, string", tag = "4")]
-    pub annotations: ::std::collections::HashMap<std::string::String, std::string::String>,
+    pub annotations:
+        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
 }
 /// ContainerStats provides the resource usage statistics for a container.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ContainerStats {
     /// Information of the container.
     #[prost(message, optional, tag = "1")]
-    pub attributes: ::std::option::Option<ContainerAttributes>,
+    pub attributes: ::core::option::Option<ContainerAttributes>,
     /// CPU usage gathered from the container.
     #[prost(message, optional, tag = "2")]
-    pub cpu: ::std::option::Option<CpuUsage>,
+    pub cpu: ::core::option::Option<CpuUsage>,
     /// Memory usage gathered from the container.
     #[prost(message, optional, tag = "3")]
-    pub memory: ::std::option::Option<MemoryUsage>,
+    pub memory: ::core::option::Option<MemoryUsage>,
     /// Usage of the writable layer.
     #[prost(message, optional, tag = "4")]
-    pub writable_layer: ::std::option::Option<FilesystemUsage>,
+    pub writable_layer: ::core::option::Option<FilesystemUsage>,
 }
 /// CpuUsage provides the CPU usage information.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -1379,7 +1402,7 @@ pub struct CpuUsage {
     pub timestamp: i64,
     /// Cumulative CPU usage (sum across all cores) since object creation.
     #[prost(message, optional, tag = "2")]
-    pub usage_core_nano_seconds: ::std::option::Option<UInt64Value>,
+    pub usage_core_nano_seconds: ::core::option::Option<UInt64Value>,
 }
 /// MemoryUsage provides the memory usage information.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -1389,13 +1412,13 @@ pub struct MemoryUsage {
     pub timestamp: i64,
     /// The amount of working set memory in bytes.
     #[prost(message, optional, tag = "2")]
-    pub working_set_bytes: ::std::option::Option<UInt64Value>,
+    pub working_set_bytes: ::core::option::Option<UInt64Value>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ReopenContainerLogRequest {
     /// ID of the container for which to reopen the log.
     #[prost(string, tag = "1")]
-    pub container_id: std::string::String,
+    pub container_id: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ReopenContainerLogResponse {}
@@ -2943,6 +2966,7 @@ pub mod runtime_service_server {
                     Ok(http::Response::builder()
                         .status(200)
                         .header("grpc-status", "12")
+                        .header("content-type", "application/grpc")
                         .body(tonic::body::BoxBody::empty())
                         .unwrap())
                 }),
@@ -3198,6 +3222,7 @@ pub mod image_service_server {
                     Ok(http::Response::builder()
                         .status(200)
                         .header("grpc-status", "12")
+                        .header("content-type", "application/grpc")
                         .body(tonic::body::BoxBody::empty())
                         .unwrap())
                 }),

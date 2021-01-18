@@ -89,15 +89,3 @@ impl Netlink {
             .context("set link up")
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[tokio::test]
-    async fn netlink() -> Result<()> {
-        let netlink = Netlink::new().await?;
-        netlink.loopback().await?;
-        Ok(())
-    }
-}
