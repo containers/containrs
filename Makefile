@@ -12,8 +12,8 @@ build: ## Build the main binary
 build-release: ## Build the main binary in release mode
 	$(CARGO) build --release
 
-.PHONY: build-release-static
-build-release-static: ## Build the main binary in release mode statically linked
+.PHONY: build-bin-release-static
+build-bin-release-static: ## Build the main binary in release mode statically linked
 	podman run -it \
 		--pull always \
 		-v "$(shell pwd)":/volume \
