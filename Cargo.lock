@@ -360,7 +360,7 @@ dependencies = [
 [[package]]
 name = "derive_builder"
 version = "0.10.0-alpha"
-source = "git+https://github.com/colin-kiegel/rust-derive-builder#ee13c513e97cf61ea4871b3b6233c833fb1aed37"
+source = "git+https://github.com/colin-kiegel/rust-derive-builder#c72cd242b282d12dcc55dcb8d3e322830c26eec2"
 dependencies = [
  "derive_builder_core",
  "derive_builder_macro",
@@ -369,7 +369,7 @@ dependencies = [
 [[package]]
 name = "derive_builder_core"
 version = "0.10.0-alpha"
-source = "git+https://github.com/colin-kiegel/rust-derive-builder#ee13c513e97cf61ea4871b3b6233c833fb1aed37"
+source = "git+https://github.com/colin-kiegel/rust-derive-builder#c72cd242b282d12dcc55dcb8d3e322830c26eec2"
 dependencies = [
  "darling",
  "proc-macro2",
@@ -380,7 +380,7 @@ dependencies = [
 [[package]]
 name = "derive_builder_macro"
 version = "0.10.0-alpha"
-source = "git+https://github.com/colin-kiegel/rust-derive-builder#ee13c513e97cf61ea4871b3b6233c833fb1aed37"
+source = "git+https://github.com/colin-kiegel/rust-derive-builder#c72cd242b282d12dcc55dcb8d3e322830c26eec2"
 dependencies = [
  "derive_builder_core",
  "syn",
