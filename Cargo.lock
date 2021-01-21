@@ -945,9 +945,9 @@ dependencies = [
 
 [[package]]
 name = "netlink-packet-core"
-version = "0.2.2"
+version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "559c08b3ea479ace788a8f75388e3db15210561a4c0f37c4ec7bdf40a3be564e"
+checksum = "ac48279d5062bdf175bdbcb6b58ff1d6b0ecd54b951f7a0ff4bc0550fe903ccb"
 dependencies = [
  "anyhow",
  "byteorder",
