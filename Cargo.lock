@@ -239,7 +239,7 @@ dependencies = [
  "sled",
  "strum",
  "tempfile",
- "tokio 1.0.2",
+ "tokio 1.1.0",
  "tokio-test",
  "tonic",
  "tonic-build",
@@ -621,7 +621,7 @@ dependencies = [
  "http",
  "indexmap",
  "slab",
- "tokio 1.0.2",
+ "tokio 1.1.0",
  "tokio-util 0.6.1",
  "tracing",
  "tracing-futures",
@@ -708,7 +708,7 @@ dependencies = [
  "itoa",
  "pin-project 1.0.4",
  "socket2",
- "tokio 1.0.2",
+ "tokio 1.1.0",
  "tower-service",
  "tracing",
  "want",
@@ -992,7 +992,7 @@ dependencies = [
  "log",
  "netlink-packet-core",
  "netlink-sys",
- "tokio 1.0.2",
+ "tokio 1.1.0",
  "tokio-util 0.2.0",
 ]
 
@@ -1005,7 +1005,7 @@ dependencies = [
  "futures",
  "libc",
  "log",
- "tokio 1.0.2",
+ "tokio 1.1.0",
 ]
 
 [[package]]
@@ -1413,7 +1413,7 @@ dependencies = [
  "netlink-proto",
  "nix",
  "thiserror",
- "tokio 1.0.2",
+ "tokio 1.1.0",
 ]
 
 [[package]]
@@ -1653,9 +1653,9 @@ dependencies = [
 
 [[package]]
 name = "tokio"
-version = "1.0.2"
+version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0ca04cec6ff2474c638057b65798f60ac183e5e79d3448bb7163d36a39cff6ec"
+checksum = "8efab2086f17abcddb8f756117665c958feee6b2e39974c2f1600592ab3a4195"
 dependencies = [
  "autocfg",
  "bytes 1.0.1",
@@ -1690,7 +1690,7 @@ checksum = "76066865172052eb8796c686f0b441a93df8b08d40a950b062ffb9a426f00edd"
 dependencies = [
  "futures-core",
  "pin-project-lite 0.2.4",
- "tokio 1.0.2",
+ "tokio 1.1.0",
 ]
 
 [[package]]
@@ -1702,7 +1702,7 @@ dependencies = [
  "async-stream",
  "bytes 1.0.1",
  "futures-core",
- "tokio 1.0.2",
+ "tokio 1.1.0",
  "tokio-stream",
 ]
 
@@ -1731,7 +1731,7 @@ dependencies = [
  "futures-sink",
  "log",
  "pin-project-lite 0.2.4",
- "tokio 1.0.2",
+ "tokio 1.1.0",
  "tokio-stream",
 ]
 
@@ -1764,7 +1764,7 @@ dependencies = [
  "pin-project 1.0.4",
  "prost",
  "prost-derive",
- "tokio 1.0.2",
+ "tokio 1.1.0",
  "tokio-stream",
  "tokio-util 0.6.1",
  "tower",
@@ -1797,7 +1797,7 @@ dependencies = [
  "pin-project 1.0.4",
  "rand",
  "slab",
- "tokio 1.0.2",
+ "tokio 1.1.0",
  "tokio-stream",
  "tower-layer",
  "tower-service",
