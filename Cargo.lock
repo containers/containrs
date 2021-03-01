@@ -167,7 +167,7 @@ dependencies = [
 [[package]]
 name = "clap"
 version = "3.0.0-beta.2"
-source = "git+https://github.com/clap-rs/clap#80cbc1e695f7779f9f7cf6d41900a26b4121f6b0"
+source = "git+https://github.com/clap-rs/clap#ace23dd197cd8e19b8507aace44b3813a55e6eca"
 dependencies = [
  "atty",
  "bitflags",
@@ -178,15 +178,14 @@ dependencies = [
  "strsim 0.10.0",
  "termcolor",
  "terminal_size",
- "textwrap 0.13.2",
- "unicode-width",
+ "textwrap 0.13.4",
  "vec_map",
 ]
 
 [[package]]
 name = "clap_derive"
 version = "3.0.0-beta.2"
-source = "git+https://github.com/clap-rs/clap#80cbc1e695f7779f9f7cf6d41900a26b4121f6b0"
+source = "git+https://github.com/clap-rs/clap#ace23dd197cd8e19b8507aace44b3813a55e6eca"
 dependencies = [
  "heck",
  "proc-macro-error",
@@ -1449,9 +1448,9 @@ dependencies = [
 
 [[package]]
 name = "textwrap"
-version = "0.13.2"
+version = "0.13.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3cdcf6b66102d38821c33eea2bf1e8b7bd738072171cbf8a0683fbb46fcb8b0b"
+checksum = "cd05616119e612a8041ef58f2b578906cc2531a6069047ae092cfb86a325d835"
 dependencies = [
  "terminal_size",
  "unicode-width",
