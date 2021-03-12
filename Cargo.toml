@@ -33,7 +33,7 @@ derive_builder = { git = "https://github.com/colin-kiegel/rust-derive-builder" }
 dyn-clone = "1.0.4"
 env_logger = "0.8.3"
 futures = "0.3.12"
-futures-util = "0.3.12"
+futures-util = "0.3.13"
 getset = "0.1.1"
 ipnetwork = "0.17.0"
 lazy_static = "1.4.0"
