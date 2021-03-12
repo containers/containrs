@@ -223,7 +223,7 @@ dependencies = [
  "lazy_static",
  "libc",
  "log",
- "nix",
+ "nix 0.20.0",
  "notify",
  "prost",
  "rmp-serde",
@@ -893,6 +893,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "nix"
+version = "0.20.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fa9b4819da1bc61c0ea48b63b7bc8604064dd43013e7cc325df098d49cd7c18a"
+dependencies = [
+ "bitflags",
+ "cc",
+ "cfg-if",
+ "libc",
+]
+
+[[package]]
 name = "notify"
 version = "5.0.0-pre.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1256,7 +1268,7 @@ dependencies = [
  "log",
  "netlink-packet-route",
  "netlink-proto",
- "nix",
+ "nix 0.19.1",
  "thiserror",
  "tokio 1.2.0",
 ]
