@@ -167,7 +167,7 @@ dependencies = [
 [[package]]
 name = "clap"
 version = "3.0.0-beta.2"
-source = "git+https://github.com/clap-rs/clap#80cbc1e695f7779f9f7cf6d41900a26b4121f6b0"
+source = "git+https://github.com/clap-rs/clap#8b721a2bcdcf412c67342a6bdf2d540150dbd37e"
 dependencies = [
  "atty",
  "bitflags",
@@ -178,15 +178,14 @@ dependencies = [
  "strsim 0.10.0",
  "termcolor",
  "terminal_size",
- "textwrap 0.13.2",
- "unicode-width",
+ "textwrap 0.13.4",
  "vec_map",
 ]
 
 [[package]]
 name = "clap_derive"
 version = "3.0.0-beta.2"
-source = "git+https://github.com/clap-rs/clap#80cbc1e695f7779f9f7cf6d41900a26b4121f6b0"
+source = "git+https://github.com/clap-rs/clap#8b721a2bcdcf412c67342a6bdf2d540150dbd37e"
 dependencies = [
  "heck",
  "proc-macro-error",
@@ -975,9 +974,9 @@ checksum = "13bd41f508810a131401606d54ac32a467c97172d74ba7662562ebba5ad07fa0"
 
 [[package]]
 name = "os_str_bytes"
-version = "2.4.0"
+version = "3.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "afb2e1c3ee07430c2cf76151675e583e0f19985fa6efae47d6848a3e2c824f85"
+checksum = "e293568965aea261bdf010db17df7030e3c9a275c415d51d6112f7cf9b7af012"
 
 [[package]]
 name = "parking_lot"
@@ -1488,9 +1487,9 @@ dependencies = [
 
 [[package]]
 name = "textwrap"
-version = "0.13.2"
+version = "0.13.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3cdcf6b66102d38821c33eea2bf1e8b7bd738072171cbf8a0683fbb46fcb8b0b"
+checksum = "cd05616119e612a8041ef58f2b578906cc2531a6069047ae092cfb86a325d835"
 dependencies = [
  "terminal_size",
  "unicode-width",
