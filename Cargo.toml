@@ -40,7 +40,7 @@ lazy_static = "1.4.0"
 libc = "0.2.86"
 log = { version = "0.4.14", features = ["serde", "std"] }
 nix = "0.20.0"
-notify = { version = "5.0.0-pre.5", features = ["serde"] }
+notify = { version = "5.0.0-pre.10", features = ["serde"] }
 prost = "0.7.0"
 rmp-serde = "0.15.4"
 rtnetlink = "0.7.0"
