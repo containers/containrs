@@ -243,7 +243,7 @@ pub struct Box {
 }
 
 /// User specifies specific user (and group) information for the container process.
-#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Builder, Getters)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Debug, Builder, Getters, CopyGetters)]
 #[builder(pattern = "owned", setter(into, strip_option))]
 pub struct User {
     #[getset(get_copy = "pub")]
