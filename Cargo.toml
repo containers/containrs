@@ -37,7 +37,7 @@ futures-util = "0.3.13"
 getset = "0.1.1"
 ipnetwork = "0.17.0"
 lazy_static = "1.4.0"
-libc = "0.2.86"
+libc = "0.2.98"
 log = { version = "0.4.14", features = ["serde", "std"] }
 nix = "0.20.0"
 notify = { version = "5.0.0-pre.5", features = ["serde"] }
