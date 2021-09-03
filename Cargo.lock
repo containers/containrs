@@ -213,7 +213,7 @@ dependencies = [
  "libc",
  "log",
  "netlink-packet-route 0.6.0",
- "nix 0.20.1",
+ "nix 0.22.1",
  "notify",
  "prost",
  "rmp-serde",
@@ -905,9 +905,9 @@ dependencies = [
 
 [[package]]
 name = "nix"
-version = "0.20.1"
+version = "0.22.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "df8e5e343312e7fbeb2a52139114e9e702991ef9c2aea6817ff2440b35647d56"
+checksum = "e7555d6c7164cc913be1ce7f95cbecdabda61eb2ccd89008524af306fb7f5031"
 dependencies = [
  "bitflags",
  "cc",
