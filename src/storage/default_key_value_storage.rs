@@ -18,11 +18,15 @@ pub struct DefaultKeyValueStorage {
 
 impl KeyValueStorage for DefaultKeyValueStorage {
     /// Open the database, whereas the `Path` has to be a directory.
-    fn open(path: &Path) -> Result<Self> {
-        trace!("Opening storage {}", path.display());
+    fn open<P>(path: P) -> Result<Self>
+    where
+        P: AsRef<Path>,
+    {
+        trace!("Opening storage {}", path.as_ref().display());
         Ok(Self {
-            db: sled::open(path)
-                .with_context(|| format!("failed to open storage path {}", path.display()))?,
+            db: sled::open(&path).with_context(|| {
+                format!("failed to open storage path {}", path.as_ref().display())
+            })?,
         })
     }
 

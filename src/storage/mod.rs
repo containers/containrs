@@ -9,9 +9,10 @@ use std::{convert::AsRef, path::Path};
 /// The data storage trait which defines the methods a storage implementation should fulfill.
 pub trait KeyValueStorage {
     /// Load the storage from the provided path.
-    fn open(path: &Path) -> Result<Self>
+    fn open<P>(path: P) -> Result<Self>
     where
-        Self: Sized;
+        Self: Sized,
+        P: AsRef<Path>;
 
     /// Get an arbitrary item from the storage.
     fn get<K, V>(&self, key: K) -> Result<Option<V>>
