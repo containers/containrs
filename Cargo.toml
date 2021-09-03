@@ -57,7 +57,7 @@ which = "4.0.2"
 [build-dependencies]
 anyhow = "1.0.38"
 cbindgen = "0.17.0"
-tonic-build = "0.4.0"
+tonic-build = "0.5.2"
 
 [dev-dependencies]
 ctor = "0.1.19"
