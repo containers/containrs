@@ -1,26 +1,37 @@
 //! error handling FFI interface
 
-use anyhow::Error;
+use anyhow::{Error, Result};
 use libc::{c_char, c_int};
-use log::{error, warn};
+use log::{trace, warn};
 use std::{cell::RefCell, ptr, slice};
 
 thread_local! {
     static LAST_ERROR: RefCell<Option<Error>> = RefCell::new(None);
 }
 
-#[allow(dead_code)]
 /// Update the last error by the provided one.
 pub fn update_last_error(err: Error) {
-    error!("Setting last error: {:#}", err);
-
-    LAST_ERROR.with(|prev| {
-        *prev.borrow_mut() = Some(err);
-    });
+    trace!("Setting last error: {:#}", err);
+    LAST_ERROR.with(|prev| *prev.borrow_mut() = Some(err));
 }
 
-/// Calculate the number of bytes in the last error's error message including a trailing `null`
-/// character. If there are no recent error, then this returns `0`.
+/// Remove the last error.
+pub fn remove_last_error() {
+    trace!("Removing last error");
+    LAST_ERROR.with(|prev| *prev.borrow_mut() = None);
+}
+
+/// Update the last erorr if the provided result contains one.
+pub fn update_last_err_if_required<T>(res: Result<T>) {
+    match res {
+        Err(e) => update_last_error(e),
+        Ok(_) => remove_last_error(),
+    };
+}
+
+/// Calculate the number of bytes in the last error's error message including a
+/// trailing `null` character. If there are no recent error, then this returns
+/// `0`.
 #[no_mangle]
 pub extern "C" fn last_error_length() -> c_int {
     LAST_ERROR.with(|prev| match *prev.borrow() {
@@ -43,7 +54,7 @@ pub extern "C" fn last_error_length() -> c_int {
 #[no_mangle]
 pub extern "C" fn last_error_message(buffer: *mut c_char, length: c_int) -> c_int {
     if buffer.is_null() {
-        warn!("Null pointer passed into last_error_message() as the buffer");
+        warn!("provided buffer is null");
         return -1;
     }
 
