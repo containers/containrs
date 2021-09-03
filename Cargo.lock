@@ -212,7 +212,7 @@ dependencies = [
  "lazy_static",
  "libc",
  "log",
- "netlink-packet-route 0.6.0",
+ "netlink-packet-route",
  "nix 0.20.1",
  "notify",
  "prost",
@@ -826,20 +826,6 @@ dependencies = [
 
 [[package]]
 name = "netlink-packet-route"
-version = "0.6.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2253105e60b35a3fb6cf342b56a45ee1c76ef4b1e68c59b08f813f24c3b7b469"
-dependencies = [
- "anyhow",
- "bitflags",
- "byteorder",
- "libc",
- "netlink-packet-core",
- "netlink-packet-utils",
-]
-
-[[package]]
-name = "netlink-packet-route"
 version = "0.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4c92a86a6528fe6d0a811c48d28213ca896a2b8bf2f6cadf2ab5bb12d32ec0f1"
@@ -1276,7 +1262,7 @@ dependencies = [
  "byteordered",
  "futures",
  "log",
- "netlink-packet-route 0.7.1",
+ "netlink-packet-route",
  "netlink-proto",
  "nix 0.19.1",
  "thiserror",
