@@ -188,10 +188,6 @@ jobs:
           bridge
         env:
           VERSION: v1.0.1
-      - name: Select Toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          override: true
       - name: Setup Cache
         uses: actions/cache@v2
         with:
@@ -203,7 +199,7 @@ jobs:
       - name: Integration Tests
         run: |
           # Run all integration tests
-          sudo env "PATH=$PATH" make test-integration
+          sudo -E env "PATH=$PATH" make test-integration
 
           # Fix permissions
           sudo chown -R $(id -u):$(id -g) ~/.cargo target
