@@ -1042,37 +1042,37 @@ pub enum Arch {
     X32,
 
     #[serde(rename = "SCMP_ARCH_ARM")]
-    ARM,
+    Arm,
 
     #[serde(rename = "SCMP_ARCH_AARCH64")]
     AARCH64,
 
     #[serde(rename = "SCMP_ARCH_MIPS")]
-    MIPS,
+    Mips,
 
     #[serde(rename = "SCMP_ARCH_MIPS64")]
-    MIPS64,
+    Mips64,
 
     #[serde(rename = "SCMP_ARCH_MIPS64N32")]
-    MIPS64N32,
+    Mips64N32,
 
     #[serde(rename = "SCMP_ARCH_MIPSEL")]
-    MIPSEL,
+    MipsEL,
 
     #[serde(rename = "SCMP_ARCH_MIPSEL64")]
-    MIPSEL64,
+    MipsEL64,
 
     #[serde(rename = "SCMP_ARCH_MIPSEL64N32")]
-    MIPSEL64N32,
+    MipsEL64N32,
 
     #[serde(rename = "SCMP_ARCH_PPC")]
-    PPC,
+    Ppc,
 
     #[serde(rename = "SCMP_ARCH_PPC64")]
-    PPC64,
+    Ppc64,
 
     #[serde(rename = "SCMP_ARCH_PPC64LE")]
-    PPC64LE,
+    Ppc64LE,
 
     #[serde(rename = "SCMP_ARCH_S390")]
     S390,
@@ -1081,10 +1081,10 @@ pub enum Arch {
     S390X,
 
     #[serde(rename = "SCMP_ARCH_PARISC")]
-    PARISC,
+    Parisc,
 
     #[serde(rename = "SCMP_ARCH_PARISC64")]
-    PARISC64,
+    Parisc64,
 
     #[serde(rename = "SCMP_ARCH_RISCV64")]
     RISCV64,

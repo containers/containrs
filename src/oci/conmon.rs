@@ -65,6 +65,7 @@ clone_trait_object!(ExecCommand);
 
 #[derive(AsRefStr, Clone, Debug, Hash, Eq, PartialEq)]
 #[strum(serialize_all = "kebab_case")]
+#[allow(clippy::enum_variant_names)]
 /// Available arguments for conmon.
 pub enum Arg {
     /// Terminal.

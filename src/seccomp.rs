@@ -245,17 +245,17 @@ const DEFAULT_ARCHITECTURES: &[Arch] = &[
     #[cfg(target_arch = "aarch64")]
     Arch::AARCH64,
     #[cfg(any(target_arch = "aarch64", target_arch = "arm"))]
-    Arch::ARM,
+    Arch::Arm,
     #[cfg(any(target_arch = "mips64", target_arch = "mips"))]
-    Arch::MIPS,
+    Arch::Mips,
     #[cfg(target_arch = "mips64")]
-    Arch::MIPS64,
+    Arch::Mips64,
     #[cfg(target_arch = "mips64")]
-    Arch::MIPS64N32,
+    Arch::Mips64N32,
     #[cfg(any(target_arch = "powerpc64", target_arch = "powerpc"))]
-    Arch::PPC64,
+    Arch::Ppc64,
     #[cfg(target_arch = "powerpc")]
-    Arch::PPC,
+    Arch::Ppc,
 ];
 
 const DEFAULT_SYSCALLS: &[&str] = &[

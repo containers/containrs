@@ -1,7 +1,7 @@
 //! CNI plugin helpers mostly around their execution
 
 use crate::network::cni::{
-    config::DNS,
+    config::Dns,
     exec::{ArgsBuilder, DefaultExec, Exec},
 };
 use anyhow::{format_err, Context, Result};
@@ -200,7 +200,7 @@ pub struct CNIResult {
     #[get = "pub"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
     /// The DNS configuration.
-    dns: Option<DNS>,
+    dns: Option<Dns>,
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug, Default, Getters)]
