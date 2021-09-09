@@ -22,7 +22,8 @@ use getset::{Getters, MutGetters};
 use log::{debug, error, info, trace, warn};
 use notify::{
     event::{CreateKind, ModifyKind, RemoveKind},
-    Error as NotifyError, Event, EventKind, RecommendedWatcher, RecursiveMode, Watcher,
+    recommended_watcher, Error as NotifyError, Event, EventKind, RecommendedWatcher, RecursiveMode,
+    Watcher,
 };
 use serde::{Deserialize, Serialize};
 use std::{
@@ -163,7 +164,7 @@ impl CNI {
         // Create a config watcher
         let (tx, rx) = crossbeam_channel::unbounded();
         let tx_clone = tx.clone();
-        let mut watcher: RecommendedWatcher = Watcher::new_immediate(move |event| {
+        let mut watcher: RecommendedWatcher = recommended_watcher(move |event| {
             tx_clone
                 .send(WatcherMessage::Handle(event))
                 .expect("watcher died because cannot send to channel");
