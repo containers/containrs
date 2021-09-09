@@ -213,7 +213,7 @@ impl PortManager {
             .context("build DNAT chain")?;
 
         trace!("Filling DNAT rules");
-        dnat_chain.fill_dnat_rules(&port_mappings, container_network);
+        dnat_chain.fill_dnat_rules(port_mappings, container_network);
 
         trace!("Setup DNAT chain");
         self.iptables

@@ -22,7 +22,8 @@ use getset::{Getters, MutGetters};
 use log::{debug, error, info, trace, warn};
 use notify::{
     event::{CreateKind, ModifyKind, RemoveKind},
-    Error as NotifyError, Event, EventKind, RecommendedWatcher, RecursiveMode, Watcher,
+    recommended_watcher, Error as NotifyError, Event, EventKind, RecommendedWatcher, RecursiveMode,
+    Watcher,
 };
 use serde::{Deserialize, Serialize};
 use std::{
@@ -163,7 +164,7 @@ impl CNI {
         // Create a config watcher
         let (tx, rx) = crossbeam_channel::unbounded();
         let tx_clone = tx.clone();
-        let mut watcher: RecommendedWatcher = Watcher::new_immediate(move |event| {
+        let mut watcher: RecommendedWatcher = recommended_watcher(move |event| {
             tx_clone
                 .send(WatcherMessage::Handle(event))
                 .expect("watcher died because cannot send to channel");
@@ -215,10 +216,10 @@ impl CNI {
         match (event.kind, event.paths.get(0), event.paths.get(1)) {
             // File creation handline
             (EventKind::Create(CreateKind::File), Some(file), None)
-                if Self::is_config_file(&file) =>
+                if Self::is_config_file(file) =>
             {
                 info!("Created new CNI config file {}", file.display());
-                let config = Self::load_network(&state, &file)
+                let config = Self::load_network(state, file)
                     .await
                     .context("load config")?;
                 Self::insert_config(state, config)
@@ -234,13 +235,13 @@ impl CNI {
                     old.display(),
                     new.display()
                 );
-                if Self::has_config_file_extensions(&old) {
-                    Self::remove_config(state, &old)
+                if Self::has_config_file_extensions(old) {
+                    Self::remove_config(state, old)
                         .await
                         .context("remove old config")?;
                 }
-                if Self::is_config_file(&new) {
-                    let config = Self::load_network(&state, &new)
+                if Self::is_config_file(new) {
+                    let config = Self::load_network(state, new)
                         .await
                         .context("load new config")?;
                     Self::insert_config(state, config)
@@ -252,9 +253,9 @@ impl CNI {
 
             // File removal handling
             (EventKind::Remove(RemoveKind::File), Some(file), None)
-                if Self::has_config_file_extensions(&file) =>
+                if Self::has_config_file_extensions(file) =>
             {
-                Self::remove_config(state, &file)
+                Self::remove_config(state, file)
                     .await
                     .context("remove config")?;
                 Self::log_networks(state).await
@@ -315,8 +316,8 @@ impl CNI {
             .to_str()
             .context("convert os string")?
         {
-            "conflist" => ConfigListFile::from(&file).context("load config list from file")?,
-            _ => ConfigFile::from(&file)
+            "conflist" => ConfigListFile::from(file).context("load config list from file")?,
+            _ => ConfigFile::from(file)
                 .context("load config from file")?
                 .into(),
         };

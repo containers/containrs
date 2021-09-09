@@ -9,7 +9,7 @@ use getset::{Getters, Setters};
 use serde::{Deserialize, Serialize};
 use std::{
     collections::HashMap,
-    convert::Into,
+    convert::From,
     fmt,
     fs::File,
     io::Read,
@@ -111,11 +111,11 @@ pub struct ConfigFile {
 
     #[getset(get = "pub")]
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    ipam: Option<IPAM>,
+    ipam: Option<Ipam>,
 
     #[getset(get = "pub")]
     #[serde(default)]
-    dns: DNS,
+    dns: Dns,
 
     #[getset(get = "pub")]
     #[serde(default)]
@@ -160,12 +160,12 @@ impl ConfigFile {
     }
 }
 
-impl Into<ConfigListFile> for ConfigFile {
-    fn into(self) -> ConfigListFile {
+impl From<ConfigFile> for ConfigListFile {
+    fn from(config_file: ConfigFile) -> ConfigListFile {
         ConfigListFile {
-            cni_version: self.cni_version.clone(),
-            name: self.name.clone(),
-            plugins: vec![self],
+            cni_version: config_file.cni_version.clone(),
+            name: config_file.name.clone(),
+            plugins: vec![config_file],
             ..Default::default()
         }
     }
@@ -210,7 +210,7 @@ impl ConfigListFile {
 
 #[derive(Clone, Serialize, Deserialize, Debug, Default, Builder, Getters)]
 #[builder(default, pattern = "owned", setter(into, strip_option))]
-pub struct IPAM {
+pub struct Ipam {
     #[getset(get = "pub")]
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
     typ: Option<String>,
@@ -219,7 +219,7 @@ pub struct IPAM {
 #[derive(Clone, Serialize, Deserialize, Debug, Default, Builder, Getters)]
 #[builder(default, pattern = "owned", setter(into, strip_option))]
 /// DNS contains values interesting for DNS resolvers
-pub struct DNS {
+pub struct Dns {
     #[getset(get = "pub")]
     #[serde(default, skip_serializing_if = "Option::is_none")]
     nameservers: Option<Vec<String>>,

@@ -252,6 +252,7 @@ mod tests {
     #[tokio::test]
     async fn initialize_network_success() -> Result<()> {
         let config = ConfigBuilder::default()
+            .cni_config_paths(vec![tempdir()?.into_path()])
             .storage_path(tempdir()?.path())
             .build()?;
         let sut = Server::new(config);

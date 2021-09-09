@@ -85,6 +85,7 @@ pub struct Config {
         default_value("/etc/cni/net.d"),
         env("CRI_CNI_CONFIG_PATHS"),
         long("cni-config-paths"),
+        multiple_occurrences(true),
         value_name("PATH")
     )]
     /// The paths to the CNI configurations.
