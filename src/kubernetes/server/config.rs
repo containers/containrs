@@ -20,8 +20,8 @@ lazy_static! {
 #[builder(default, pattern = "owned", setter(into, strip_option))]
 #[serde(rename_all = "kebab-case")]
 #[clap(
-    about("CRI - Container Runtime library for Kubernetes (CRI) and friends"),
-    after_help("More info at: https://github.com/cri-o/cri"),
+    about("containrs - Container Runtime for Kubernetes (CRI) and friends"),
+    after_help("More info at: https://github.com/containers/containrs"),
     global_setting(AppSettings::ColoredHelp),
     version(crate_version!()),
 )]
