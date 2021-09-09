@@ -2,14 +2,15 @@
 
 use crate::{
     capability::{Capabilities, Capability},
-    oci::spec::runtime::{
-        Arch, LinuxSeccomp, LinuxSeccompAction, LinuxSeccompArgBuilder, LinuxSeccompBuilder,
-        LinuxSeccompOperator, LinuxSyscall, LinuxSyscallBuilder,
-    },
+
 };
 use anyhow::{bail, format_err, Context, Result};
 use derive_builder::Builder;
 use log::debug;
+use oci_spec::runtime::{
+    Arch, LinuxSeccomp, LinuxSeccompAction, LinuxSeccompArgBuilder, LinuxSeccompBuilder,
+    LinuxSeccompOperator, LinuxSyscall, LinuxSyscallBuilder,
+};
 use std::{convert::AsRef, fmt::Display, fs::File, path::PathBuf, string::ToString};
 
 #[derive(Builder, Debug, Default)]
@@ -122,7 +123,7 @@ impl Seccomp {
         }
 
         LinuxSeccompBuilder::default()
-            .default_action(LinuxSeccompAction::Errno)
+            .default_action(LinuxSeccompAction::ScmpActErrno)
             .architectures(DEFAULT_ARCHITECTURES)
             .syscalls(syscalls)
             .build()
@@ -149,7 +150,7 @@ impl Seccomp {
             .args(vec![LinuxSeccompArgBuilder::default()
                 .index(0usize)
                 .value(value)
-                .op(LinuxSeccompOperator::EqualTo)
+                .op(LinuxSeccompOperator::ScmpCmpEq)
                 .build()
                 .context("build personality args")?])
             .build()
@@ -237,25 +238,25 @@ impl Seccomp {
 
 const DEFAULT_ARCHITECTURES: &[Arch] = &[
     #[cfg(target_arch = "x86_64")]
-    Arch::X86_64,
+    Arch::ScmpArchX86_64,
     #[cfg(target_arch = "x86_64")]
-    Arch::X86,
+    Arch::ScmpArchX86,
     #[cfg(target_arch = "x86_64")]
-    Arch::X32,
+    Arch::ScmpArchX32,
     #[cfg(target_arch = "aarch64")]
-    Arch::AARCH64,
+    Arch::ScmpArchAarch64 ,
     #[cfg(any(target_arch = "aarch64", target_arch = "arm"))]
-    Arch::Arm,
+    Arch:: ScmpArchArm,
     #[cfg(any(target_arch = "mips64", target_arch = "mips"))]
-    Arch::Mips,
+    Arch::ScmpArchMips,
     #[cfg(target_arch = "mips64")]
-    Arch::Mips64,
+    Arch::ScmpArchMips64,
     #[cfg(target_arch = "mips64")]
-    Arch::Mips64N32,
+    Arch::ScmpArchMipsn32,
     #[cfg(any(target_arch = "powerpc64", target_arch = "powerpc"))]
-    Arch::Ppc64,
+    Arch::ScmpArchPpc64,
     #[cfg(target_arch = "powerpc")]
-    Arch::Ppc,
+    Arch::ScmpArchPpc,
 ];
 
 const DEFAULT_SYSCALLS: &[&str] = &[
@@ -636,7 +637,7 @@ mod tests {
             .build()?
             .build_linux_seccomp("runtime/default")?
             .context("no profile")?;
-        assert_eq!(profile.default_action(), LinuxSeccompAction::Errno);
+        assert_eq!(profile.default_action(), LinuxSeccompAction::ScmpActErrno);
         assert_eq!(profile.syscalls().as_ref().context("no syscalls")?.len(), 7);
         Ok(())
     }
@@ -667,7 +668,7 @@ mod tests {
             .build_linux_seccomp(format!("localhost/{}", temp_file.path().display()))?
             .context("no profile")?;
 
-        assert_eq!(profile.default_action(), LinuxSeccompAction::Trace);
+        assert_eq!(profile.default_action(), LinuxSeccompAction::ScmpActTrace);
         Ok(())
     }
 
