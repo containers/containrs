@@ -1,6 +1,6 @@
 //! A pod sandbox implementation which does pin it's namespaces to file descriptors.
 
-use crate::sandbox::Pod;
+use super::Pod;
 
 #[derive(Default)]
 pub struct PinnedSandbox {}
