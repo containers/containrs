@@ -188,6 +188,10 @@ jobs:
           bridge
         env:
           VERSION: v1.0.1
+      - name: Select Toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          override: true
       - name: Setup Cache
         uses: actions/cache@v2
         with:
