@@ -1,6 +1,6 @@
 //! The default key value storage implementation for storing arbitrary data.
 
-use crate::storage::KeyValueStorage;
+use super::KeyValueStorage;
 use anyhow::{Context, Result};
 use getset::Getters;
 use log::trace;
