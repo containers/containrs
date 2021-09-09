@@ -17,8 +17,6 @@ build-bin-release-static: ## Build the main binary in release mode statically li
 	podman run -it \
 		--pull always \
 		-v "$(shell pwd)":/volume \
-		-v ~/.cargo/git:/root/.cargo/git \
-		-v ~/.cargo/registry:/root/.cargo/registry \
 		clux/muslrust:stable \
 		bash -c "\
 			rustup component add rustfmt && \
