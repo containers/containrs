@@ -196,7 +196,7 @@ jobs:
             sudo tar xfz - -C /usr/local/bin
           bridge
         env:
-          VERSION: v0.8.7
+          VERSION: v1.0.1
       - name: Setup Cache
         uses: actions/cache@v2
         with:
