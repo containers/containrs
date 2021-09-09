@@ -112,7 +112,7 @@ pub enum Subcommand {
 
 impl Subcommand {
     fn build_cmd(&self) -> Vec<String> {
-        use crate::oci::oci_runtime::Subcommand::*;
+        use crate::oci_runtime::Subcommand::*;
         match self {
             Checkpoint((container_id, args)) => self.build_cmd_vec(
                 args.iter().map(ToString::to_string).collect(),
@@ -234,7 +234,7 @@ where
 
 impl fmt::Display for GlobalArgs {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        use crate::oci::oci_runtime::GlobalArgs::*;
+        use crate::oci_runtime::GlobalArgs::*;
         write!(f, "--")?;
 
         match self {
@@ -296,7 +296,7 @@ pub enum CheckpointArgs {
 
 impl fmt::Display for CheckpointArgs {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        use crate::oci::oci_runtime::CheckpointArgs::*;
+       use crate::oci_runtime::CheckpointArgs::*;
         write!(f, "--")?;
 
         match self {
@@ -332,7 +332,7 @@ pub enum CreateArgs {
 
 impl fmt::Display for CreateArgs {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        use crate::oci::oci_runtime::CreateArgs::*;
+        use crate::oci_runtime::CreateArgs::*;
         write!(f, "--")?;
 
         match self {
@@ -357,7 +357,7 @@ pub enum EventsArgs {
 
 impl fmt::Display for EventsArgs {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        use crate::oci::oci_runtime::EventsArgs::*;
+        use crate::oci_runtime::EventsArgs::*;
         write!(f, "--")?;
 
         match self {
@@ -403,7 +403,7 @@ pub enum ExecArgs {
 
 impl fmt::Display for ExecArgs {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        use crate::oci::oci_runtime::ExecArgs::*;
+        use crate::oci_runtime::ExecArgs::*;
         write!(f, "--")?;
 
         match self {
@@ -455,7 +455,7 @@ pub enum ListArgs {
 
 impl fmt::Display for ListArgs {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        use crate::oci::oci_runtime::ListArgs::*;
+        use crate::oci_runtime::ListArgs::*;
         write!(f, "--")?;
 
         match self {
@@ -475,7 +475,7 @@ pub enum PsArgs {
 
 impl fmt::Display for PsArgs {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        use crate::oci::oci_runtime::PsArgs::*;
+        use crate::oci_runtime::PsArgs::*;
         write!(f, "--")?;
 
         match self {
@@ -524,7 +524,7 @@ pub enum RestoreArgs {
 
 impl fmt::Display for RestoreArgs {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        use crate::oci::oci_runtime::RestoreArgs::*;
+        use crate::oci_runtime::RestoreArgs::*;
         write!(f, "--")?;
 
         match self {
@@ -564,7 +564,7 @@ pub enum RunArgs {
 
 impl fmt::Display for RunArgs {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        use crate::oci::oci_runtime::RunArgs::*;
+        use crate::oci_runtime::RunArgs::*;
         write!(f, "--")?;
 
         match self {
@@ -589,7 +589,7 @@ pub enum SpecArgs {
 
 impl fmt::Display for SpecArgs {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        use crate::oci::oci_runtime::SpecArgs::*;
+        use crate::oci_runtime::SpecArgs::*;
         write!(f, "--")?;
 
         match self {
@@ -639,7 +639,7 @@ pub enum UpdateArgs {
 
 impl fmt::Display for UpdateArgs {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        use crate::oci::oci_runtime::UpdateArgs::*;
+        use crate::oci_runtime::UpdateArgs::*;
         write!(f, "--")?;
 
         match self {

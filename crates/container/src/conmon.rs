@@ -176,7 +176,7 @@ pub enum Arg {
 
 impl fmt::Display for Arg {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        use crate::oci::conmon::Arg::*;
+        use crate::conmon::Arg::*;
         write!(f, "--")?;
 
         fn write_kv<K, V>(f: &mut fmt::Formatter<'_>, key: K, value: V) -> fmt::Result

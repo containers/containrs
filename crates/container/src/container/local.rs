@@ -4,9 +4,8 @@
 //! [0]: https://github.com/opencontainers/runc
 //! [1]: https://github.com/containers/crun
 
-use crate::oci::{
-    container::{Container, ContainerState, ContainerStats},
-    spec::runtime::{LinuxResources, Spec},
+use oci_spec::{
+    runtime::{LinuxResources, Spec},
 };
 use anyhow::Result;
 use async_trait::async_trait;
@@ -14,6 +13,8 @@ use derive_builder::Builder;
 use getset::Getters;
 use serde::{Deserialize, Serialize};
 use tokio::{process::Command, signal::unix::SignalKind};
+
+use super::{Container, ContainerState, ContainerStats};
 
 #[derive(Debug, Default, Builder, Getters, Serialize, Deserialize)]
 #[builder(default, pattern = "owned", setter(into, strip_option))]

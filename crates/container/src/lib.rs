@@ -1,7 +1,5 @@
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
-}
+//! Open Container Initiative (OCI) related implementations
+
+mod conmon;
+pub mod container;
+pub mod oci_runtime;

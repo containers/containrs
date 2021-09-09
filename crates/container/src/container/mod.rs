@@ -1,6 +1,6 @@
 //! OCI container implementations.
 
-use crate::oci::spec::runtime::LinuxResources;
+use oci_spec::runtime::LinuxResources;
 use anyhow::Result;
 use async_trait::async_trait;
 use serde::{de::DeserializeOwned, Serialize};
