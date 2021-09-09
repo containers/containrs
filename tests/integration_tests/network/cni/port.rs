@@ -1,5 +1,5 @@
 use anyhow::{Context, Result};
-use cri::network::cni::port::{PortManager, PortMappingBuilder};
+use containrs::network::cni::port::{PortManager, PortMappingBuilder};
 use ipnetwork::IpNetwork;
 use log::info;
 use nix::unistd::getuid;
