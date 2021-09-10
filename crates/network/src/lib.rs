@@ -1,9 +1,9 @@
 //! Network types and implementations.
 
-use sandbox::SandboxData;
 use anyhow::Result;
 use async_trait::async_trait;
 use derive_builder::Builder;
+use sandbox::SandboxData;
 
 pub mod cni;
 
@@ -68,7 +68,7 @@ pub mod tests {
     use sandbox::{LinuxNamespaces, SandboxDataBuilder};
 
     use super::*;
-    
+
     pub fn new_sandbox_data() -> Result<SandboxData> {
         let mut annotations: HashMap<String, String> = HashMap::new();
         annotations.insert("annotationkey1".into(), "annotationvalue1".into());

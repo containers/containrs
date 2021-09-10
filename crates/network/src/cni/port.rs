@@ -1,11 +1,8 @@
 //! Host to container port mapping functionality.
 
-use crate::{
-    cni::{
-        iptables::{Chain, ChainBuilder, DefaultIptablesBuilder, Iptables},
-        netlink::{DefaultNetlink, Netlink},
-    },
-    
+use crate::cni::{
+    iptables::{Chain, ChainBuilder, DefaultIptablesBuilder, Iptables},
+    netlink::{DefaultNetlink, Netlink},
 };
 use anyhow::{format_err, Context, Result};
 use derive_builder::Builder;

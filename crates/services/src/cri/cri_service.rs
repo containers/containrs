@@ -1,10 +1,10 @@
 //! A CRI API service implementation.
 
-use storage::default_key_value_storage::DefaultKeyValueStorage;
 use anyhow::Result;
 use derive_builder::Builder;
 use log::debug;
 use std::fmt::{Debug, Display};
+use storage::default_key_value_storage::DefaultKeyValueStorage;
 use tonic::{Request, Response, Status};
 
 #[derive(Clone, Builder)]
@@ -102,8 +102,8 @@ where
 #[cfg(test)]
 pub mod tests {
     use super::*;
-    use storage::KeyValueStorage;
     use anyhow::Result;
+    use storage::KeyValueStorage;
     use tempfile::TempDir;
 
     pub fn new_cri_service() -> Result<CRIService> {

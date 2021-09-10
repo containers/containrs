@@ -296,7 +296,7 @@ pub enum CheckpointArgs {
 
 impl fmt::Display for CheckpointArgs {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-       use crate::oci_runtime::CheckpointArgs::*;
+        use crate::oci_runtime::CheckpointArgs::*;
         write!(f, "--")?;
 
         match self {

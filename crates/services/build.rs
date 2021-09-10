@@ -1,5 +1,5 @@
 use anyhow::{Context, Result};
-use std::{path::PathBuf};
+use std::path::PathBuf;
 
 const PROTO_FILE: &str = "src/cri/proto/criapi.proto";
 

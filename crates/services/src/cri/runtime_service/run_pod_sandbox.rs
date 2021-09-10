@@ -1,8 +1,6 @@
-use crate::{
-    cri::{
-        api::{NamespaceMode, RunPodSandboxRequest, RunPodSandboxResponse},
-        cri_service::{CRIService, OptionStatus, ResultStatus},
-    },  
+use crate::cri::{
+    api::{NamespaceMode, RunPodSandboxRequest, RunPodSandboxResponse},
+    cri_service::{CRIService, OptionStatus, ResultStatus},
 };
 use log::{debug, info};
 use sandbox::{pinned::PinnedSandbox, LinuxNamespaces, SandboxBuilder, SandboxDataBuilder};

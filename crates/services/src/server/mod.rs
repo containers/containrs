@@ -1,26 +1,21 @@
 //! Container Runtime Interface server implementation
-use crate::{
-    cri::{
-        api::{
-            image_service_server::ImageServiceServer, runtime_service_server::RuntimeServiceServer,
-        },
-        cri_service::CRIServiceBuilder,
-    },
-   
+use crate::cri::{
+    api::{image_service_server::ImageServiceServer, runtime_service_server::RuntimeServiceServer},
+    cri_service::CRIServiceBuilder,
 };
-use network::{
-    cni::{CNIBuilder, CNI},
-    Network, NetworkBuilder,
-};
-use storage::{default_key_value_storage::DefaultKeyValueStorage, KeyValueStorage};
-use common::unix_stream::UnixStream;
 use anyhow::{bail, Context, Result};
 use clap::crate_name;
+use common::unix_stream::UnixStream;
 pub use config::{Config, LogScope};
 use env_logger::fmt::Color;
 use futures::TryFutureExt;
 use log::{debug, info, trace, LevelFilter};
+use network::{
+    cni::{CNIBuilder, CNI},
+    Network, NetworkBuilder,
+};
 use std::{env, io::Write};
+use storage::{default_key_value_storage::DefaultKeyValueStorage, KeyValueStorage};
 #[cfg(unix)]
 use tokio::net::UnixListener;
 use tokio::{

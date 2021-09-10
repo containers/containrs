@@ -1,9 +1,6 @@
 //! seccomp profile handling
 
-use crate::{
-    capability::{Capabilities, Capability},
-
-};
+use crate::capability::{Capabilities, Capability};
 use anyhow::{bail, format_err, Context, Result};
 use derive_builder::Builder;
 use log::debug;
@@ -244,9 +241,9 @@ const DEFAULT_ARCHITECTURES: &[Arch] = &[
     #[cfg(target_arch = "x86_64")]
     Arch::ScmpArchX32,
     #[cfg(target_arch = "aarch64")]
-    Arch::ScmpArchAarch64 ,
+    Arch::ScmpArchAarch64,
     #[cfg(any(target_arch = "aarch64", target_arch = "arm"))]
-    Arch:: ScmpArchArm,
+    Arch::ScmpArchArm,
     #[cfg(any(target_arch = "mips64", target_arch = "mips"))]
     Arch::ScmpArchMips,
     #[cfg(target_arch = "mips64")]

@@ -1,16 +1,14 @@
 //! A network implementation which does work with the Kubernetes Container Network Interface (CNI).
 
 use crate::{
-    {
-        cni::{
-            config::{Config, ConfigBuilder, ConfigFile, ConfigListFile},
-            exec::{DefaultExec, Exec},
-            namespace::Namespace,
-            netlink::{DefaultNetlink, Netlink},
-            plugin::{CNIResult, Plugin, PluginBuilder},
-        },
-        PodNetwork,
-    }
+    cni::{
+        config::{Config, ConfigBuilder, ConfigFile, ConfigListFile},
+        exec::{DefaultExec, Exec},
+        namespace::Namespace,
+        netlink::{DefaultNetlink, Netlink},
+        plugin::{CNIResult, Plugin, PluginBuilder},
+    },
+    PodNetwork,
 };
 use anyhow::{bail, Context, Result};
 use async_trait::async_trait;
@@ -23,6 +21,7 @@ use notify::{
     recommended_watcher, Error as NotifyError, Event, EventKind, RecommendedWatcher, RecursiveMode,
     Watcher,
 };
+use sandbox::SandboxData;
 use serde::{Deserialize, Serialize};
 use std::{
     collections::HashMap,
@@ -32,7 +31,6 @@ use std::{
     result,
     sync::Arc,
 };
-use sandbox::SandboxData;
 use storage::{default_key_value_storage::DefaultKeyValueStorage, KeyValueStorage};
 use tokio::sync::RwLock;
 
