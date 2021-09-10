@@ -1,11 +1,11 @@
 //! Host to container port mapping functionality.
 
 use crate::{
-    network::cni::{
+    cni::{
         iptables::{Chain, ChainBuilder, DefaultIptablesBuilder, Iptables},
         netlink::{DefaultNetlink, Netlink},
     },
-    storage::{default_key_value_storage::DefaultKeyValueStorage, KeyValueStorage},
+    
 };
 use anyhow::{format_err, Context, Result};
 use derive_builder::Builder;
@@ -20,6 +20,7 @@ use std::{
     net::{IpAddr, SocketAddr},
     path::Path,
 };
+use storage::{default_key_value_storage::DefaultKeyValueStorage, KeyValueStorage};
 use sysctl::{Ctl, Sysctl};
 
 #[derive(Getters, MutGetters)]
@@ -314,7 +315,7 @@ impl PortManager {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::network::cni::netlink::{Link, LinkBuilder};
+    use crate::cni::netlink::{Link, LinkBuilder};
     use anyhow::bail;
     use async_trait::async_trait;
     use netlink_packet_route::rtnl::{route::nlas::Nla, RouteHeader, RouteMessage};

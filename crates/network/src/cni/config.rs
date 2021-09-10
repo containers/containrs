@@ -1,5 +1,5 @@
 //! CNI network config types
-use crate::network::cni::{
+use crate::cni::{
     exec::{DefaultExec, Exec},
     plugin::PluginBuilder,
 };
@@ -240,7 +240,7 @@ pub struct Dns {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::network::cni::plugin::{tests::ExecMock, VersionResult};
+    use crate::cni::plugin::{tests::ExecMock, VersionResult};
     use std::io::Write;
     use tempfile::NamedTempFile;
 

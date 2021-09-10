@@ -1,6 +1,6 @@
 //! CNI plugin helpers mostly around their execution
 
-use crate::network::cni::{
+use crate::cni::{
     config::Dns,
     exec::{ArgsBuilder, DefaultExec, Exec},
 };
@@ -262,7 +262,7 @@ pub struct ErrorResult {
 #[cfg(test)]
 pub mod tests {
     use super::*;
-    use crate::network::cni::exec::Args;
+    use crate::cni::exec::Args;
     use anyhow::{bail, format_err};
     use async_trait::async_trait;
     use std::path::Path;

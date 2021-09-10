@@ -1,6 +1,6 @@
 //! Linux iptables interface
 
-use crate::network::cni::port::PortMapping;
+use crate::cni::port::PortMapping;
 use anyhow::{bail, Context, Result};
 use async_trait::async_trait;
 use derive_builder::Builder;
@@ -535,7 +535,7 @@ impl Chain {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::network::cni::port::PortMappingBuilder;
+    use crate::cni::port::PortMappingBuilder;
     use std::{net::SocketAddr, os::unix::process::ExitStatusExt, process::ExitStatus, sync::Arc};
     use tokio::sync::RwLock;
 

@@ -1,7 +1,5 @@
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
-}
+//! Everything Kubernetes related, like the actual GRPC server implementation and CRI API
+//! definition.
+
+mod cri;
+pub mod server;

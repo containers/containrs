@@ -1,7 +1,7 @@
 //! A network implementation which does work with the Kubernetes Container Network Interface (CNI).
 
 use crate::{
-    network::{
+    {
         cni::{
             config::{Config, ConfigBuilder, ConfigFile, ConfigListFile},
             exec::{DefaultExec, Exec},
@@ -10,9 +10,7 @@ use crate::{
             plugin::{CNIResult, Plugin, PluginBuilder},
         },
         PodNetwork,
-    },
-    sandbox::SandboxData,
-    storage::{default_key_value_storage::DefaultKeyValueStorage, KeyValueStorage},
+    }
 };
 use anyhow::{bail, Context, Result};
 use async_trait::async_trait;
@@ -34,6 +32,8 @@ use std::{
     result,
     sync::Arc,
 };
+use sandbox::SandboxData;
+use storage::{default_key_value_storage::DefaultKeyValueStorage, KeyValueStorage};
 use tokio::sync::RwLock;
 
 mod config;
