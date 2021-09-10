@@ -1,5 +1,5 @@
 use anyhow::Result;
-use containrs::kubernetes::server::{Config, Server};
+use services::server::{Config, Server};
 use std::process::exit;
 
 #[tokio::main]
