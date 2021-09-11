@@ -1,5 +1,5 @@
 use anyhow::{bail, Context, Result};
-use criapi::{
+use crate::criapi::{
     image_service_client::ImageServiceClient, runtime_service_client::RuntimeServiceClient,
 };
 use getset::{Getters, MutGetters};
@@ -19,12 +19,8 @@ use tokio::net::UnixStream;
 use tonic::transport::{Channel, Endpoint, Uri};
 use tower::service_fn;
 
-pub mod criapi {
-    include!("../src/kubernetes/cri/api/runtime.v1alpha2.rs");
-}
-
 const TIMEOUT: u64 = 10;
-const BINARY_PATH: &str = "target/debug/server";
+const BINARY_PATH: &str = "../target/debug/server";
 
 static INIT: Once = Once::new();
 
@@ -35,7 +31,8 @@ fn init() {
     env_logger::init();
 
     info!("Ensuring latest server binary build");
-    if let Err(e) = Command::new("cargo").arg("build").status() {
+    let cwd = PathBuf::from("../crates/server");
+    if let Err(e) = Command::new("cargo").arg("build").current_dir(cwd).status() {
         error!("Unable to build server binary: {}", e);
         exit(1);
     }
@@ -81,7 +78,7 @@ impl Sut {
         let cni_config_path = test_dir.join("cni");
         Command::new("cp")
             .arg("-r")
-            .arg("tests/cni")
+            .arg("cni")
             .arg(&cni_config_path)
             .output()
             .with_context(|| format!("copy 'cni' test dir to {}", cni_config_path.display()))?;
@@ -90,6 +87,7 @@ impl Sut {
         let sock_path = test_dir.join("test.sock");
         let child = Command::new(BINARY_PATH)
             .arg("--log-level=trace")
+            .arg("--log-scope=global")
             .arg(format!("--sock-path={}", sock_path.display()))
             .arg(format!(
                 "--storage-path={}",
@@ -137,8 +135,9 @@ impl Sut {
     /// Checks if the log file contains the provided line since the last call to this method.
     pub fn log_file_contains_line(&mut self, content: &str) -> Result<bool> {
         let now = Instant::now();
+        info!("Checking for log line");
 
-        while now.elapsed().as_secs() < 3 {
+        while now.elapsed().as_secs() < 6 {
             for line_result in self.log_file_reader_mut().lines() {
                 let line = line_result.context("read log line")?;
                 info!("Got new log line: {}", line);

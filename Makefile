@@ -48,7 +48,8 @@ run: ## Run the main binary
 
 define test
 	$(CARGO) test \
-		--test $(1) $(ARGS) \
+	    --package tests \
+		$(1) $(ARGS) \
 		-- \
 		--nocapture \
 		$(FOCUS)

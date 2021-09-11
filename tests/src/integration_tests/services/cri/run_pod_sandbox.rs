@@ -1,9 +1,7 @@
-use crate::common::{
-    criapi::{
-        LinuxPodSandboxConfig, LinuxSandboxSecurityContext, NamespaceOption, PodSandboxConfig,
-        PodSandboxMetadata, RunPodSandboxRequest, RunPodSandboxResponse,
-    },
-    Sut,
+use crate::common::Sut;
+use crate:: criapi::{
+    LinuxPodSandboxConfig, LinuxSandboxSecurityContext, NamespaceOption, PodSandboxConfig,
+    PodSandboxMetadata, RunPodSandboxRequest, RunPodSandboxResponse,
 };
 use anyhow::Result;
 use std::collections::HashMap;
