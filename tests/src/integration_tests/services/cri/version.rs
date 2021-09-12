@@ -1,5 +1,7 @@
-use crate::common::Sut;
-use crate::criapi::{VersionRequest, VersionResponse};
+use crate::{
+    common::Sut,
+    criapi::{VersionRequest, VersionResponse},
+};
 use anyhow::Result;
 use tonic::Request;
 

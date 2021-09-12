@@ -63,6 +63,7 @@ impl Server {
             self.config.sock_path().display()
         );
 
+        #[allow(irrefutable_let_patterns)]
         let incoming = async_stream::stream! {
             while let item = uds.accept().map_ok(|(st, _)| UnixStream(st)).await {
                 yield item;

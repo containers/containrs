@@ -2,6 +2,6 @@
 #![cfg(test)]
 
 mod common;
-mod integration_tests;
-mod e2e;
 mod criapi;
+mod e2e;
+mod integration_tests;

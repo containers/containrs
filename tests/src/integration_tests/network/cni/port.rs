@@ -1,7 +1,7 @@
 use anyhow::{Context, Result};
-use network::cni::port::{PortManager, PortMappingBuilder};
 use ipnetwork::IpNetwork;
 use log::info;
+use network::cni::port::{PortManager, PortMappingBuilder};
 use nix::unistd::getuid;
 use std::{net::SocketAddr, path::Path};
 use tempfile::TempDir;

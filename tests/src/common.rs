@@ -1,7 +1,7 @@
-use anyhow::{bail, Context, Result};
 use crate::criapi::{
     image_service_client::ImageServiceClient, runtime_service_client::RuntimeServiceClient,
 };
+use anyhow::{bail, Context, Result};
 use getset::{Getters, MutGetters};
 use log::{error, info};
 use std::{
@@ -137,7 +137,7 @@ impl Sut {
         let now = Instant::now();
         info!("Checking for log line");
 
-        while now.elapsed().as_secs() < 6 {
+        while now.elapsed().as_secs() < 3 {
             for line_result in self.log_file_reader_mut().lines() {
                 let line = line_result.context("read log line")?;
                 info!("Got new log line: {}", line);
