@@ -41,7 +41,7 @@ libc = "0.2.101"
 log = { version = "0.4.14", features = ["serde", "std"] }
 nix = "0.22.0"
 netlink-packet-route = "0.7.1"
-notify = { version = "5.0.0-pre.12", features = ["serde"] }
+notify = { version = "5.0.0-pre.13", features = ["serde"] }
 prost = "0.8.0"
 rmp-serde = "0.15.5"
 rtnetlink = "0.8.0"
