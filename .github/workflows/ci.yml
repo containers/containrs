@@ -60,8 +60,8 @@ jobs:
       - name: Create and upload artifact tarball
         shell: bash
         run: |
-            cp src/ffi/ffi.h .
-            cp target/${{ matrix.target }}/release/libcontainrs.a .
+            cp crates/ffi/src/ffi.h .
+            cp target/${{ matrix.target }}/release/lib*.rlib .
 
             VERSION=$(
               git describe --tags --exact-match 2>/dev/null ||
@@ -69,7 +69,7 @@ jobs:
             )
             TARBALL=lib-$VERSION-${{ matrix.target }}.tar.gz
 
-            tar cfz $TARBALL ffi.h libcontainrs.a
+            tar cfz $TARBALL ffi.h lib*.rlib
             gsutil -m cp -n $TARBALL gs://$GCS_BUCKET/lib || true
         env:
           GCS_BUCKET: k8s-conform-cri-o
@@ -149,7 +149,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: test
-          args: --lib --no-fail-fast
+          args: --lib --workspace --exclude tests --no-fail-fast
         env:
           CARGO_INCREMENTAL: '0'
           RUSTFLAGS: '-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Zpanic_abort_tests'
