@@ -1,0 +1,46 @@
+[package]
+name = "services"
+version = "0.1.0"
+edition = "2018"
+authors = [
+    "Furisto",
+    "Mrunal Patel <mrunalp@gmail.com>",
+    "Sascha Grunert <mail@saschagrunert.de>",
+    "utam0k <k0ma@utam0k.jp>",
+]
+documentation = "https://docs.rs/containrs"
+homepage = "https://github.com/containers/containrs"
+repository = "https://github.com/containers/containrs"
+license = "Apache-2.0"
+keywords = ["runtime", "kubernetes", "cri", "container", "pod"]
+categories = ["network-programming", "api-bindings"]
+
+[dependencies]
+anyhow = "1.0.43"
+async-stream = "0.3.2"
+derive_builder = "0.10.2"
+log = { version = "0.4.14", features = ["serde", "std"] }
+prost = "0.8.0"
+sandbox = { path = "../sandbox" }
+storage = { path = "../storage" }
+tonic = "0.5.2"
+# TODO: these dependencies are only needed for the server
+# should be moved to the server crate
+lazy_static = "1.4.0"
+tokio = { version = "1.11.0", features = ["full"] }
+serde = { version = "1.0.130", features = ["derive"] }
+network = { path = "../network" }
+nix = "0.22.0"
+clap = { git = "https://github.com/clap-rs/clap", features = ["wrap_help"] }
+getset = "0.1.1"
+strum = { version = "0.21.0", features = ["derive"] }
+futures = "0.3.17"
+env_logger = "0.9.0"
+common = { path="../common" }
+
+[build-dependencies]
+anyhow = "1.0.43"
+tonic-build = "0.5.2"
+
+[dev-dependencies]
+tempfile = "3.2.0"

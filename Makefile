@@ -48,7 +48,8 @@ run: ## Run the main binary
 
 define test
 	$(CARGO) test \
-		--test $(1) $(ARGS) \
+	    --package tests \
+		$(1) $(ARGS) \
 		-- \
 		--nocapture \
 		$(FOCUS)
@@ -64,7 +65,7 @@ test-e2e: ## Run the e2e tests
 
 .PHONY: test-unit
 test-unit: ## Run the unit tests
-	$(CARGO) test --lib $(FOCUS)
+	$(CARGO) test --lib --workspace --exclude tests $(FOCUS)
 
 .PHONY: help
 help: ## Display this help

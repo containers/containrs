@@ -22,9 +22,9 @@ dependencies = [
 
 [[package]]
 name = "anyhow"
-version = "1.0.44"
+version = "1.0.43"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "61604a8f862e1d5c3229fdd78f8b02c68dcf73a4c4b05fd636d12240aaa242c1"
+checksum = "28ae2b3dec75a406790005a200b1bd89785afc02517a00ca99ecfe093ee9e6cf"
 
 [[package]]
 name = "async-stream"
@@ -185,45 +185,35 @@ dependencies = [
 ]
 
 [[package]]
-name = "containrs"
+name = "common"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "async-stream",
- "async-trait",
- "bitflags",
- "cbindgen",
- "clap 3.0.0-beta.4",
- "crossbeam-channel",
- "ctor",
  "derive_builder",
- "dyn-clone",
- "env_logger",
- "futures",
- "futures-util",
- "getset",
- "ipnetwork",
- "lazy_static",
- "libc",
  "log",
- "netlink-packet-route",
- "nix 0.22.0",
- "notify",
- "prost",
- "rmp-serde",
- "rtnetlink",
+ "oci-spec",
  "serde",
  "serde_json",
- "sled",
  "strum",
- "sysctl",
  "tempfile",
  "tokio",
- "tokio-test",
  "tonic",
- "tonic-build",
- "tower",
- "uuid",
+]
+
+[[package]]
+name = "container"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "derive_builder",
+ "dyn-clone",
+ "getset",
+ "log",
+ "oci-spec",
+ "serde",
+ "strum",
+ "tokio",
  "which",
 ]
 
@@ -368,6 +358,19 @@ dependencies = [
  "log",
  "regex",
  "termcolor",
+]
+
+[[package]]
+name = "ffi"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "cbindgen",
+ "clap 3.0.0-beta.4",
+ "env_logger",
+ "libc",
+ "log",
+ "strum",
 ]
 
 [[package]]
@@ -665,6 +668,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b9e0384b61958566e926dc50660321d12159025e767c18e043daf26b70104c39"
 
 [[package]]
+name = "image"
+version = "0.1.0"
+
+[[package]]
 name = "indexmap"
 version = "1.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -887,6 +894,35 @@ dependencies = [
 ]
 
 [[package]]
+name = "network"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "crossbeam-channel",
+ "derive_builder",
+ "dyn-clone",
+ "futures",
+ "futures-util",
+ "getset",
+ "ipnetwork",
+ "log",
+ "netlink-packet-route",
+ "nix 0.22.0",
+ "notify",
+ "rtnetlink",
+ "sandbox",
+ "serde",
+ "serde_json",
+ "storage",
+ "strum",
+ "sysctl",
+ "tempfile",
+ "tokio",
+ "which",
+]
+
+[[package]]
 name = "nix"
 version = "0.19.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -913,9 +949,9 @@ dependencies = [
 
 [[package]]
 name = "notify"
-version = "5.0.0-pre.13"
+version = "5.0.0-pre.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "245d358380e2352c2d020e8ee62baac09b3420f1f6c012a31326cfced4ad487d"
+checksum = "20a629259bb2c87a884bb76f6086c8637919de6d074754341c12e5dd3aed6326"
 dependencies = [
  "bitflags",
  "crossbeam-channel",
@@ -956,6 +992,19 @@ checksum = "05499f3756671c15885fee9034446956fff3f243d6077b91e5767df161f766b3"
 dependencies = [
  "hermit-abi",
  "libc",
+]
+
+[[package]]
+name = "oci-spec"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b33c04af97b8e9e3155d9c530a1260e7e6c8d36a1e7353e54f3aa013d388a0c7"
+dependencies = [
+ "derive_builder",
+ "getset",
+ "serde",
+ "serde_json",
+ "thiserror",
 ]
 
 [[package]]
@@ -1291,6 +1340,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "sandbox"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "bitflags",
+ "derive_builder",
+ "getset",
+]
+
+[[package]]
 name = "scopeguard"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1328,6 +1387,42 @@ dependencies = [
 ]
 
 [[package]]
+name = "server"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "services",
+ "tokio",
+]
+
+[[package]]
+name = "services"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-stream",
+ "clap 3.0.0-beta.4",
+ "common",
+ "derive_builder",
+ "env_logger",
+ "futures",
+ "getset",
+ "lazy_static",
+ "log",
+ "network",
+ "nix 0.22.0",
+ "prost",
+ "sandbox",
+ "serde",
+ "storage",
+ "strum",
+ "tempfile",
+ "tokio",
+ "tonic",
+ "tonic-build",
+]
+
+[[package]]
 name = "signal-hook-registry"
 version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1344,9 +1439,9 @@ checksum = "c307a32c1c5c437f38c7fd45d753050587732ba8628319fbdf12a7e289ccc590"
 
 [[package]]
 name = "sled"
-version = "0.34.7"
+version = "0.34.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7f96b4737c2ce5987354855aed3797279def4ebf734436c6aa4552cf8e169935"
+checksum = "1d0132f3e393bcb7390c60bb45769498cf4550bcb7a21d7f95c02b69f6362cdc"
 dependencies = [
  "crc32fast",
  "crossbeam-epoch",
@@ -1372,6 +1467,19 @@ checksum = "765f090f0e423d2b55843402a07915add955e7d60657db13707a159727326cad"
 dependencies = [
  "libc",
  "winapi",
+]
+
+[[package]]
+name = "storage"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "getset",
+ "log",
+ "rmp-serde",
+ "serde",
+ "sled",
+ "tempfile",
 ]
 
 [[package]]
@@ -1465,6 +1573,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "tests"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "ctor",
+ "env_logger",
+ "getset",
+ "ipnetwork",
+ "log",
+ "network",
+ "nix 0.22.0",
+ "prost",
+ "tempfile",
+ "tokio",
+ "tonic",
+ "tower",
+ "uuid",
+ "which",
+]
+
+[[package]]
 name = "textwrap"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1553,19 +1682,6 @@ dependencies = [
  "futures-core",
  "pin-project-lite",
  "tokio",
-]
-
-[[package]]
-name = "tokio-test"
-version = "0.4.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "53474327ae5e166530d17f2d956afcb4f8a004de581b3cae10f12006bc8163e3"
-dependencies = [
- "async-stream",
- "bytes",
- "futures-core",
- "tokio",
- "tokio-stream",
 ]
 
 [[package]]
@@ -1692,9 +1808,9 @@ dependencies = [
 
 [[package]]
 name = "tracing-core"
-version = "0.1.20"
+version = "0.1.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "46125608c26121c81b0c6d693eab5a420e416da7e43c426d2e8f7df8da8a3acf"
+checksum = "2ca517f43f0fb96e0c3072ed5c275fe5eece87e8cb52f4a77b69226d3b1c9df8"
 dependencies = [
  "lazy_static",
 ]

@@ -1,0 +1,22 @@
+[package]
+name = "sandbox"
+version = "0.1.0"
+edition = "2018"
+authors = [
+    "Furisto",
+    "Mrunal Patel <mrunalp@gmail.com>",
+    "Sascha Grunert <mail@saschagrunert.de>",
+    "utam0k <k0ma@utam0k.jp>",
+]
+documentation = "https://docs.rs/containrs"
+homepage = "https://github.com/containers/containrs"
+repository = "https://github.com/containers/containrs"
+license = "Apache-2.0"
+keywords = ["runtime", "kubernetes", "cri", "container", "pod"]
+categories = ["network-programming", "api-bindings"]
+
+[dependencies]
+anyhow = "1.0.43"
+bitflags = "1.3.2"
+derive_builder = "0.10.2"
+getset = "0.1.1"

@@ -1,0 +1,30 @@
+[package]
+name = "common"
+version = "0.1.0"
+edition = "2018"
+authors = [
+    "Furisto",
+    "Mrunal Patel <mrunalp@gmail.com>",
+    "Sascha Grunert <mail@saschagrunert.de>",
+    "utam0k <k0ma@utam0k.jp>",
+]
+documentation = "https://docs.rs/containrs"
+homepage = "https://github.com/containers/containrs"
+repository = "https://github.com/containers/containrs"
+license = "Apache-2.0"
+keywords = ["runtime", "kubernetes", "cri", "container", "pod"]
+categories = ["network-programming", "api-bindings"]
+
+[dependencies]
+anyhow = "1.0.43"
+derive_builder = "0.10.2"
+log = { version = "0.4.14", features = ["serde", "std"] }
+oci-spec = { version = "0.5.1", features = ["runtime"] }
+serde = { version = "1.0.130", features = ["derive"] }
+serde_json = "1.0.67"
+strum = { version = "0.21.0", features = ["derive"] }
+tokio = { version = "1.11.0", features = ["full"] }
+tonic = "0.5.2"
+
+[dev-dependencies]
+tempfile = "3.2.0"
