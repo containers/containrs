@@ -1343,10 +1343,10 @@ dependencies = [
 name = "sandbox"
 version = "0.1.0"
 dependencies = [
- "anyhow",
  "bitflags",
  "derive_builder",
  "getset",
+ "thiserror",
 ]
 
 [[package]]

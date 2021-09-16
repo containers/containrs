@@ -1,15 +1,16 @@
 //! Basic Pod Sandbox types
 
+pub mod error;
 pub mod pinned;
 
-use anyhow::Result;
+use crate::error::{Result, SandboxError};
 use bitflags::bitflags;
 use derive_builder::Builder;
 use getset::Getters;
 use std::{collections::HashMap, fmt, path::PathBuf};
 
 #[derive(Builder)]
-#[builder(pattern = "owned", setter(into))]
+#[builder(pattern = "owned", setter(into), build_fn(error = "SandboxError"))]
 /// This is the main data structure for a Pod Sandbox. The implementation `T` can vary and is being
 /// defined in the `Pod` trait. Responsibility of the `Sandbox` is to hold arbitrary necessary data
 /// for the implementation and not modify it in any way.
@@ -37,7 +38,11 @@ bitflags! {
 }
 
 #[derive(Builder, Getters)]
-#[builder(pattern = "owned", setter(into, strip_option))]
+#[builder(
+    pattern = "owned",
+    setter(into, strip_option),
+    build_fn(error = "SandboxError")
+)]
 /// SandboxData holds all the data which will be passed around to the `Pod` trait, too.
 pub struct SandboxData {
     #[get = "pub"]
