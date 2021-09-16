@@ -58,3 +58,75 @@ impl KeyValueStorage for MemoryKeyValueStorage {
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use anyhow::Context;
+    use serde::{Deserialize, Serialize};
+
+    #[test]
+    fn get_existing_value() -> Result<()> {
+        let mut db = MemoryKeyValueStorage::default();
+
+        let (k, v) = ("key", "value");
+        db.insert(k, v)?;
+        let res: String = db.get(k)?.context("value is none")?;
+        assert_eq!(res, v);
+        Ok(())
+    }
+
+    #[test]
+    fn get_nonexisting_value() -> Result<()> {
+        let db = MemoryKeyValueStorage::default();
+
+        assert!(db.get::<_, String>("key")?.is_none());
+        Ok(())
+    }
+
+    #[test]
+    fn remove_value() -> Result<()> {
+        let mut db = MemoryKeyValueStorage::default();
+
+        let (k, v) = ("key", "value");
+        db.insert(k, v)?;
+        db.remove(k)?;
+        assert!(db.get::<_, String>(k)?.is_none());
+
+        Ok(())
+    }
+
+    #[test]
+    fn persist() -> Result<()> {
+        let mut db = MemoryKeyValueStorage::default();
+
+        db.insert("key", "value")?;
+        db.persist()
+    }
+
+    #[test]
+    fn insert_values() -> Result<()> {
+        let mut db = MemoryKeyValueStorage::default();
+
+        #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+        struct NewValue(String);
+
+        let k1 = vec![1, 2, 3];
+        let v1 = NewValue("value".into());
+
+        let v2 = "value 2";
+        let k2 = vec![3, 2, 1];
+
+        db.insert(k1.clone(), v1.clone())?;
+        assert_eq!(
+            db.get::<_, NewValue>(k1)?.context("value for k1 is none")?,
+            v1
+        );
+
+        db.insert(k2.clone(), v2.clone())?;
+        assert_eq!(
+            db.get::<_, String>(k2)?.context("value for k2 is none")?,
+            v2
+        );
+        Ok(())
+    }
+}
