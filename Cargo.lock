@@ -1343,11 +1343,15 @@ dependencies = [
 name = "sandbox"
 version = "0.1.0"
 dependencies = [
+ "async-trait",
  "bitflags",
  "common",
  "derive_builder",
+ "dyn-clone",
  "getset",
+ "strum",
  "thiserror",
+ "tokio",
 ]
 
 [[package]]

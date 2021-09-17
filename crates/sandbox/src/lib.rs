@@ -2,12 +2,14 @@
 
 pub mod error;
 pub mod pinned;
+mod pinns;
 
 use crate::error::{Result, SandboxError};
 use bitflags::bitflags;
 use common::Namespace;
 use derive_builder::Builder;
 use getset::{CopyGetters, Getters, Setters};
+use pinns::Pinns;
 use std::{collections::HashMap, fmt, path::PathBuf};
 
 #[derive(Builder)]
@@ -83,6 +85,11 @@ pub struct SandboxConfig {
     #[builder(default = "None")]
     // Path to the network namespace.
     network_namespace_path: Option<PathBuf>,
+
+    // Options for pinning namespaces
+    #[get = "pub"]
+    #[builder(default)]
+    pinns: Pinns,
 }
 
 #[derive(Clone, Debug, Getters, Setters)]
