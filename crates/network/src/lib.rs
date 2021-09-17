@@ -3,7 +3,7 @@
 use anyhow::Result;
 use async_trait::async_trait;
 use derive_builder::Builder;
-use sandbox::SandboxData;
+use sandbox::SandboxConfig;
 
 pub mod cni;
 
@@ -24,12 +24,12 @@ where
 /// Common network behavior trait
 pub trait PodNetwork {
     /// Start a new network for the provided `SandboxData`.
-    async fn start(&mut self, _: &SandboxData) -> Result<()> {
+    async fn start(&mut self, _: &SandboxConfig) -> Result<()> {
         Ok(())
     }
 
     /// Stop the network of the provided `SandboxData`.
-    async fn stop(&mut self, _: &SandboxData) -> Result<()> {
+    async fn stop(&mut self, _: &SandboxConfig) -> Result<()> {
         Ok(())
     }
 
@@ -45,13 +45,13 @@ where
 {
     #[allow(dead_code)]
     /// Wrapper for the implementations `start` method.
-    pub async fn start(&mut self, sandbox_data: &SandboxData) -> Result<()> {
+    pub async fn start(&mut self, sandbox_data: &SandboxConfig) -> Result<()> {
         self.implementation.start(sandbox_data).await
     }
 
     #[allow(dead_code)]
     /// Wrapper for the implementations `stop` method.
-    pub async fn stop(&mut self, sandbox_data: &SandboxData) -> Result<()> {
+    pub async fn stop(&mut self, sandbox_data: &SandboxConfig) -> Result<()> {
         self.implementation.stop(sandbox_data).await
     }
 
@@ -65,15 +65,15 @@ where
 pub mod tests {
     use std::collections::HashMap;
 
-    use sandbox::{LinuxNamespaces, SandboxDataBuilder};
+    use sandbox::{LinuxNamespaces, SandboxConfigBuilder};
 
     use super::*;
 
-    pub fn new_sandbox_data() -> Result<SandboxData> {
+    pub fn new_sandbox_data() -> Result<SandboxConfig> {
         let mut annotations: HashMap<String, String> = HashMap::new();
         annotations.insert("annotationkey1".into(), "annotationvalue1".into());
 
-        Ok(SandboxDataBuilder::default()
+        Ok(SandboxConfigBuilder::default()
             .id("uid")
             .name("name")
             .namespace("namespace")
@@ -93,12 +93,12 @@ pub mod tests {
 
     #[async_trait]
     impl PodNetwork for Mock {
-        async fn start(&mut self, _: &SandboxData) -> Result<()> {
+        async fn start(&mut self, _: &SandboxConfig) -> Result<()> {
             self.start_called = true;
             Ok(())
         }
 
-        async fn stop(&mut self, _: &SandboxData) -> Result<()> {
+        async fn stop(&mut self, _: &SandboxConfig) -> Result<()> {
             self.stop_called = true;
             Ok(())
         }
