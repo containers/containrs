@@ -21,7 +21,7 @@ use notify::{
     recommended_watcher, Error as NotifyError, Event, EventKind, RecommendedWatcher, RecursiveMode,
     Watcher,
 };
-use sandbox::SandboxData;
+use sandbox::SandboxConfig;
 use serde::{Deserialize, Serialize};
 use std::{
     collections::HashMap,
@@ -463,7 +463,7 @@ impl CNI {
     /// Retrieve necessary data for network start/stop.
     async fn get_start_stop_data<'a, 'b>(
         &'b self,
-        sandbox_data: &'a SandboxData,
+        sandbox_data: &'a SandboxConfig,
     ) -> Result<(&'a Path, Namespace)> {
         let network_namespace_path = sandbox_data
             .network_namespace_path()
@@ -523,7 +523,7 @@ struct StorageValue {
 #[async_trait]
 impl PodNetwork for CNI {
     /// Start a new network for the provided `SandboxData`.
-    async fn start(&mut self, sandbox_data: &SandboxData) -> Result<()> {
+    async fn start(&mut self, sandbox_data: &SandboxConfig) -> Result<()> {
         info!("Starting CNI network for sandbox {}", sandbox_data.id());
         // Things intentionally skipped for sake of initial implementation simplicity:
         //
@@ -589,7 +589,7 @@ impl PodNetwork for CNI {
     }
 
     /// Stop the network of the provided `SandboxData`.
-    async fn stop(&mut self, sandbox_data: &SandboxData) -> Result<()> {
+    async fn stop(&mut self, sandbox_data: &SandboxConfig) -> Result<()> {
         info!("Stopping CNI network for sandbox {}", sandbox_data.id());
         let mut state = self.state.write().await;
         let (network_namespace_path, netns) = self.get_start_stop_data(sandbox_data).await?;

@@ -3,7 +3,10 @@ use crate::cri::{
     cri_service::{CRIService, OptionStatus, ResultStatus},
 };
 use log::{debug, info};
-use sandbox::{pinned::PinnedSandbox, LinuxNamespaces, SandboxBuilder, SandboxDataBuilder};
+use sandbox::{
+    pinned::PinnedSandbox, LinuxNamespaces, SandboxBuilder, SandboxConfigBuilder,
+    SandboxContextBuilder,
+};
 use tonic::{Request, Response, Status};
 
 impl CRIService {
@@ -51,18 +54,23 @@ impl CRIService {
 
         // Build a new sandbox from it
         let mut sandbox = SandboxBuilder::<PinnedSandbox>::default()
-            .data(
-                SandboxDataBuilder::default()
-                    .id(metadata.uid)
-                    .name(metadata.name)
-                    .namespace(metadata.namespace)
-                    .attempt(metadata.attempt)
-                    .linux_namespaces(linux_namespaces)
-                    .hostname(config.hostname)
-                    .log_directory(config.log_directory)
-                    .annotations(config.annotations)
+            .context(
+                SandboxContextBuilder::default()
+                    .config(
+                        SandboxConfigBuilder::default()
+                            .id(metadata.uid)
+                            .name(metadata.name)
+                            .namespace(metadata.namespace)
+                            .attempt(metadata.attempt)
+                            .linux_namespaces(linux_namespaces)
+                            .hostname(config.hostname)
+                            .log_directory(config.log_directory)
+                            .annotations(config.annotations)
+                            .build()
+                            .map_internal("build sandbox config from metadata")?,
+                    )
                     .build()
-                    .map_internal("build sandbox data from metadata")?,
+                    .map_internal("build sandbox context")?,
             )
             .build()
             .map_internal("build sandbox from config")?;
