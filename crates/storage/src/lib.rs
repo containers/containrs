@@ -1,6 +1,7 @@
 //! Basic storage types
 
 pub mod default_key_value_storage;
+pub mod memory_key_value_storage;
 
 use anyhow::Result;
 use serde::{de::DeserializeOwned, Serialize};
