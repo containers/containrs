@@ -8,7 +8,7 @@ use std::fmt::Debug;
 use std::fmt::Display;
 use std::path::{Path, PathBuf};
 use std::process::Output;
-use strum::AsRefStr;
+use strum::{AsRefStr, Display};
 use tokio::process::Command;
 
 #[derive(Builder, Clone, Debug, Getters, Setters)]
@@ -30,7 +30,6 @@ impl Pinns {
         self.exec()
             .run_output(self.binary(), args)
             .await
-            .map_err(|e| SandboxError::Pinning(e.to_string()))
     }
 }
 
@@ -69,7 +68,7 @@ enum Arg {
     Net,
     Pid,
     Uts,
-    Dir(String),
+    Dir(PathBuf),
     FileName(String),
     #[strum(serialize = "log-level")]
     LogLevel(LogLevel),
@@ -80,14 +79,14 @@ impl Display for Arg {
         fn write_kv<K, V>(f: &mut std::fmt::Formatter<'_>, k: K, v: V) -> std::fmt::Result
         where
             K: AsRef<str>,
-            V: AsRef<str>,
+            V: Display,
         {
-            write!(f, "{} {}", k.as_ref(), v.as_ref())
+            write!(f, "{} {}", k.as_ref(), v)
         }
 
         write!(f, "--")?;
         match self {
-            Arg::Dir(dir) => write_kv(f, self, dir),
+            Arg::Dir(dir) => write_kv(f, self, dir.display()),
             Arg::FileName(file) => write_kv(f, self, file),
             Arg::LogLevel(level) => write_kv(f, self, level),
             _ => write!(f, "{}", self.as_ref()),
@@ -95,7 +94,7 @@ impl Display for Arg {
     }
 }
 
-#[derive(AsRefStr, Clone, Debug)]
+#[derive(AsRefStr, Display, Clone, Debug)]
 #[strum(serialize_all = "lowercase")]
 enum LogLevel {
     Trace,
@@ -104,4 +103,82 @@ enum LogLevel {
     Warn,
     Error,
     Off,
+}
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use anyhow::{Context, Result};
+    use which;
+
+    fn setup_pinns() -> Result<Pinns> {
+        let pinns = PinnsBuilder::default()
+            .binary(which::which("echo")?)
+            .build()
+            .context("build pinns")?;
+
+        Ok(pinns)
+    }
+
+    #[tokio::test]
+    async fn pinns_cmd_flags() -> Result<()> {
+        let pinns = setup_pinns()?;
+        let test_data = &[
+            (Arg::Cgroup, "--cgroup\n"),
+            (Arg::Ipc, "--ipc\n"),
+            (Arg::Net, "--net\n"),
+            (Arg::Pid, "--pid\n"),
+            (Arg::Uts, "--uts\n"),
+        ];
+
+        for t in test_data {
+            let output = pinns.run(&[t.0.clone()]).await.context("run pinns")?;
+            assert!(output.status.success());
+            assert!(String::from_utf8(output.stderr)?.is_empty());
+            assert_eq!(String::from_utf8(output.stdout)?, t.1);
+        }
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn pinns_cmd_options() -> Result<()> {
+        let pinns = setup_pinns()?;
+        let test_data = &[
+            (Arg::Dir(PathBuf::from("/tmp/containrs")), "--dir /tmp/containrs\n"),
+            (Arg::FileName("containrs".to_owned()), "--filename containrs\n"),
+        ];
+
+        for t in test_data {
+            let output = pinns.run(&[t.0.clone()]).await.context("run pinns")?;
+            assert!(output.status.success());
+            assert!(String::from_utf8(output.stderr)?.is_empty());
+            assert_eq!(String::from_utf8(output.stdout)?, t.1);
+        }
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn pinns_cmd_log_level() -> Result<()> {
+        let pinns = setup_pinns()?;
+        let test_data = &[
+            (Arg::LogLevel(LogLevel::Trace), "--log-level trace\n"),
+            (Arg::LogLevel(LogLevel::Debug), "--log-level debug\n"),
+            (Arg::LogLevel(LogLevel::Info), "--log-level info\n"),
+            (Arg::LogLevel(LogLevel::Warn), "--log-level warn\n"),
+            (Arg::LogLevel(LogLevel::Error), "--log-level error\n"),
+            (Arg::LogLevel(LogLevel::Off), "--log-level off\n"),
+        ];
+
+        for t in test_data {
+            let output = pinns.run(&[t.0.clone()]).await.context("run pinns")?;
+            assert!(output.status.success());
+            assert!(String::from_utf8(output.stderr)?.is_empty());
+            assert_eq!(String::from_utf8(output.stdout)?, t.1);
+        }
+
+        Ok(())
+    }
 }

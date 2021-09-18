@@ -1343,6 +1343,7 @@ dependencies = [
 name = "sandbox"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "async-trait",
  "bitflags",
  "common",
@@ -1352,6 +1353,7 @@ dependencies = [
  "strum",
  "thiserror",
  "tokio",
+ "which",
 ]
 
 [[package]]
