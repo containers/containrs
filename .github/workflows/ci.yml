@@ -145,6 +145,8 @@ jobs:
       - name: Install rustfmt
         shell: bash
         run: rustup component add rustfmt
+      - name: Install pinns
+        run: make download-pinns
       - name: Unit tests
         uses: actions-rs/cargo@v1
         with:
@@ -174,6 +176,8 @@ jobs:
             ~/.cargo/git
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Install pinns
+        run: make download-pinns
       - name: Unit Tests
         run: make test-unit
 
@@ -198,6 +202,8 @@ jobs:
             ~/.cargo/git
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Install pinns
+        run: make install-pinns
       - name: Integration Tests
         run: |
           # Run all integration tests
@@ -221,5 +227,7 @@ jobs:
             ~/.cargo/git
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Install pinns
+        run: make download-pinns
       - name: End-to-End Tests
         run: make test-e2e
