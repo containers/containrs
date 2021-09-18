@@ -1353,6 +1353,7 @@ dependencies = [
  "strum",
  "thiserror",
  "tokio",
+ "uuid",
  "which",
 ]
 

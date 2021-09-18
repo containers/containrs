@@ -3,7 +3,7 @@ use async_trait::async_trait;
 use derive_builder::Builder;
 use dyn_clone::clone_trait_object;
 use dyn_clone::DynClone;
-use getset::{Getters, Setters};
+use getset::{CopyGetters, Getters, Setters};
 use std::fmt::Debug;
 use std::fmt::Display;
 use std::path::{Path, PathBuf};
@@ -11,7 +11,7 @@ use std::process::Output;
 use strum::{AsRefStr, Display};
 use tokio::process::Command;
 
-#[derive(Builder, Clone, Debug, Getters, Setters)]
+#[derive(Builder, Clone, Debug, CopyGetters, Getters, Setters)]
 #[builder(
     pattern = "owned",
     setter(into, strip_option),
@@ -24,13 +24,16 @@ pub struct Pinns {
     #[get = "pub"]
     #[builder(default = "Pinns::default_pin_dir()?")]
     pin_dir: PathBuf,
+    #[get_copy = "pub"]
+    #[builder(default = "LogLevel::Info")]
+    log_level: LogLevel,
     #[getset(get, set)]
     #[builder(private, default = "Box::new(DefaultExecCommand{})")]
     exec: Box<dyn ExecCommand>,
 }
 
 impl Pinns {
-    async fn run(&self, args: &[Arg]) -> Result<Output> {
+    pub(crate) async fn run(&self, args: &[Arg]) -> Result<Output> {
         self.exec().run_output(self.binary(), args).await
     }
 
@@ -63,7 +66,7 @@ impl ExecCommand for DefaultExecCommand {}
 
 #[derive(AsRefStr, Clone, Debug)]
 #[strum(serialize_all = "lowercase")]
-enum Arg {
+pub(crate) enum Arg {
     Cgroup,
     Ipc,
     Net,
@@ -95,9 +98,9 @@ impl Display for Arg {
     }
 }
 
-#[derive(AsRefStr, Display, Clone, Debug)]
+#[derive(AsRefStr, Display, Clone, Copy, Debug)]
 #[strum(serialize_all = "lowercase")]
-enum LogLevel {
+pub enum LogLevel {
     Trace,
     Debug,
     Info,
@@ -191,8 +194,8 @@ mod tests {
     #[test]
     fn default_values_set() -> Result<()> {
         let pinns = PinnsBuilder::default()
-        .binary(which::which("echo")?)
-        .build()?;
+            .binary(which::which("echo")?)
+            .build()?;
 
         assert_eq!(pinns.pin_dir(), &PathBuf::from("/run/containrs"));
         Ok(())

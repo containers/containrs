@@ -5,6 +5,7 @@ pub mod pinned;
 pub mod pinns;
 
 use crate::error::{Result, SandboxError};
+use async_trait::async_trait;
 use bitflags::bitflags;
 use common::Namespace;
 use derive_builder::Builder;
@@ -128,9 +129,10 @@ pub struct SandboxContext {
     state: SandboxState,
 }
 
+#[async_trait]
 pub trait Pod {
     /// Run a previously created sandbox.
-    fn run(&mut self, _: &SandboxContext) -> Result<()> {
+    async fn run(&mut self, _: &SandboxContext) -> Result<()> {
         Ok(())
     }
 
@@ -154,7 +156,7 @@ pub trait Pod {
 
 impl<T> Sandbox<T>
 where
-    T: Default + Pod,
+    T: Default + Pod + Send,
 {
     /// Retrieve the unique identifier for the sandbox
     pub fn id(&self) -> &str {
@@ -162,8 +164,8 @@ where
     }
 
     /// Wrapper for the implementations `run` method
-    pub fn run(&mut self) -> Result<()> {
-        self.implementation.run(&self.context)
+    pub async fn run(&mut self) -> Result<()> {
+        self.implementation.run(&self.context).await
     }
 
     #[allow(dead_code)]
@@ -243,8 +245,10 @@ pub mod tests {
         remove_called: bool,
         ready: bool,
     }
+
+    #[async_trait]
     impl Pod for Mock {
-        fn run(&mut self, _: &SandboxContext) -> Result<()> {
+        async fn run(&mut self, _: &SandboxContext) -> Result<()> {
             self.run_called = true;
             self.ready = true;
             Ok(())
@@ -297,8 +301,8 @@ pub mod tests {
         Ok(())
     }
 
-    #[test]
-    fn create_custom_impl() -> Result<()> {
+    #[tokio::test]
+    async fn create_custom_impl() -> Result<()> {
         let implementation = Mock::default();
         let context = SandboxContextBuilder::default()
             .config(new_sandbox_data()?)
@@ -314,7 +318,7 @@ pub mod tests {
             .build()?;
 
         assert!(!sandbox.ready()?);
-        sandbox.run()?;
+        sandbox.run().await?;
         assert!(sandbox.implementation.run_called);
         assert!(sandbox.ready()?);
 
