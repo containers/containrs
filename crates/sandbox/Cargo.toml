@@ -25,8 +25,9 @@ dyn-clone = "1.0.4"
 getset = "0.1.1"
 tokio = { version = "1.11.0", features = ["process"] }
 strum = { version = "0.21.0", features = ["derive"] }
+which = "4.2.2"
 
 [dev-dependencies]
 anyhow = "1.0.44"
 tokio = { version = "1.11.0", features = ["macros"] }
-which = "4.2.2"
+

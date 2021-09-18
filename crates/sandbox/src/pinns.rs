@@ -19,7 +19,11 @@ use tokio::process::Command;
 )]
 pub struct Pinns {
     #[get = "pub"]
+    #[builder(default = "Pinns::default_pin_tool()?")]
     binary: PathBuf,
+    #[get = "pub"]
+    #[builder(default = "Pinns::default_pin_dir()?")]
+    pin_dir: PathBuf,
     #[getset(get, set)]
     #[builder(private, default = "Box::new(DefaultExecCommand{})")]
     exec: Box<dyn ExecCommand>,
@@ -27,18 +31,15 @@ pub struct Pinns {
 
 impl Pinns {
     async fn run(&self, args: &[Arg]) -> Result<Output> {
-        self.exec()
-            .run_output(self.binary(), args)
-            .await
+        self.exec().run_output(self.binary(), args).await
     }
-}
 
-impl Default for Pinns {
-    fn default() -> Self {
-        Self {
-            binary: PathBuf::from("pinns"),
-            exec: Box::new(DefaultExecCommand {}),
-        }
+    fn default_pin_tool() -> Result<PathBuf> {
+        which::which("pinns").map_err(|e| SandboxError::Pinning(e.to_string()))
+    }
+
+    fn default_pin_dir() -> Result<PathBuf> {
+        Ok(PathBuf::from("/run/containrs"))
     }
 }
 
@@ -105,7 +106,6 @@ enum LogLevel {
     Off,
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -146,8 +146,14 @@ mod tests {
     async fn pinns_cmd_options() -> Result<()> {
         let pinns = setup_pinns()?;
         let test_data = &[
-            (Arg::Dir(PathBuf::from("/tmp/containrs")), "--dir /tmp/containrs\n"),
-            (Arg::FileName("containrs".to_owned()), "--filename containrs\n"),
+            (
+                Arg::Dir(PathBuf::from("/tmp/containrs")),
+                "--dir /tmp/containrs\n",
+            ),
+            (
+                Arg::FileName("containrs".to_owned()),
+                "--filename containrs\n",
+            ),
         ];
 
         for t in test_data {
@@ -179,6 +185,16 @@ mod tests {
             assert_eq!(String::from_utf8(output.stdout)?, t.1);
         }
 
+        Ok(())
+    }
+
+    #[test]
+    fn default_values_set() -> Result<()> {
+        let pinns = PinnsBuilder::default()
+        .binary(which::which("echo")?)
+        .build()?;
+
+        assert_eq!(pinns.pin_dir(), &PathBuf::from("/run/containrs"));
         Ok(())
     }
 }

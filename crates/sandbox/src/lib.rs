@@ -2,7 +2,7 @@
 
 pub mod error;
 pub mod pinned;
-mod pinns;
+pub mod pinns;
 
 use crate::error::{Result, SandboxError};
 use bitflags::bitflags;
@@ -88,7 +88,6 @@ pub struct SandboxConfig {
 
     // Options for pinning namespaces
     #[get = "pub"]
-    #[builder(default)]
     pinns: Pinns,
 }
 
