@@ -46,6 +46,17 @@ impl Pinns {
     }
 }
 
+impl Default for Pinns {
+    fn default() -> Self {
+        Self {
+            binary: Self::default_pin_tool().unwrap(),
+            pin_dir: Self::default_pin_dir().unwrap(),
+            log_level: Default::default(),
+            exec: Box::new(DefaultExecCommand {}),
+        }
+    }
+}
+
 #[async_trait]
 trait ExecCommand: Debug + DynClone + Send + Sync {
     async fn run_output(&self, binary: &Path, args: &[Arg]) -> Result<Output> {
@@ -85,7 +96,7 @@ impl Display for Arg {
             K: AsRef<str>,
             V: Display,
         {
-            write!(f, "{} {}", k.as_ref(), v)
+            write!(f, "{}={}", k.as_ref(), v)
         }
 
         write!(f, "--")?;
@@ -107,6 +118,12 @@ pub enum LogLevel {
     Warn,
     Error,
     Off,
+}
+
+impl Default for LogLevel {
+    fn default() -> Self {
+        LogLevel::Info
+    }
 }
 
 #[cfg(test)]
@@ -151,11 +168,11 @@ mod tests {
         let test_data = &[
             (
                 Arg::Dir(PathBuf::from("/tmp/containrs")),
-                "--dir /tmp/containrs\n",
+                "--dir=/tmp/containrs\n",
             ),
             (
                 Arg::FileName("containrs".to_owned()),
-                "--filename containrs\n",
+                "--filename=containrs\n",
             ),
         ];
 
@@ -173,12 +190,12 @@ mod tests {
     async fn pinns_cmd_log_level() -> Result<()> {
         let pinns = setup_pinns()?;
         let test_data = &[
-            (Arg::LogLevel(LogLevel::Trace), "--log-level trace\n"),
-            (Arg::LogLevel(LogLevel::Debug), "--log-level debug\n"),
-            (Arg::LogLevel(LogLevel::Info), "--log-level info\n"),
-            (Arg::LogLevel(LogLevel::Warn), "--log-level warn\n"),
-            (Arg::LogLevel(LogLevel::Error), "--log-level error\n"),
-            (Arg::LogLevel(LogLevel::Off), "--log-level off\n"),
+            (Arg::LogLevel(LogLevel::Trace), "--log-level=trace\n"),
+            (Arg::LogLevel(LogLevel::Debug), "--log-level=debug\n"),
+            (Arg::LogLevel(LogLevel::Info), "--log-level=info\n"),
+            (Arg::LogLevel(LogLevel::Warn), "--log-level=warn\n"),
+            (Arg::LogLevel(LogLevel::Error), "--log-level=error\n"),
+            (Arg::LogLevel(LogLevel::Off), "--log-level=off\n"),
         ];
 
         for t in test_data {
@@ -187,6 +204,29 @@ mod tests {
             assert!(String::from_utf8(output.stderr)?.is_empty());
             assert_eq!(String::from_utf8(output.stdout)?, t.1);
         }
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn pinns_cmd_multiple_args() -> Result<()> {
+        let pinns = setup_pinns()?;
+        let args = &[
+            Arg::Ipc,
+            Arg::Uts,
+            Arg::Net,
+            Arg::Dir(PathBuf::from("/tmp/containrs")),
+            Arg::FileName("containrs".to_owned()),
+            Arg::LogLevel(LogLevel::Warn),
+        ];
+
+        let output = pinns.run(args).await.context("run pinns")?;
+        assert!(output.status.success());
+        assert!(String::from_utf8(output.stderr)?.is_empty());
+        assert_eq!(
+            String::from_utf8(output.stdout)?,
+            "--ipc --uts --net --dir=/tmp/containrs --filename=containrs --log-level=warn\n"
+        );
 
         Ok(())
     }

@@ -89,6 +89,7 @@ pub struct SandboxConfig {
 
     // Options for pinning namespaces
     #[get = "pub"]
+    #[builder(default)]
     pinns: Pinns,
 }
 
