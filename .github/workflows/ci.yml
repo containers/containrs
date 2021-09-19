@@ -203,7 +203,7 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
       - name: Install pinns
-        run: make install-pinns
+        run: make download-pinns
       - name: Integration Tests
         run: |
           # Run all integration tests

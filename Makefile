@@ -65,7 +65,7 @@ test-e2e: ## Run the e2e tests
 
 .PHONY: test-unit
 test-unit: ## Run the unit tests
-	sudo -E env "PATH=$(PATH)" $(CARGO) test --lib --workspace --exclude tests $(FOCUS)
+	$(CARGO) test --lib --workspace --exclude tests $(FOCUS)
 
 .PHONY: help
 help: ## Display this help

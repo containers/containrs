@@ -102,6 +102,7 @@ mod tests {
     }
 
     #[tokio::test]
+    #[ignore = "requires root"]
     async fn pin_namespaces() -> Result<()> {
         let pod_id = Uuid::new_v4().to_string();
         let pin_dir = TempDir::new().context("create temp dir")?;

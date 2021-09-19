@@ -103,6 +103,7 @@ mod tests {
     use std::collections::HashMap;
 
     #[tokio::test]
+    #[ignore = "requires root"]
     async fn run_pod_sandbox_success() -> Result<()> {
         let sut = new_cri_service()?;
         let test_id = "123";
