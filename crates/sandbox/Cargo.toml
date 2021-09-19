@@ -31,4 +31,5 @@ which = "4.2.2"
 [dev-dependencies]
 anyhow = "1.0.44"
 tokio = { version = "1.11.0", features = ["macros"] }
-
+tempfile = "3.2.0"
+nix = "0.22.0"

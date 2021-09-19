@@ -81,6 +81,7 @@ pub(crate) enum Arg {
     Cgroup,
     Ipc,
     Net,
+    #[allow(dead_code)]
     Pid,
     Uts,
     Dir(PathBuf),
