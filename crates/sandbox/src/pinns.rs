@@ -21,12 +21,15 @@ pub struct Pinns {
     #[get = "pub"]
     #[builder(default = "Pinns::default_pin_tool()?")]
     binary: PathBuf,
+
     #[get = "pub"]
     #[builder(default = "Pinns::default_pin_dir()?")]
     pin_dir: PathBuf,
+
     #[get_copy = "pub"]
     #[builder(default = "LogLevel::Info")]
     log_level: LogLevel,
+
     #[getset(get, set)]
     #[builder(private, default = "Box::new(DefaultExecCommand{})")]
     exec: Box<dyn ExecCommand>,

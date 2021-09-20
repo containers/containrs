@@ -98,12 +98,15 @@ pub struct SandboxState {
     // User namespace of the sandbox
     #[getset(get = "pub", set = "pub")]
     user_ns: Option<Namespace>,
+
     // IPC namespace of the sandbox
     #[getset(get = "pub", set = "pub")]
     ipc_ns: Option<Namespace>,
+
     // UTS namespace of the sandbox
     #[getset(get = "pub", set = "pub")]
     uts_ns: Option<Namespace>,
+
     // Network namespace of the sandbox
     #[getset(get = "pub", set = "pub")]
     net_ns: Option<Namespace>,
@@ -125,6 +128,7 @@ impl Default for SandboxState {
 pub struct SandboxContext {
     #[get = "pub"]
     config: SandboxConfig,
+
     #[getset(get_mut = "pub")]
     #[builder(default)]
     state: SandboxState,
