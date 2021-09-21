@@ -83,3 +83,9 @@ help: ## Display this help
 				printf "\n%s%s%s\n", col, substr($$0, 5), nocol \
 			} \
 		' $(MAKEFILE_LIST)
+
+.PHONY: download-pinns
+download-pinns:
+	sudo curl -fsSLo /usr/local/bin/pinns https://github.com/Furisto/pinns.rs/releases/download/v0.1.1/pinns
+	sudo chmod +x /usr/local/bin/pinns
+

@@ -78,7 +78,7 @@ impl CRIService {
         debug!("Created pod sandbox {:?}", sandbox);
 
         // Run the sandbox
-        sandbox.run().map_internal("run pod sandbox")?;
+        sandbox.run().await.map_internal("run pod sandbox")?;
         info!("Started pod sandbox {}", sandbox);
 
         // Build and return the response
@@ -103,6 +103,7 @@ mod tests {
     use std::collections::HashMap;
 
     #[tokio::test]
+    #[ignore = "requires root"]
     async fn run_pod_sandbox_success() -> Result<()> {
         let sut = new_cri_service()?;
         let test_id = "123";

@@ -1343,11 +1343,20 @@ dependencies = [
 name = "sandbox"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
+ "async-trait",
  "bitflags",
  "common",
  "derive_builder",
+ "dyn-clone",
  "getset",
+ "nix 0.22.0",
+ "strum",
+ "tempfile",
  "thiserror",
+ "tokio",
+ "uuid",
+ "which",
 ]
 
 [[package]]

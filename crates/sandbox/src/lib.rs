@@ -2,12 +2,15 @@
 
 pub mod error;
 pub mod pinned;
+pub mod pinns;
 
 use crate::error::{Result, SandboxError};
+use async_trait::async_trait;
 use bitflags::bitflags;
 use common::Namespace;
 use derive_builder::Builder;
 use getset::{CopyGetters, Getters, Setters};
+use pinns::Pinns;
 use std::{collections::HashMap, fmt, path::PathBuf};
 
 #[derive(Builder)]
@@ -83,6 +86,11 @@ pub struct SandboxConfig {
     #[builder(default = "None")]
     // Path to the network namespace.
     network_namespace_path: Option<PathBuf>,
+
+    // Options for pinning namespaces
+    #[get = "pub"]
+    #[builder(default)]
+    pinns: Pinns,
 }
 
 #[derive(Clone, Debug, Getters, Setters)]
@@ -90,12 +98,15 @@ pub struct SandboxState {
     // User namespace of the sandbox
     #[getset(get = "pub", set = "pub")]
     user_ns: Option<Namespace>,
+
     // IPC namespace of the sandbox
     #[getset(get = "pub", set = "pub")]
     ipc_ns: Option<Namespace>,
+
     // UTS namespace of the sandbox
     #[getset(get = "pub", set = "pub")]
     uts_ns: Option<Namespace>,
+
     // Network namespace of the sandbox
     #[getset(get = "pub", set = "pub")]
     net_ns: Option<Namespace>,
@@ -117,14 +128,16 @@ impl Default for SandboxState {
 pub struct SandboxContext {
     #[get = "pub"]
     config: SandboxConfig,
+
     #[getset(get_mut = "pub")]
     #[builder(default)]
     state: SandboxState,
 }
 
+#[async_trait]
 pub trait Pod {
     /// Run a previously created sandbox.
-    fn run(&mut self, _: &SandboxContext) -> Result<()> {
+    async fn run(&mut self, _: &SandboxContext) -> Result<()> {
         Ok(())
     }
 
@@ -148,7 +161,7 @@ pub trait Pod {
 
 impl<T> Sandbox<T>
 where
-    T: Default + Pod,
+    T: Default + Pod + Send,
 {
     /// Retrieve the unique identifier for the sandbox
     pub fn id(&self) -> &str {
@@ -156,8 +169,8 @@ where
     }
 
     /// Wrapper for the implementations `run` method
-    pub fn run(&mut self) -> Result<()> {
-        self.implementation.run(&self.context)
+    pub async fn run(&mut self) -> Result<()> {
+        self.implementation.run(&self.context).await
     }
 
     #[allow(dead_code)]
@@ -237,8 +250,10 @@ pub mod tests {
         remove_called: bool,
         ready: bool,
     }
+
+    #[async_trait]
     impl Pod for Mock {
-        fn run(&mut self, _: &SandboxContext) -> Result<()> {
+        async fn run(&mut self, _: &SandboxContext) -> Result<()> {
             self.run_called = true;
             self.ready = true;
             Ok(())
@@ -291,8 +306,8 @@ pub mod tests {
         Ok(())
     }
 
-    #[test]
-    fn create_custom_impl() -> Result<()> {
+    #[tokio::test]
+    async fn create_custom_impl() -> Result<()> {
         let implementation = Mock::default();
         let context = SandboxContextBuilder::default()
             .config(new_sandbox_data()?)
@@ -308,7 +323,7 @@ pub mod tests {
             .build()?;
 
         assert!(!sandbox.ready()?);
-        sandbox.run()?;
+        sandbox.run().await?;
         assert!(sandbox.implementation.run_called);
         assert!(sandbox.ready()?);
 
