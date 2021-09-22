@@ -9,7 +9,7 @@ use async_trait::async_trait;
 use bitflags::bitflags;
 use common::Namespace;
 use derive_builder::Builder;
-use getset::{CopyGetters, Getters, Setters};
+use getset::{CopyGetters, Getters, MutGetters, Setters};
 use pinns::Pinns;
 use std::{collections::HashMap, fmt, path::PathBuf};
 
@@ -42,11 +42,7 @@ bitflags! {
 }
 
 #[derive(Builder, Clone, Debug, Getters, CopyGetters)]
-#[builder(
-    pattern = "owned",
-    setter(into, strip_option),
-    build_fn(error = "SandboxError")
-)]
+#[builder(pattern = "owned", setter(into), build_fn(error = "SandboxError"))]
 /// SandboxData holds all the data which will be passed around to the `Pod` trait, too.
 pub struct SandboxConfig {
     #[get = "pub"]
@@ -79,8 +75,13 @@ pub struct SandboxConfig {
     log_directory: PathBuf,
 
     #[get = "pub"]
+    #[builder(default)]
     // Arbitrary metadata of the sandbox.
     annotations: HashMap<String, String>,
+
+    #[get = "pub"]
+    #[builder(default)]
+    labels: HashMap<String, String>,
 
     #[get = "pub"]
     #[builder(default = "None")]
@@ -91,6 +92,37 @@ pub struct SandboxConfig {
     #[get = "pub"]
     #[builder(default)]
     pinns: Pinns,
+
+    #[get = "pub"]
+    #[builder(default)]
+    sysctls: HashMap<String, String>,
+
+    #[get = "pub"]
+    cgroup_parent: PathBuf,
+
+    #[get = "pub"]
+    #[builder(default)]
+    run_as_user: Option<i64>,
+
+    #[get = "pub"]
+    #[builder(default)]
+    run_as_group: Option<i64>,
+
+    #[get = "pub"]
+    #[builder(default)]
+    supplemental_groups: Vec<i64>,
+
+    #[get = "pub"]
+    #[builder(default)]
+    privileged: bool,
+
+    #[get = "pub"]
+    #[builder(default)]
+    seccomp_profile: Option<String>,
+
+    #[get = "pub"]
+    #[builder(default)]
+    readonly_rootfs: bool,
 }
 
 #[derive(Clone, Debug, Getters, Setters)]
@@ -123,7 +155,7 @@ impl Default for SandboxState {
     }
 }
 
-#[derive(Builder, Debug, Getters)]
+#[derive(Builder, Debug, MutGetters, Getters)]
 #[builder(pattern = "owned", setter(into), build_fn(error = "SandboxError"))]
 pub struct SandboxContext {
     #[get = "pub"]
@@ -209,6 +241,15 @@ where
             .field("log_directory", config.log_directory())
             .field("annotations", config.annotations())
             .field("network_namespace_path", config.network_namespace_path())
+            .field("pinns", config.pinns())
+            .field("sysctls", config.sysctls())
+            .field("cgroup_parent", config.cgroup_parent())
+            .field("run_as_user", config.run_as_user())
+            .field("run_as_group", config.run_as_group())
+            .field("supplemental_groups", config.supplemental_groups())
+            .field("privileged", config.privileged())
+            .field("seccomp_profile", config.seccomp_profile())
+            .field("readonly_rootfs", config.readonly_rootfs())
             .finish()
     }
 }
@@ -237,6 +278,7 @@ pub mod tests {
             .namespace("namespace")
             .attempt(1u32)
             .linux_namespaces(LinuxNamespaces::NET)
+            .cgroup_parent(PathBuf::from("/sys/fs/cgroup/containrs"))
             .hostname("hostname")
             .log_directory("log_directory")
             .annotations(annotations)

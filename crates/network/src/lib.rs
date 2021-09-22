@@ -63,7 +63,7 @@ where
 
 #[cfg(test)]
 pub mod tests {
-    use std::collections::HashMap;
+    use std::{collections::HashMap, path::PathBuf};
 
     use sandbox::{LinuxNamespaces, SandboxConfigBuilder};
 
@@ -79,6 +79,7 @@ pub mod tests {
             .namespace("namespace")
             .attempt(1u32)
             .linux_namespaces(LinuxNamespaces::NET)
+            .cgroup_parent(PathBuf::from("/sys/fs/cgroup/containrs/pod"))
             .hostname("hostname")
             .log_directory("log_directory")
             .annotations(annotations)

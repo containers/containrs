@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use crate::cri::{
     api::{NamespaceMode, RunPodSandboxRequest, RunPodSandboxResponse},
     cri_service::{CRIService, OptionStatus, ResultStatus},
@@ -53,27 +55,37 @@ impl CRIService {
         }
 
         // Build a new sandbox from it
-        let mut sandbox = SandboxBuilder::<PinnedSandbox>::default()
-            .context(
-                SandboxContextBuilder::default()
-                    .config(
-                        SandboxConfigBuilder::default()
-                            .id(metadata.uid)
-                            .name(metadata.name)
-                            .namespace(metadata.namespace)
-                            .attempt(metadata.attempt)
-                            .linux_namespaces(linux_namespaces)
-                            .hostname(config.hostname)
-                            .log_directory(config.log_directory)
-                            .annotations(config.annotations)
-                            .build()
-                            .map_internal("build sandbox config from metadata")?,
-                    )
-                    .build()
-                    .map_internal("build sandbox context")?,
-            )
-            .build()
-            .map_internal("build sandbox from config")?;
+        let mut sandbox =
+            SandboxBuilder::<PinnedSandbox>::default()
+                .context(
+                    SandboxContextBuilder::default()
+                        .config(
+                            SandboxConfigBuilder::default()
+                                .id(metadata.uid)
+                                .name(metadata.name)
+                                .namespace(metadata.namespace)
+                                .attempt(metadata.attempt)
+                                .linux_namespaces(linux_namespaces)
+                                .hostname(config.hostname)
+                                .log_directory(config.log_directory)
+                                .annotations(config.annotations)
+                                .labels(config.labels)
+                                .sysctls(linux_config.sysctls)
+                                .cgroup_parent(PathBuf::from(linux_config.cgroup_parent))
+                                .run_as_user(security_context.run_as_user.map(|v| v.value))
+                                .run_as_group(security_context.run_as_group.map(|v| v.value))
+                                .supplemental_groups(security_context.supplemental_groups)
+                                .privileged(security_context.privileged)
+                                .seccomp_profile(security_context.seccomp_profile_path)
+                                .readonly_rootfs(security_context.readonly_rootfs)
+                                .build()
+                                .map_internal("build sandbox config from metadata")?,
+                        )
+                        .build()
+                        .map_internal("build sandbox context")?,
+                )
+                .build()
+                .map_internal("build sandbox from config")?;
 
         debug!("Created pod sandbox {:?}", sandbox);
 
