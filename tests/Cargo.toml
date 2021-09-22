@@ -26,7 +26,7 @@ network = { path = "../crates/network" }
 nix = "0.22.0"
 prost = "0.8.0"
 tempfile = "3.2.0"
-tokio = { version = "1.11.0", features = ["full"] }
+tokio = { version = "1.12.0", features = ["full"] }
 tonic = "0.5.2"
 tower = { version = "0.4.8", features = ["util"] }
 uuid = { version = "0.8.2", features = ["v4"] }
