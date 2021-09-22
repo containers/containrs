@@ -315,7 +315,7 @@ pub mod tests {
     }
 
     #[test]
-    fn create() -> Result<()> {
+    fn create_presentation() -> Result<()> {
         let config = new_sandbox_data()?;
 
         let context = SandboxContextBuilder::default()
@@ -336,6 +336,7 @@ pub mod tests {
         assert!(sandbox_debug.contains(config.id()));
         assert!(sandbox_debug.contains(&config.attempt().to_string()));
         assert!(sandbox_debug.contains(config.hostname()));
+        assert!(sandbox_debug.contains(&config.cgroup_parent().display().to_string()));
 
         let log_dir = config.log_directory().display().to_string();
         assert!(sandbox_debug.contains(&log_dir));
@@ -344,6 +345,33 @@ pub mod tests {
             assert!(sandbox_debug.contains(key));
             assert!(sandbox_debug.contains(val));
         }
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn create_default() -> Result<()> {
+        let config = SandboxConfigBuilder::default()
+            .id("uid")
+            .name("name")
+            .namespace("namespace")
+            .attempt(1u32)
+            .linux_namespaces(LinuxNamespaces::NET)
+            .cgroup_parent(PathBuf::from("/sys/fs/cgroup/containrs"))
+            .hostname("hostname")
+            .log_directory("log_directory")
+            .build()?;
+
+        assert!(config.annotations().is_empty());
+        assert!(config.labels().is_empty());
+        assert!(config.network_namespace_path().is_none());
+        assert!(config.sysctls().is_empty());
+        assert!(config.run_as_user().is_none());
+        assert!(config.run_as_group().is_none());
+        assert!(config.supplemental_groups().is_empty());
+        assert!(config.seccomp_profile().is_none());
+        assert!(!config.privileged());
+        assert!(!config.readonly_rootfs());
 
         Ok(())
     }
