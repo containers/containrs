@@ -29,7 +29,7 @@ async fn run_pod_sandbox_success() -> Result<()> {
             labels: HashMap::new(),
             annotations: HashMap::new(),
             linux: Some(LinuxPodSandboxConfig {
-                cgroup_parent: String::from("abc-pod.slice"),
+                cgroup_parent: String::from("/path/to/cgroup"),
                 sysctls: HashMap::new(),
                 security_context: Some(LinuxSandboxSecurityContext {
                     namespace_options: Some(NamespaceOption {

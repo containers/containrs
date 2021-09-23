@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use crate::cri::{
     api::{NamespaceMode, RunPodSandboxRequest, RunPodSandboxResponse},
     cri_service::{CRIService, OptionStatus, ResultStatus},
@@ -5,7 +7,7 @@ use crate::cri::{
 use log::{debug, info};
 use sandbox::{
     pinned::PinnedSandbox, LinuxNamespaces, SandboxBuilder, SandboxConfigBuilder,
-    SandboxContextBuilder,
+    SandboxContextBuilder, SecurityConfigBuilder,
 };
 use tonic::{Request, Response, Status};
 
@@ -66,6 +68,20 @@ impl CRIService {
                             .hostname(config.hostname)
                             .log_directory(config.log_directory)
                             .annotations(config.annotations)
+                            .labels(config.labels)
+                            .sysctls(linux_config.sysctls)
+                            .cgroup_parent(PathBuf::from(linux_config.cgroup_parent))
+                            .security(
+                                SecurityConfigBuilder::default()
+                                    .run_as_user(security_context.run_as_user.map(|v| v.value))
+                                    .run_as_group(security_context.run_as_group.map(|v| v.value))
+                                    .supplemental_groups(security_context.supplemental_groups)
+                                    .privileged(security_context.privileged)
+                                    .seccomp_profile(security_context.seccomp_profile_path)
+                                    .readonly_rootfs(security_context.readonly_rootfs)
+                                    .build()
+                                    .map_internal("build security config")?,
+                            )
                             .build()
                             .map_internal("build sandbox config from metadata")?,
                     )

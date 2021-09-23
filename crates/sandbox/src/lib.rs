@@ -9,7 +9,7 @@ use async_trait::async_trait;
 use bitflags::bitflags;
 use common::Namespace;
 use derive_builder::Builder;
-use getset::{CopyGetters, Getters, Setters};
+use getset::{CopyGetters, Getters, MutGetters, Setters};
 use pinns::Pinns;
 use std::{collections::HashMap, fmt, path::PathBuf};
 
@@ -42,11 +42,7 @@ bitflags! {
 }
 
 #[derive(Builder, Clone, Debug, Getters, CopyGetters)]
-#[builder(
-    pattern = "owned",
-    setter(into, strip_option),
-    build_fn(error = "SandboxError")
-)]
+#[builder(pattern = "owned", setter(into), build_fn(error = "SandboxError"))]
 /// SandboxData holds all the data which will be passed around to the `Pod` trait, too.
 pub struct SandboxConfig {
     #[get = "pub"]
@@ -79,8 +75,13 @@ pub struct SandboxConfig {
     log_directory: PathBuf,
 
     #[get = "pub"]
+    #[builder(default)]
     // Arbitrary metadata of the sandbox.
     annotations: HashMap<String, String>,
+
+    #[get = "pub"]
+    #[builder(default)]
+    labels: HashMap<String, String>,
 
     #[get = "pub"]
     #[builder(default = "None")]
@@ -91,6 +92,65 @@ pub struct SandboxConfig {
     #[get = "pub"]
     #[builder(default)]
     pinns: Pinns,
+
+    #[get = "pub"]
+    #[builder(default)]
+    sysctls: HashMap<String, String>,
+
+    #[get = "pub"]
+    cgroup_parent: PathBuf,
+
+    #[get = "pub"]
+    #[builder(default)]
+    security: SecurityConfig,
+}
+
+#[derive(Builder, Clone, Debug, Getters, CopyGetters)]
+#[builder(pattern = "owned", setter(into), build_fn(error = "SandboxError"))]
+pub struct SecurityConfig {
+    #[get = "pub"]
+    #[builder(default)]
+    /// UID to run sandbox processes as
+    run_as_user: Option<i64>,
+
+    /// GID to run sandbox processes as
+    #[get = "pub"]
+    #[builder(default)]
+    run_as_group: Option<i64>,
+
+    /// Additional groups to apply to sandbox processes
+    #[get = "pub"]
+    #[builder(default)]
+    supplemental_groups: Vec<i64>,
+
+    /// Indicates if the sandbox will run a privileged container
+    #[get = "pub"]
+    #[builder(default)]
+    privileged: bool,
+
+    /// Seccomp profile that should be applied to the sandbox
+    #[get = "pub"]
+    #[builder(default)]
+    seccomp_profile: Option<String>,
+
+    /// Indicates if the root filesystem of the sandbox
+    /// is readonly
+    #[get = "pub"]
+    #[builder(default)]
+    readonly_rootfs: bool,
+}
+
+impl Default for SecurityConfig {
+    fn default() -> Self {
+        Self {
+            run_as_user: Default::default(),
+            run_as_group: Default::default(),
+            supplemental_groups: Default::default(),
+            privileged: Default::default(),
+            seccomp_profile: Default::default(),
+            readonly_rootfs: Default::default(),
+        }
+    }
 }
 
 #[derive(Clone, Debug, Getters, Setters)]
@@ -123,7 +183,7 @@ impl Default for SandboxState {
     }
 }
 
-#[derive(Builder, Debug, Getters)]
+#[derive(Builder, Debug, MutGetters, Getters)]
 #[builder(pattern = "owned", setter(into), build_fn(error = "SandboxError"))]
 pub struct SandboxContext {
     #[get = "pub"]
@@ -209,6 +269,15 @@ where
             .field("log_directory", config.log_directory())
             .field("annotations", config.annotations())
             .field("network_namespace_path", config.network_namespace_path())
+            .field("pinns", config.pinns())
+            .field("sysctls", config.sysctls())
+            .field("cgroup_parent", config.cgroup_parent())
+            .field("run_as_user", config.security.run_as_user())
+            .field("run_as_group", config.security.run_as_group())
+            .field("supplemental_groups", config.security.supplemental_groups())
+            .field("privileged", config.security.privileged())
+            .field("seccomp_profile", config.security.seccomp_profile())
+            .field("readonly_rootfs", config.security.readonly_rootfs())
             .finish()
     }
 }
@@ -237,6 +306,7 @@ pub mod tests {
             .namespace("namespace")
             .attempt(1u32)
             .linux_namespaces(LinuxNamespaces::NET)
+            .cgroup_parent(PathBuf::from("/sys/fs/cgroup/containrs"))
             .hostname("hostname")
             .log_directory("log_directory")
             .annotations(annotations)
@@ -273,7 +343,7 @@ pub mod tests {
     }
 
     #[test]
-    fn create() -> Result<()> {
+    fn create_presentation() -> Result<()> {
         let config = new_sandbox_data()?;
 
         let context = SandboxContextBuilder::default()
@@ -294,6 +364,7 @@ pub mod tests {
         assert!(sandbox_debug.contains(config.id()));
         assert!(sandbox_debug.contains(&config.attempt().to_string()));
         assert!(sandbox_debug.contains(config.hostname()));
+        assert!(sandbox_debug.contains(&config.cgroup_parent().display().to_string()));
 
         let log_dir = config.log_directory().display().to_string();
         assert!(sandbox_debug.contains(&log_dir));
@@ -302,6 +373,33 @@ pub mod tests {
             assert!(sandbox_debug.contains(key));
             assert!(sandbox_debug.contains(val));
         }
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn create_default() -> Result<()> {
+        let config = SandboxConfigBuilder::default()
+            .id("uid")
+            .name("name")
+            .namespace("namespace")
+            .attempt(1u32)
+            .linux_namespaces(LinuxNamespaces::NET)
+            .cgroup_parent(PathBuf::from("/sys/fs/cgroup/containrs"))
+            .hostname("hostname")
+            .log_directory("log_directory")
+            .build()?;
+
+        assert!(config.annotations().is_empty());
+        assert!(config.labels().is_empty());
+        assert!(config.network_namespace_path().is_none());
+        assert!(config.sysctls().is_empty());
+        assert!(config.security.run_as_user().is_none());
+        assert!(config.security.run_as_group().is_none());
+        assert!(config.security.supplemental_groups().is_empty());
+        assert!(config.security.seccomp_profile().is_none());
+        assert!(!config.security.privileged());
+        assert!(!config.security.readonly_rootfs());
 
         Ok(())
     }
