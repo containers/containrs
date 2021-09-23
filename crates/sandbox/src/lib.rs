@@ -102,27 +102,55 @@ pub struct SandboxConfig {
 
     #[get = "pub"]
     #[builder(default)]
+    security: SecurityConfig,
+}
+
+#[derive(Builder, Clone, Debug, Getters, CopyGetters)]
+#[builder(pattern = "owned", setter(into), build_fn(error = "SandboxError"))]
+pub struct SecurityConfig {
+    #[get = "pub"]
+    #[builder(default)]
+    /// UID to run sandbox processes as
     run_as_user: Option<i64>,
 
+    /// GID to run sandbox processes as
     #[get = "pub"]
     #[builder(default)]
     run_as_group: Option<i64>,
 
+    /// Additional groups to apply to sandbox processes
     #[get = "pub"]
     #[builder(default)]
     supplemental_groups: Vec<i64>,
 
+    /// Indicates if the sandbox will run a privileged container
     #[get = "pub"]
     #[builder(default)]
     privileged: bool,
 
+    /// Seccomp profile that should be applied to the sandbox
     #[get = "pub"]
     #[builder(default)]
     seccomp_profile: Option<String>,
 
+    /// Indicates if the root filesystem of the sandbox
+    /// is readonly
     #[get = "pub"]
     #[builder(default)]
     readonly_rootfs: bool,
+}
+
+impl Default for SecurityConfig {
+    fn default() -> Self {
+        Self {
+            run_as_user: Default::default(),
+            run_as_group: Default::default(),
+            supplemental_groups: Default::default(),
+            privileged: Default::default(),
+            seccomp_profile: Default::default(),
+            readonly_rootfs: Default::default(),
+        }
+    }
 }
 
 #[derive(Clone, Debug, Getters, Setters)]
@@ -244,12 +272,12 @@ where
             .field("pinns", config.pinns())
             .field("sysctls", config.sysctls())
             .field("cgroup_parent", config.cgroup_parent())
-            .field("run_as_user", config.run_as_user())
-            .field("run_as_group", config.run_as_group())
-            .field("supplemental_groups", config.supplemental_groups())
-            .field("privileged", config.privileged())
-            .field("seccomp_profile", config.seccomp_profile())
-            .field("readonly_rootfs", config.readonly_rootfs())
+            .field("run_as_user", config.security.run_as_user())
+            .field("run_as_group", config.security.run_as_group())
+            .field("supplemental_groups", config.security.supplemental_groups())
+            .field("privileged", config.security.privileged())
+            .field("seccomp_profile", config.security.seccomp_profile())
+            .field("readonly_rootfs", config.security.readonly_rootfs())
             .finish()
     }
 }
@@ -366,12 +394,12 @@ pub mod tests {
         assert!(config.labels().is_empty());
         assert!(config.network_namespace_path().is_none());
         assert!(config.sysctls().is_empty());
-        assert!(config.run_as_user().is_none());
-        assert!(config.run_as_group().is_none());
-        assert!(config.supplemental_groups().is_empty());
-        assert!(config.seccomp_profile().is_none());
-        assert!(!config.privileged());
-        assert!(!config.readonly_rootfs());
+        assert!(config.security.run_as_user().is_none());
+        assert!(config.security.run_as_group().is_none());
+        assert!(config.security.supplemental_groups().is_empty());
+        assert!(config.security.seccomp_profile().is_none());
+        assert!(!config.security.privileged());
+        assert!(!config.security.readonly_rootfs());
 
         Ok(())
     }
