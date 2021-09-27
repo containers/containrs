@@ -4,6 +4,8 @@
 //! [0]: https://github.com/opencontainers/runc
 //! [1]: https://github.com/containers/crun
 
+use std::path::PathBuf;
+
 use anyhow::Result;
 use async_trait::async_trait;
 use derive_builder::Builder;
@@ -23,6 +25,9 @@ pub struct OCIContainer {
     id: String,
 
     #[get = "pub"]
+    log_path: PathBuf,
+
+    #[get = "pub"]
     /// OCI Runtime Specification of the container.
     spec: Spec,
 }
@@ -30,8 +35,8 @@ pub struct OCIContainer {
 #[async_trait]
 impl Container for OCIContainer {
     /// Create a new container, which should be in the `Created` state afterwards.
-    async fn create() -> Result<Self> {
-        unimplemented!()
+    async fn create(&mut self) -> Result<()> {
+        Ok(())
     }
 
     /// Execute the user defined process in a created container.
