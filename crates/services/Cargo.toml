@@ -18,11 +18,14 @@ categories = ["network-programming", "api-bindings"]
 [dependencies]
 anyhow = "1.0.44"
 async-stream = "0.3.2"
+container = { path = "../container" }
 derive_builder = "0.10.2"
 log = { version = "0.4.14", features = ["serde", "std"] }
+oci-spec = {version = "0.5.1", features = ["runtime"]}
 prost = "0.8.0"
 sandbox = { path = "../sandbox" }
 storage = { path = "../storage" }
+thiserror = "1.0.29"
 tonic = "0.5.2"
 # TODO: these dependencies are only needed for the server
 # should be moved to the server crate
