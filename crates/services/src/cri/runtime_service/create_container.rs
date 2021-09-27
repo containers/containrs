@@ -1,4 +1,4 @@
-use std::convert::TryInto;
+use std::convert::{TryFrom, TryInto};
 
 use crate::{
     cri::{
@@ -9,7 +9,9 @@ use crate::{
 };
 use container::container::local::OCIContainerBuilder;
 use container::container::Container;
-use oci_spec::runtime::{ProcessBuilder, SpecBuilder};
+use oci_spec::runtime::{
+    LinuxBuilder, ProcessBuilder, RootBuilder, SpecBuilder, UserBuilder,
+};
 use tonic::{Request, Response, Status};
 
 use crate::cri::api::Mount as CRIMount;
@@ -31,6 +33,14 @@ impl CRIService {
             .metadata
             .ok_or_invalid("no container metadata provided")?;
 
+        let linux_config = config
+            .linux
+            .ok_or_invalid("no container linux config provided")?;
+
+        let security_context = linux_config
+            .security_context
+            .ok_or_invalid("no container security context provided")?;
+
         let spec = SpecBuilder::default()
             .process(
                 ProcessBuilder::default()
@@ -49,8 +59,57 @@ impl CRIService {
                             .collect::<Vec<String>>(),
                     )
                     .cwd(config.working_dir)
+                    .apparmor_profile(security_context.apparmor_profile)
+                    .no_new_privileges(security_context.no_new_privs)
+                    .user(
+                        UserBuilder::default()
+                            .uid(
+                                u32::try_from(
+                                    security_context
+                                        .run_as_user
+                                        .as_ref()
+                                        .and_then(|id| Some(id.value))
+                                        .unwrap_or_default(),
+                                )
+                                .map_internal("failed to convert uid")?,
+                            )
+                            .gid(
+                                u32::try_from(
+                                    security_context
+                                        .run_as_group
+                                        .as_ref()
+                                        .and_then(|id| Some(id.value))
+                                        .unwrap_or_default(),
+                                )
+                                .map_internal("failed to convert gid")?,
+                            )
+                            .additional_gids(
+                                security_context
+                                    .supplemental_groups
+                                    .iter()
+                                    .copied()
+                                    .map(|id| u32::try_from(id))
+                                    .collect::<Result<Vec<u32>, _>>()
+                                    .map_internal("failed to convert supplemental groups")?,
+                            )
+                            .build()
+                            .map_internal("failed to build runtime spec user")?,
+                    )
                     .build()
                     .map_internal("failed to build runtime spec process")?,
+            )
+            .linux(
+                LinuxBuilder::default()
+                    .masked_paths(security_context.masked_paths)
+                    .readonly_paths(security_context.readonly_paths)
+                    .build()
+                    .map_internal("failed to build runtime spec linux")?,
+            )
+            .root(
+                RootBuilder::default()
+                    .readonly(security_context.readonly_rootfs)
+                    .build()
+                    .map_internal("failed to build")?,
             )
             .mounts(
                 prepare_mounts(&config.mounts)
