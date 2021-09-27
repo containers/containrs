@@ -2,4 +2,5 @@
 //! definition.
 
 mod cri;
+pub mod error;
 pub mod server;
