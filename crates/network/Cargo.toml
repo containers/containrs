@@ -26,7 +26,7 @@ futures-util = "0.3.17"
 getset = "0.1.1"
 ipnetwork = "0.18.0"
 log = { version = "0.4.14", features = ["serde", "std"] }
-nix = "0.22.0"
+nix = "0.23.0"
 notify = { version = "5.0.0-pre.12", features = ["serde"] }
 netlink-packet-route = "0.7.1"
 rtnetlink = "0.8.0"
