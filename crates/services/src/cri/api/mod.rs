@@ -1,16 +1,18 @@
 //! Kubernetes Container Runtime Interface (CRI) protobuf API
 #![allow(missing_docs)]
 #![allow(clippy::all)]
+
+include!("runtime.v1alpha2.rs");
+
 use crate::error::ServiceError;
 use oci_spec::runtime::MountBuilder;
 use std::convert::TryFrom;
 use std::fmt::Display;
 use std::fs;
+use std::path::PathBuf;
 
 use crate::cri::api::Mount as CRIMount;
 use oci_spec::runtime::Mount as OCIMount;
-
-include!("runtime.v1alpha2.rs");
 
 impl Display for MountPropagation {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -40,7 +42,10 @@ impl TryFrom<&CRIMount> for OCIMount {
             ));
         }
 
-        let resolved = fs::read_link(&mount.host_path)?;
+        let mut host_path = PathBuf::from(&mount.host_path);
+        if fs::symlink_metadata(&host_path)?.file_type().is_symlink() {
+            host_path = fs::read_link(&mount.host_path)?;
+        }
 
         let mut options = Vec::new();
         if mount.readonly {
@@ -50,7 +55,7 @@ impl TryFrom<&CRIMount> for OCIMount {
         options.push(mount.propagation().to_string());
 
         let oci_mount = MountBuilder::default()
-            .source(resolved)
+            .source(host_path)
             .destination(mount.container_path.as_str())
             .typ("bind")
             .options(options)

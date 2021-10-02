@@ -9,9 +9,7 @@ use crate::{
 };
 use container::container::local::OCIContainerBuilder;
 use container::container::Container;
-use oci_spec::runtime::{
-    LinuxBuilder, ProcessBuilder, RootBuilder, SpecBuilder, UserBuilder,
-};
+use oci_spec::runtime::{LinuxBuilder, ProcessBuilder, RootBuilder, SpecBuilder, UserBuilder};
 use tonic::{Request, Response, Status};
 
 use crate::cri::api::Mount as CRIMount;
@@ -132,7 +130,7 @@ impl CRIService {
             .map_internal("failed to create container")?;
 
         let resp = CreateContainerResponse {
-            container_id: "stub".into(),
+            container_id: container.id().into(),
         };
 
         Ok(Response::new(resp))
@@ -147,4 +145,155 @@ fn prepare_mounts(cri_mounts: &[CRIMount]) -> Result<Vec<OCIMount>, ServiceError
     oci_mounts.append(&mut oci_spec::runtime::get_default_mounts());
 
     Ok(oci_mounts)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::cri::{
+        api::{
+            ContainerConfig, ContainerMetadata, CreateContainerRequest, Int64Value, KeyValue,
+            LinuxContainerConfig, LinuxContainerSecurityContext, Mount,
+        },
+        cri_service::tests::new_cri_service,
+    };
+    use anyhow::Result;
+    use std::collections::HashMap;
+
+    fn create_request(config: Option<ContainerConfig>) -> Result<CreateContainerRequest> {
+        let request = CreateContainerRequest {
+            pod_sandbox_id: "123".to_owned(),
+            sandbox_config: None,
+            config,
+        };
+
+        Ok(request)
+    }
+
+    fn create_config(linux: Option<LinuxContainerConfig>) -> Result<ContainerConfig> {
+        let tmp = tempfile::tempdir()?;
+
+        let mut labels = HashMap::with_capacity(2);
+        labels.insert("label1".to_owned(), "lvalue1".to_owned());
+        labels.insert("label2".to_owned(), "lvalue2".to_owned());
+
+        let mut annotations = HashMap::with_capacity(2);
+        annotations.insert("annotation1".to_owned(), "avalue1".to_owned());
+        annotations.insert("annotation2".to_owned(), "avalue2".to_owned());
+
+        Ok(ContainerConfig {
+            metadata: Some(ContainerMetadata {
+                name: "vicious_tuna".to_owned(),
+                attempt: 1,
+            }),
+            image: None,
+            command: vec!["sleep".to_owned()],
+            args: vec!["9000".to_owned()],
+            working_dir: "/var/run/containrs".to_owned(),
+            envs: vec![
+                KeyValue {
+                    key: "PATH".to_owned(),
+                    value: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+                        .to_owned(),
+                },
+                KeyValue {
+                    key: "LOG_LEVEL".to_owned(),
+                    value: "debug".to_owned(),
+                },
+            ],
+            mounts: vec![Mount {
+                container_path: "/path/in/container".to_owned(),
+                host_path: tmp.into_path().to_string_lossy().to_string(),
+                readonly: false,
+                selinux_relabel: false,
+                propagation: 0,
+            }],
+            devices: Vec::new(),
+            labels,
+            annotations,
+            log_path: "/var/run/containrs/".to_owned(),
+            stdin: false,
+            stdin_once: false,
+            tty: false,
+            windows: None,
+            linux,
+        })
+    }
+
+    fn create_linux(
+        security_context: Option<LinuxContainerSecurityContext>,
+    ) -> LinuxContainerConfig {
+        LinuxContainerConfig {
+            resources: None,
+            security_context,
+        }
+    }
+
+    fn create_security_context() -> LinuxContainerSecurityContext {
+        LinuxContainerSecurityContext {
+            capabilities: None,
+            privileged: false,
+            run_as_user: Some(Int64Value { value: 1000 }),
+            run_as_group: Some(Int64Value { value: 1000 }),
+            supplemental_groups: vec![1000, 1001],
+            run_as_username: "somebody".to_owned(),
+            readonly_rootfs: false,
+            apparmor_profile: "containrs_secure_profile".to_owned(),
+            no_new_privs: true,
+            masked_paths: vec!["/proc/kcore".to_owned()],
+            readonly_paths: vec!["/proc/sys".to_owned()],
+            namespace_options: None,
+            seccomp_profile_path: "localhost/docker-default".to_owned(),
+            selinux_options: None,
+        }
+    }
+
+    #[tokio::test]
+    async fn create_container_success() -> Result<()> {
+        let sut = new_cri_service()?;
+        let security_context = create_security_context();
+        let linux_config = create_linux(Some(security_context));
+        let config = create_config(Some(linux_config))?;
+        let request = create_request(Some(config))?;
+
+        let response = sut.handle_create_container(Request::new(request)).await?;
+        assert_eq!(response.get_ref().container_id, "vicious_tuna.1".to_owned());
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn create_container_fail_no_metadata() -> Result<()> {
+        let sut = new_cri_service()?;
+        let security_context = create_security_context();
+        let linux_config = create_linux(Some(security_context));
+        let mut config = create_config(Some(linux_config))?;
+        config.metadata = None;
+        let request = create_request(Some(config))?;
+
+        let response = sut.handle_create_container(Request::new(request)).await;
+        assert!(response.is_err());
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn create_container_fail_no_config() -> Result<()> {
+        let sut = new_cri_service()?;
+        let request = create_request(None)?;
+
+        let response = sut.handle_create_container(Request::new(request)).await;
+        assert!(response.is_err());
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn create_container_fail_no_security() -> Result<()> {
+        let sut = new_cri_service()?;
+        let linux_config = create_linux(None);
+        let config = create_config(Some(linux_config))?;
+        let request = create_request(Some(config))?;
+
+        let response = sut.handle_create_container(Request::new(request)).await;
+        assert!(response.is_err());
+        Ok(())
+    }
 }
