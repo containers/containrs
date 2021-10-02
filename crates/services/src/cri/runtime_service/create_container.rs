@@ -66,7 +66,7 @@ impl CRIService {
                                     security_context
                                         .run_as_user
                                         .as_ref()
-                                        .and_then(|id| Some(id.value))
+                                        .map(|id| id.value)
                                         .unwrap_or_default(),
                                 )
                                 .map_internal("failed to convert uid")?,
@@ -76,7 +76,7 @@ impl CRIService {
                                     security_context
                                         .run_as_group
                                         .as_ref()
-                                        .and_then(|id| Some(id.value))
+                                        .map(|id| id.value)
                                         .unwrap_or_default(),
                                 )
                                 .map_internal("failed to convert gid")?,
@@ -86,7 +86,7 @@ impl CRIService {
                                     .supplemental_groups
                                     .iter()
                                     .copied()
-                                    .map(|id| u32::try_from(id))
+                                    .map(u32::try_from)
                                     .collect::<Result<Vec<u32>, _>>()
                                     .map_internal("failed to convert supplemental groups")?,
                             )
