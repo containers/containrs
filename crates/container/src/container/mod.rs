@@ -16,7 +16,7 @@ where
     Self: Sized + Send + Sync + Serialize + DeserializeOwned,
 {
     /// Create a new container, which should be in the `Created` state afterwards.
-    async fn create() -> Result<Self>;
+    async fn create(&mut self) -> Result<()>;
 
     /// Execute the user defined process in a created container.
     async fn start(&mut self) -> Result<()>;
