@@ -94,15 +94,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "14c189c53d098945499cdfa7ecc63567cf3886b3332b312a5b4585d8d3a6a610"
 
 [[package]]
-name = "byteordered"
-version = "0.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "32687ee8ab498526e3ef07dfbede151650ce202dc83c53494645a24677d89b37"
-dependencies = [
- "byteorder",
-]
-
-[[package]]
 name = "bytes"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -841,9 +832,9 @@ dependencies = [
 
 [[package]]
 name = "netlink-packet-route"
-version = "0.7.1"
+version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4c92a86a6528fe6d0a811c48d28213ca896a2b8bf2f6cadf2ab5bb12d32ec0f1"
+checksum = "76aed5d3b6e3929713bf1e1334a11fd65180b6d9f5d7c8572664c48b122604f8"
 dependencies = [
  "anyhow",
  "bitflags",
@@ -923,14 +914,15 @@ dependencies = [
 
 [[package]]
 name = "nix"
-version = "0.19.1"
+version = "0.22.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b2ccba0cfe4fdf15982d1674c69b1fd80bad427d293849982668dfe454bd61f2"
+checksum = "cf1e25ee6b412c2a1e3fcb6a4499a5c1bfe7f43e014bdce9a6b6666e5aa2d187"
 dependencies = [
  "bitflags",
  "cc",
  "cfg-if",
  "libc",
+ "memoffset",
 ]
 
 [[package]]
@@ -1309,16 +1301,15 @@ dependencies = [
 
 [[package]]
 name = "rtnetlink"
-version = "0.8.0"
+version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "279f7e9a312496b3e726e776cbd1f3102bd5ffe66503c3f44d642f7327995919"
+checksum = "7c9a6200d18ec1acfc218ce71363dcc9b6075f399220f903fdfeacd476a876ef"
 dependencies = [
- "byteordered",
  "futures",
  "log",
  "netlink-packet-route",
  "netlink-proto",
- "nix 0.19.1",
+ "nix 0.22.0",
  "thiserror",
  "tokio",
 ]
