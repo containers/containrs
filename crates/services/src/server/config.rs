@@ -32,7 +32,7 @@ pub struct Config {
         default_value("info"),
         env("CRI_LOG_LEVEL"),
         long("log-level"),
-        possible_values(&["trace", "debug", "info", "warn", "error", "off"]),
+        possible_values(["trace", "debug", "info", "warn", "error", "off"]),
         short('l'),
         value_name("LEVEL")
     )]
@@ -44,7 +44,7 @@ pub struct Config {
         default_value("lib"),
         env("CRI_LOG_SCOPE"),
         long("log-scope"),
-        possible_values(&[LogScope::Lib.as_ref(), LogScope::Global.as_ref()]),
+        possible_values([LogScope::Lib.as_ref(), LogScope::Global.as_ref()]),
         value_name("SCOPE")
     )]
     /// The logging scope of the application. If set to `global`, then all dependent crates will
