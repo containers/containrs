@@ -1,5 +1,5 @@
 //! Configuration related structures
-use clap::{crate_name, crate_version, AppSettings, Clap};
+use clap::{crate_name, crate_version, AppSettings, Parser};
 use derive_builder::Builder;
 use getset::{CopyGetters, Getters};
 use lazy_static::lazy_static;
@@ -16,7 +16,7 @@ lazy_static! {
         env::var("PATH").unwrap_or_else(|_| "/opt/cni/bin".into());
 }
 
-#[derive(Builder, Clap, CopyGetters, Getters, Deserialize, Serialize)]
+#[derive(Builder, Parser, CopyGetters, Getters, Deserialize, Serialize)]
 #[builder(default, pattern = "owned", setter(into, strip_option))]
 #[serde(rename_all = "kebab-case")]
 #[clap(
