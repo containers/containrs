@@ -1,5 +1,5 @@
 //! Configuration related structures
-use clap::{crate_name, crate_version, AppSettings, Parser};
+use clap::{crate_name, crate_version, Parser};
 use derive_builder::Builder;
 use getset::{CopyGetters, Getters};
 use lazy_static::lazy_static;
@@ -22,7 +22,6 @@ lazy_static! {
 #[clap(
     about("containrs - Container Runtime for Kubernetes (CRI) and friends"),
     after_help("More info at: https://github.com/containers/containrs"),
-    global_setting(AppSettings::ColoredHelp),
     version(crate_version!()),
 )]
 /// Config is the main configuration structure for the server.
