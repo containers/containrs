@@ -148,7 +148,7 @@ dependencies = [
 [[package]]
 name = "clap"
 version = "3.0.0-beta.4"
-source = "git+https://github.com/clap-rs/clap#404b44837ff7a897a47856ee6de2e3e919fb9103"
+source = "git+https://github.com/clap-rs/clap#d833d667df490bb2d33b332874ff7eb33eb1132d"
 dependencies = [
  "atty",
  "bitflags",
@@ -166,7 +166,7 @@ dependencies = [
 [[package]]
 name = "clap_derive"
 version = "3.0.0-beta.4"
-source = "git+https://github.com/clap-rs/clap#404b44837ff7a897a47856ee6de2e3e919fb9103"
+source = "git+https://github.com/clap-rs/clap#d833d667df490bb2d33b332874ff7eb33eb1132d"
 dependencies = [
  "heck",
  "proc-macro-error",
