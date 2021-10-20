@@ -22,7 +22,7 @@ container = { path = "../container" }
 derive_builder = "0.10.2"
 log = { version = "0.4.14", features = ["serde", "std"] }
 oci-spec = {version = "0.5.2", features = ["runtime"]}
-prost = "0.8.0"
+prost = "0.9.0"
 sandbox = { path = "../sandbox" }
 storage = { path = "../storage" }
 thiserror = "1.0.30"
