@@ -30,7 +30,7 @@ pub struct DnsConfig {
     /// List of DNS search domains of the cluster.
     #[prost(string, repeated, tag = "2")]
     pub searches: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
-    /// List of DNS options. See https://linux.die.net/man/5/resolv.conf
+    /// List of DNS options. See <https://linux.die.net/man/5/resolv.conf>
     /// for all available options.
     #[prost(string, repeated, tag = "3")]
     pub options: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
@@ -211,7 +211,7 @@ pub struct PodSandboxConfig {
     ///
     /// WARNING: Log management and how kubelet should interface with the
     /// container logs are under active discussion in
-    /// https://issues.k8s.io/24677. There *may* be future change of direction
+    /// <https://issues.k8s.io/24677.> There *may* be future change of direction
     /// for logging as the discussion carries on.
     #[prost(string, tag = "3")]
     pub log_directory: ::prost::alloc::string::String,
@@ -257,7 +257,7 @@ pub struct RunPodSandboxRequest {
     /// If the runtime handler is unknown, this request should be rejected.  An
     /// empty string should select the default handler, equivalent to the
     /// behavior before this feature was added.
-    /// See https://git.k8s.io/enhancements/keps/sig-node/runtime-class.md
+    /// See <https://git.k8s.io/enhancements/keps/sig-node/runtime-class.md>
     #[prost(string, tag = "2")]
     pub runtime_handler: ::prost::alloc::string::String,
 }
@@ -582,7 +582,7 @@ pub struct LinuxContainerSecurityContext {
     /// * unconfined: no profiles are loaded
     /// * localhost/<profile_name>: profile loaded on the node
     ///    (localhost) by name. The possible profile names are detailed at
-    ///    http://wiki.apparmor.net/index.php/AppArmor_Core_Policy_Reference
+    ///    <http://wiki.apparmor.net/index.php/AppArmor_Core_Policy_Reference>
     #[prost(string, tag = "9")]
     pub apparmor_profile: ::prost::alloc::string::String,
     /// Seccomp profile for the container, candidate values are:
@@ -748,7 +748,7 @@ pub struct ContainerConfig {
     ///
     /// WARNING: Log management and how kubelet should interface with the
     /// container logs are under active discussion in
-    /// https://issues.k8s.io/24677. There *may* be future change of direction
+    /// <https://issues.k8s.io/24677.> There *may* be future change of direction
     /// for logging as the discussion carries on.
     #[prost(string, tag = "11")]
     pub log_path: ::prost::alloc::string::String,
@@ -1503,7 +1503,7 @@ pub mod runtime_service_client {
     impl<T> RuntimeServiceClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
-        T::ResponseBody: Body + Send + Sync + 'static,
+        T::ResponseBody: Body + Send + 'static,
         T::Error: Into<StdError>,
         <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
@@ -1961,7 +1961,7 @@ pub mod image_service_client {
     impl<T> ImageServiceClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
-        T::ResponseBody: Body + Send + Sync + 'static,
+        T::ResponseBody: Body + Send + 'static,
         T::Error: Into<StdError>,
         <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
@@ -2256,7 +2256,7 @@ pub mod runtime_service_server {
     impl<T, B> tonic::codegen::Service<http::Request<B>> for RuntimeServiceServer<T>
     where
         T: RuntimeService,
-        B: Body + Send + Sync + 'static,
+        B: Body + Send + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::BoxBody>;
@@ -3099,7 +3099,7 @@ pub mod image_service_server {
     impl<T, B> tonic::codegen::Service<http::Request<B>> for ImageServiceServer<T>
     where
         T: ImageService,
-        B: Body + Send + Sync + 'static,
+        B: Body + Send + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::BoxBody>;

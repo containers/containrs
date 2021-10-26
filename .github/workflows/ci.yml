@@ -12,6 +12,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
       - name: Setup Cache
         uses: actions/cache@v2
         with:
@@ -97,6 +101,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
       - name: Setup Cache
         uses: actions/cache@v2
         with:
@@ -113,6 +121,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
       - name: Setup Cache
         uses: actions/cache@v2
         with:
@@ -129,6 +141,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
       - name: Rustfmt
         run: make lint-rustfmt
 
@@ -168,6 +184,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
       - name: Setup Cache
         uses: actions/cache@v2
         with:
@@ -186,6 +206,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
       - name: Install CNI plugins
         shell: bash
         run: |
@@ -219,6 +243,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
       - name: Setup Cache
         uses: actions/cache@v2
         with:
