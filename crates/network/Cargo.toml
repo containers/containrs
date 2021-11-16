@@ -36,7 +36,7 @@ strum = { version = "0.22.0", features = ["derive"] }
 storage = { path = "../storage" }
 sandbox = { path = "../sandbox" }
 sysctl = "0.4.3"
-tokio = { version = "1.13.0", features = ["full"] }
+tokio = { version = "1.13.1", features = ["full"] }
 which = "4.2.2"
 
 [dev-dependencies]
