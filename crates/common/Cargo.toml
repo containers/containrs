@@ -23,7 +23,7 @@ oci-spec = { version = "0.5.2", features = ["runtime"] }
 serde = { version = "1.0.130", features = ["derive"] }
 serde_json = "1.0.70"
 strum = { version = "0.22.0", features = ["derive"] }
-tokio = { version = "1.13.1", features = ["full"] }
+tokio = { version = "1.14.0", features = ["full"] }
 tonic = "0.6.1"
 
 [dev-dependencies]
