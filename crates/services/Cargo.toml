@@ -36,7 +36,7 @@ network = { path = "../network" }
 nix = "0.23.0"
 clap = { git = "https://github.com/clap-rs/clap", features = ["wrap_help"] }
 getset = "0.1.1"
-strum = { version = "0.22.0", features = ["derive"] }
+strum = { version = "0.23.0", features = ["derive"] }
 futures = "0.3.17"
 env_logger = "0.9.0"
 common = { path="../common" }
