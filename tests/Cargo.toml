@@ -28,6 +28,6 @@ prost = "0.9.0"
 tempfile = "3.2.0"
 tokio = { version = "1.14.0", features = ["full"] }
 tonic = "0.6.1"
-tower = { version = "0.4.10", features = ["util"] }
+tower = { version = "0.4.11", features = ["util"] }
 uuid = { version = "0.8.2", features = ["v4"] }
 which = "4.2.2"
