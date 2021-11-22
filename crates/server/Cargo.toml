@@ -16,6 +16,6 @@ keywords = ["runtime", "kubernetes", "cri", "container", "pod"]
 categories = ["network-programming", "api-bindings"]
 
 [dependencies]
-anyhow = "1.0.45"
+anyhow = "1.0.47"
 services = { path = "../services" }
 tokio = { version = "1.14.0", features = ["full"] }
