@@ -6,10 +6,7 @@ include!("runtime.v1alpha2.rs");
 
 use crate::error::ServiceError;
 use oci_spec::runtime::MountBuilder;
-use std::convert::TryFrom;
-use std::fmt::Display;
-use std::fs;
-use std::path::PathBuf;
+use std::{convert::TryFrom, fmt::Display, fs, path::PathBuf};
 
 use crate::cri::api::Mount as CRIMount;
 use oci_spec::runtime::Mount as OCIMount;
