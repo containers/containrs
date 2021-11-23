@@ -16,7 +16,7 @@ keywords = ["runtime", "kubernetes", "cri", "container", "pod"]
 categories = ["network-programming", "api-bindings"]
 
 [dependencies]
-anyhow = "1.0.45"
+anyhow = "1.0.48"
 async-trait = "0.1.51"
 crossbeam-channel = "0.5.1"
 derive_builder = "0.10.2"
