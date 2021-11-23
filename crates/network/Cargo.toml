@@ -22,7 +22,7 @@ crossbeam-channel = "0.5.1"
 derive_builder = "0.10.2"
 dyn-clone = "1.0.4"
 futures = "0.3.17"
-futures-util = "0.3.17"
+futures-util = "0.3.18"
 getset = "0.1.1"
 ipnetwork = "0.18.0"
 log = { version = "0.4.14", features = ["serde", "std"] }
