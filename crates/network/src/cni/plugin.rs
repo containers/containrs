@@ -1,4 +1,4 @@
-//! CNI plugin helpers mostly around their execution
+//! cni PLUGIN HELPERS MOSTLY AROUND THEIR EXECUTION
 
 use crate::cni::{
     config::Dns,
@@ -451,7 +451,7 @@ pub mod tests {
     async fn add_failure_error() -> Result<()> {
         let mut mock = ExecMock::boxed()?;
         let mut plugin = PluginBuilder::default().binary("ls").build()?;
-        mock.result = Err(format_err!(r#"{ "code": 123, "msg": "error" }"#));
+        mock.result = Err(format_err!(r#"{{ "code": 123, "msg": "error" }}"#));
         plugin.set_exec(mock);
 
         assert!(plugin.add("", "", "", &[]).await.is_err());
@@ -483,7 +483,7 @@ pub mod tests {
     async fn del_failure_error() -> Result<()> {
         let mut mock = ExecMock::boxed()?;
         let mut plugin = PluginBuilder::default().binary("ls").build()?;
-        mock.result = Err(format_err!(r#"{ "code": 123, "msg": "error" }"#));
+        mock.result = Err(format_err!(r#"{{ "code": 123, "msg": "error" }}"#));
         plugin.set_exec(mock);
 
         assert!(plugin.del("", "", "", &[]).await.is_err());
