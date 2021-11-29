@@ -16,7 +16,7 @@ keywords = ["runtime", "kubernetes", "cri", "container", "pod"]
 categories = ["network-programming", "api-bindings"]
 
 [dependencies]
-anyhow = "1.0.48"
+anyhow = "1.0.50"
 async-stream = "0.3.2"
 container = { path = "../container" }
 derive_builder = "0.10.2"
@@ -42,7 +42,7 @@ env_logger = "0.9.0"
 common = { path="../common" }
 
 [build-dependencies]
-anyhow = "1.0.48"
+anyhow = "1.0.50"
 tonic-build = "0.6.0"
 
 [dev-dependencies]
