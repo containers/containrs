@@ -20,7 +20,7 @@ anyhow = "1.0.50"
 async-trait = "0.1.51"
 derive_builder = "0.10.2"
 dyn-clone = "1.0.4"
-getset = "0.1.1"
+getset = "0.1.2"
 log = { version = "0.4.14", features = ["serde", "std"] }
 oci-spec = { version = "0.5.2", features = ["runtime"] }
 serde = { version = "1.0.130", features = ["derive"] }

@@ -23,7 +23,7 @@ derive_builder = "0.10.2"
 dyn-clone = "1.0.4"
 futures = "0.3.18"
 futures-util = "0.3.17"
-getset = "0.1.1"
+getset = "0.1.2"
 ipnetwork = "0.18.0"
 log = { version = "0.4.14", features = ["serde", "std"] }
 nix = "0.23.0"
