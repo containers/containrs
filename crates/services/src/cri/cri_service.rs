@@ -12,6 +12,7 @@ use tonic::{Request, Response, Status};
 /// The service implementation for the CRI API
 pub struct CRIService {
     /// Storage used by the service.
+    #[allow(dead_code)]
     storage: DefaultKeyValueStorage,
 }
 
