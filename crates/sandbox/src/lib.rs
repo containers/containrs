@@ -105,7 +105,7 @@ pub struct SandboxConfig {
     security: SecurityConfig,
 }
 
-#[derive(Builder, Clone, Debug, Getters, CopyGetters)]
+#[derive(Builder, Clone, Debug, Default, Getters, CopyGetters)]
 #[builder(pattern = "owned", setter(into), build_fn(error = "SandboxError"))]
 pub struct SecurityConfig {
     #[get = "pub"]
@@ -140,20 +140,7 @@ pub struct SecurityConfig {
     readonly_rootfs: bool,
 }
 
-impl Default for SecurityConfig {
-    fn default() -> Self {
-        Self {
-            run_as_user: Default::default(),
-            run_as_group: Default::default(),
-            supplemental_groups: Default::default(),
-            privileged: Default::default(),
-            seccomp_profile: Default::default(),
-            readonly_rootfs: Default::default(),
-        }
-    }
-}
-
-#[derive(Clone, Debug, Getters, Setters)]
+#[derive(Clone, Default, Debug, Getters, Setters)]
 pub struct SandboxState {
     // User namespace of the sandbox
     #[getset(get = "pub", set = "pub")]
@@ -170,17 +157,6 @@ pub struct SandboxState {
     // Network namespace of the sandbox
     #[getset(get = "pub", set = "pub")]
     net_ns: Option<Namespace>,
-}
-
-impl Default for SandboxState {
-    fn default() -> Self {
-        Self {
-            user_ns: Default::default(),
-            ipc_ns: Default::default(),
-            uts_ns: Default::default(),
-            net_ns: Default::default(),
-        }
-    }
 }
 
 #[derive(Builder, Debug, MutGetters, Getters)]

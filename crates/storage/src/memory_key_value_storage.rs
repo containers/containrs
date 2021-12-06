@@ -3,16 +3,10 @@ use anyhow::Result;
 use getset::{Getters, MutGetters};
 use std::collections::HashMap;
 
-#[derive(Debug, Clone, Getters, MutGetters)]
+#[derive(Debug, Default, Clone, Getters, MutGetters)]
 pub struct MemoryKeyValueStorage {
     #[getset(get, get_mut)]
     db: HashMap<Vec<u8>, Vec<u8>>,
-}
-
-impl Default for MemoryKeyValueStorage {
-    fn default() -> Self {
-        Self { db: HashMap::new() }
-    }
 }
 
 impl KeyValueStorage for MemoryKeyValueStorage {
