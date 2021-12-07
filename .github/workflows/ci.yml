@@ -57,24 +57,6 @@ jobs:
           use-cross: true
           command: build
           args: --release --target ${{ matrix.target }}
-      - uses: google-github-actions/setup-gcloud@master
-        with:
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
-      - name: Create and upload artifact tarball
-        shell: bash
-        run: |
-            cp crates/ffi/src/ffi.h .
-            cp target/${{ matrix.target }}/release/lib*.rlib .
-
-            VERSION=$(
-              git describe --tags --exact-match 2>/dev/null ||
-              git rev-parse --short HEAD
-            )
-            TARBALL=lib-$VERSION-${{ matrix.target }}.tar.gz
-
-            tar cfz $TARBALL ffi.h lib*.rlib
-            gsutil -m cp -n $TARBALL gs://$GCS_BUCKET/lib || true
         env:
           GCS_BUCKET: k8s-conform-cri-o
       - uses: actions/upload-artifact@v2
