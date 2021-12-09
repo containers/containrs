@@ -43,7 +43,7 @@ common = { path="../common" }
 
 [build-dependencies]
 anyhow = "1.0.51"
-tonic-build = "0.6.0"
+tonic-build = "0.6.2"
 
 [dev-dependencies]
 tempfile = "3.2.0"
