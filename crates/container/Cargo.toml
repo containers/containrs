@@ -17,7 +17,7 @@ categories = ["network-programming", "api-bindings"]
 
 [dependencies]
 anyhow = "1.0.51"
-async-trait = "0.1.51"
+async-trait = "0.1.52"
 derive_builder = "0.10.2"
 dyn-clone = "1.0.4"
 getset = "0.1.2"
