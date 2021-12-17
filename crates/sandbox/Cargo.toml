@@ -32,4 +32,4 @@ which = "4.2.2"
 anyhow = "1.0.51"
 tokio = { version = "1.15.0", features = ["macros"] }
 tempfile = "3.2.0"
-nix = "0.23.0"
+nix = "0.23.1"
