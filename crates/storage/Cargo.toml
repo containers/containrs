@@ -24,4 +24,4 @@ serde = { version = "1.0.133", features = ["derive"] }
 sled = "0.34.7"
 
 [dev-dependencies]
-tempfile = "3.2.0"
+tempfile = "3.3.0"
