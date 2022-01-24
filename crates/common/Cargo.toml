@@ -20,7 +20,7 @@ anyhow = "1.0.52"
 derive_builder = "0.10.2"
 log = { version = "0.4.14", features = ["serde", "std"] }
 oci-spec = { version = "0.5.3", features = ["runtime"] }
-serde = { version = "1.0.133", features = ["derive"] }
+serde = { version = "1.0.135", features = ["derive"] }
 serde_json = "1.0.75"
 strum = { version = "0.23.0", features = ["derive"] }
 tokio = { version = "1.15.0", features = ["full"] }
