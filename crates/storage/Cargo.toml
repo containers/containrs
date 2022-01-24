@@ -20,7 +20,7 @@ anyhow = "1.0.52"
 getset = "0.1.2"
 log = { version = "0.4.14", features = ["serde", "std"] }
 rmp-serde = "1.0.0"
-serde = { version = "1.0.133", features = ["derive"] }
+serde = { version = "1.0.135", features = ["derive"] }
 sled = "0.34.7"
 
 [dev-dependencies]

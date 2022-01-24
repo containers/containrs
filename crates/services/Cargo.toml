@@ -31,7 +31,7 @@ tonic = "0.6.2"
 # should be moved to the server crate
 lazy_static = "1.4.0"
 tokio = { version = "1.15.0", features = ["full"] }
-serde = { version = "1.0.133", features = ["derive"] }
+serde = { version = "1.0.135", features = ["derive"] }
 network = { path = "../network" }
 nix = "0.23.1"
 clap = { git = "https://github.com/clap-rs/clap", features = ["wrap_help"] }
