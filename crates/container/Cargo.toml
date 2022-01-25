@@ -28,4 +28,4 @@ strum = { version = "0.23.0", features = ["derive"] }
 tokio = { version = "1.15.0", features = ["full"] }
 
 [dev-dependencies]
-which = "4.2.2"
+which = "4.2.4"
