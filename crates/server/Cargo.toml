@@ -18,4 +18,4 @@ categories = ["network-programming", "api-bindings"]
 [dependencies]
 anyhow = "1.0.53"
 services = { path = "../services" }
-tokio = { version = "1.15.0", features = ["full"] }
+tokio = { version = "1.16.0", features = ["full"] }
