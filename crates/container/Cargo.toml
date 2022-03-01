@@ -22,7 +22,7 @@ derive_builder = "0.10.2"
 dyn-clone = "1.0.4"
 getset = "0.1.2"
 log = { version = "0.4.14", features = ["serde", "std"] }
-oci-spec = { version = "0.5.4", features = ["runtime"] }
+oci-spec = { version = "0.5.5", features = ["runtime"] }
 serde = { version = "1.0.136", features = ["derive"] }
 strum = { version = "0.24.0", features = ["derive"] }
 tokio = { version = "1.15.0", features = ["full"] }
