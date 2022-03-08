@@ -16,7 +16,7 @@ keywords = ["runtime", "kubernetes", "cri", "container", "pod"]
 categories = ["network-programming", "api-bindings"]
 
 [dependencies]
-anyhow = "1.0.55"
+anyhow = "1.0.56"
 getset = "0.1.2"
 log = { version = "0.4.14", features = ["serde", "std"] }
 rmp-serde = "1.0.0"
