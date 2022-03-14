@@ -17,7 +17,7 @@ categories = ["network-programming", "api-bindings"]
 
 [dependencies]
 anyhow = "1.0.56"
-async-stream = "0.3.2"
+async-stream = "0.3.3"
 container = { path = "../container" }
 derive_builder = "0.10.2"
 log = { version = "0.4.14", features = ["serde", "std"] }
