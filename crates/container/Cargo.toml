@@ -19,7 +19,7 @@ categories = ["network-programming", "api-bindings"]
 anyhow = "1.0.56"
 async-trait = "0.1.52"
 derive_builder = "0.10.2"
-dyn-clone = "1.0.4"
+dyn-clone = "1.0.5"
 getset = "0.1.2"
 log = { version = "0.4.14", features = ["serde", "std"] }
 oci-spec = { version = "0.5.5", features = ["runtime"] }
