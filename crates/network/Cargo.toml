@@ -18,7 +18,7 @@ categories = ["network-programming", "api-bindings"]
 [dependencies]
 anyhow = "1.0.56"
 async-trait = "0.1.52"
-crossbeam-channel = "0.5.2"
+crossbeam-channel = "0.5.3"
 derive_builder = "0.10.2"
 dyn-clone = "1.0.4"
 futures = "0.3.21"
