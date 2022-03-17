@@ -18,7 +18,7 @@ categories = ["network-programming", "api-bindings"]
 [dependencies]
 anyhow = "1.0.56"
 async-trait = "0.1.52"
-derive_builder = "0.11.0"
+derive_builder = "0.11.1"
 dyn-clone = "1.0.5"
 getset = "0.1.2"
 log = { version = "0.4.14", features = ["serde", "std"] }
