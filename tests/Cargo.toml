@@ -17,7 +17,7 @@ categories = ["network-programming", "api-bindings"]
 
 [dev-dependencies]
 anyhow = "1.0.56"
-ctor = "0.1.21"
+ctor = "0.1.22"
 getset = "0.1.2"
 env_logger = "0.9.0"
 ipnetwork = "0.18.0"
