@@ -30,4 +30,4 @@ tokio = { version = "1.15.0", features = ["full"] }
 tonic = "0.6.2"
 tower = { version = "0.4.12", features = ["util"] }
 uuid = { version = "0.8.2", features = ["v4"] }
-which = "4.2.4"
+which = "4.2.5"
