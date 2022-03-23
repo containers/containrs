@@ -884,7 +884,19 @@ dependencies = [
  "anyhow",
  "byteorder",
  "libc",
- "netlink-packet-utils",
+ "netlink-packet-utils 0.4.1",
+]
+
+[[package]]
+name = "netlink-packet-core"
+version = "0.4.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "345b8ab5bd4e71a2986663e88c56856699d060e78e152e6e9d7966fcd5491297"
+dependencies = [
+ "anyhow",
+ "byteorder",
+ "libc",
+ "netlink-packet-utils 0.5.1",
 ]
 
 [[package]]
@@ -897,8 +909,22 @@ dependencies = [
  "bitflags",
  "byteorder",
  "libc",
- "netlink-packet-core",
- "netlink-packet-utils",
+ "netlink-packet-core 0.2.4",
+ "netlink-packet-utils 0.4.1",
+]
+
+[[package]]
+name = "netlink-packet-route"
+version = "0.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "733ea73609acfd7fa7ddadfb7bf709b0471668c456ad9513685af543a06342b2"
+dependencies = [
+ "anyhow",
+ "bitflags",
+ "byteorder",
+ "libc",
+ "netlink-packet-core 0.4.2",
+ "netlink-packet-utils 0.5.1",
 ]
 
 [[package]]
@@ -906,6 +932,18 @@ name = "netlink-packet-utils"
 version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5fcfb6f758b66e964b2339596d94078218d96aad5b32003e8e2a1d23c27a6784"
+dependencies = [
+ "anyhow",
+ "byteorder",
+ "paste",
+ "thiserror",
+]
+
+[[package]]
+name = "netlink-packet-utils"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "25af9cf0dc55498b7bd94a1508af7a78706aa0ab715a73c5169273e03c84845e"
 dependencies = [
  "anyhow",
  "byteorder",
@@ -922,7 +960,7 @@ dependencies = [
  "bytes",
  "futures",
  "log",
- "netlink-packet-core",
+ "netlink-packet-core 0.2.4",
  "netlink-sys",
  "tokio",
  "tokio-util 0.6.9",
@@ -954,7 +992,7 @@ dependencies = [
  "getset",
  "ipnetwork",
  "log",
- "netlink-packet-route",
+ "netlink-packet-route 0.11.0",
  "nix 0.23.1",
  "notify",
  "rtnetlink",
@@ -1344,7 +1382,7 @@ checksum = "7c9a6200d18ec1acfc218ce71363dcc9b6075f399220f903fdfeacd476a876ef"
 dependencies = [
  "futures",
  "log",
- "netlink-packet-route",
+ "netlink-packet-route 0.8.0",
  "netlink-proto",
  "nix 0.22.0",
  "thiserror",
