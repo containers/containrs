@@ -18,7 +18,7 @@ categories = ["network-programming", "api-bindings"]
 [dependencies]
 anyhow = "1.0.56"
 getset = "0.1.2"
-log = { version = "0.4.14", features = ["serde", "std"] }
+log = { version = "0.4.16", features = ["serde", "std"] }
 rmp-serde = "1.0.0"
 serde = { version = "1.0.136", features = ["derive"] }
 sled = "0.34.7"
