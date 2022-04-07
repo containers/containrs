@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["OCIContainerBuilderError","Error type for OCIContainerBuilder"]],"struct":[["OCIContainer","A general OCI container implementation."],["OCIContainerBuilder","Builder for `OCIContainer`."]]});

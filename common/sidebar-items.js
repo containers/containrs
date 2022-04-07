@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["NamespaceType",""]],"mod":[["capability","Linux capability handling"],["seccomp","seccomp profile handling"],["unix_stream",""]],"struct":[["Namespace",""]]});

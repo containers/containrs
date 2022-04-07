@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["services"] = [{"text":"impl <a class=\"trait\" href=\"https://docs.rs/clap/3.0.0-beta.5/clap/derive/trait.IntoApp.html\" title=\"trait clap::derive::IntoApp\">IntoApp</a> for <a class=\"struct\" href=\"services/server/struct.Config.html\" title=\"struct services::server::Config\">Config</a>","synthetic":false,"types":["services::server::config::Config"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

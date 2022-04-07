@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["default_key_value_storage","The default key value storage implementation for storing arbitrary data."],["memory_key_value_storage",""]],"trait":[["KeyValueStorage","The data storage trait which defines the methods a storage implementation should fulfill."]]});

@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["common"] = [{"text":"impl <a class=\"trait\" href=\"https://docs.rs/tonic/0.6.2/tonic/transport/server/conn/trait.Connected.html\" title=\"trait tonic::transport::server::conn::Connected\">Connected</a> for <a class=\"struct\" href=\"common/unix_stream/struct.UnixStream.html\" title=\"struct common::unix_stream::UnixStream\">UnixStream</a>","synthetic":false,"types":["common::unix_stream::UnixStream"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
