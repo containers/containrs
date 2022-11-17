@@ -14,7 +14,7 @@ use network::{
     cni::{CNIBuilder, CNI},
     Network, NetworkBuilder,
 };
-use std::{env, io::Write};
+use std::{env, io::Write, str::FromStr};
 use storage::{default_key_value_storage::DefaultKeyValueStorage, KeyValueStorage};
 #[cfg(unix)]
 use tokio::net::UnixListener;
@@ -110,13 +110,13 @@ impl Server {
                 .with_context(|| format!("unable to create socket dir {}", sock_dir.display()))?;
         }
 
-        Ok(UnixListener::bind(sock_path).context("unable to bind socket from path")?)
+        UnixListener::bind(sock_path).context("unable to bind socket from path")
     }
 
     /// Initialize the logger and set the verbosity to the provided level.
     fn set_logging_verbosity(&self) -> Result<()> {
         // Set the logging verbosity via the env
-        let level = if self.config.log_scope() == LogScope::Global {
+        let level = if self.config.log_scope() == LogScope::Global.as_ref() {
             self.config.log_level().to_string()
         } else {
             format!("{}={}", crate_name!(), self.config.log_level())
@@ -126,7 +126,7 @@ impl Server {
         // Initialize the logger with the format:
         // [YYYY-MM-DDTHH:MM:SS:MMMZ LEVEL crate::module file:LINE] MSG…
         // The file and line will be only printed when running with debug or trace level.
-        let log_level = self.config.log_level();
+        let log_level = LevelFilter::from_str(self.config.log_level())?;
         env_logger::builder()
             .format(move |buf, r| {
                 let mut style = buf.style();

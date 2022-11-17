@@ -12,6 +12,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - run: .github/setup
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
@@ -39,6 +40,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - run: .github/setup
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
@@ -52,13 +54,14 @@ jobs:
             ~/.cargo/git
             target
           key: build-lib-release-${{ matrix.target }}-${{ hashFiles('**/Cargo.lock') }}
-      - uses: actions-rs/cargo@v1
-        with:
-          use-cross: true
-          command: build
-          args: --release --target ${{ matrix.target }}
-        env:
-          GCS_BUCKET: k8s-conform-cri-o
+      - name: Install cross-rs
+        run: |
+          cargo install cross --git https://github.com/cross-rs/cross
+          cross --version
+      - name: Ensure the latest base image
+        run: docker pull ghcr.io/cross-rs/${{matrix.target}}:main
+      - name: Build for ${{matrix.target}}
+        run: cross build -v --target ${{matrix.target}}
       - uses: actions/upload-artifact@v2
         with:
           name: lib
@@ -83,6 +86,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - run: .github/setup
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
@@ -103,6 +107,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - run: .github/setup
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
@@ -135,6 +140,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - run: .github/setup
       - name: Select nightly Toolchain
         uses: actions-rs/toolchain@v1
         with:
@@ -166,6 +172,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - run: .github/setup
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
@@ -188,6 +195,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - run: .github/setup
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable

@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euox pipefail
+
+sudo apt-get install -y protobuf-compiler

@@ -16,28 +16,28 @@ keywords = ["runtime", "kubernetes", "cri", "container", "pod"]
 categories = ["network-programming", "api-bindings"]
 
 [dependencies]
-anyhow = "1.0.56"
-async-trait = "0.1.53"
-crossbeam-channel = "0.5.4"
-derive_builder = "0.11.1"
-dyn-clone = "1.0.5"
-futures = "0.3.21"
-futures-util = "0.3.21"
+anyhow = "1.0.66"
+async-trait = "0.1.58"
+crossbeam-channel = "0.5.6"
+derive_builder = "0.11.2"
+dyn-clone = "1.0.9"
+futures = "0.3.25"
+futures-util = "0.3.25"
 getset = "0.1.2"
-ipnetwork = "0.18.0"
-log = { version = "0.4.16", features = ["serde", "std"] }
-nix = "0.23.1"
-notify = { version = "5.0.0-pre.14", features = ["serde"] }
-netlink-packet-route = "0.8.0"
-rtnetlink = "0.8.1"
-serde = { version = "1.0.136", features = ["derive"] }
-serde_json = "1.0.79"
-strum = { version = "0.24.0", features = ["derive"] }
+ipnetwork = "0.20.0"
+log = { version = "0.4.17", features = ["serde", "std"] }
+nix = "0.25.0"
+notify = { version = "5.0.0", features = ["serde"] }
+netlink-packet-route = "0.13.0"
+rtnetlink = "0.11.0"
+serde = { version = "1.0.147", features = ["derive"] }
+serde_json = "1.0.87"
+strum = { version = "0.24.1", features = ["derive"] }
 storage = { path = "../storage" }
 sandbox = { path = "../sandbox" }
-sysctl = "0.4.4"
-tokio = { version = "1.15.0", features = ["full"] }
-which = "4.2.5"
+sysctl = "0.5.2"
+tokio = { version = "1.21.2", features = ["full"] }
+which = "4.3.0"
 
 [dev-dependencies]
 tempfile = "3.3.0"

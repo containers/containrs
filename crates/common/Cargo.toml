@@ -16,15 +16,15 @@ keywords = ["runtime", "kubernetes", "cri", "container", "pod"]
 categories = ["network-programming", "api-bindings"]
 
 [dependencies]
-anyhow = "1.0.56"
-derive_builder = "0.11.1"
-log = { version = "0.4.16", features = ["serde", "std"] }
-oci-spec = { version = "0.5.5", features = ["runtime"] }
-serde = { version = "1.0.136", features = ["derive"] }
-serde_json = "1.0.79"
-strum = { version = "0.24.0", features = ["derive"] }
-tokio = { version = "1.15.0", features = ["full"] }
-tonic = "0.6.2"
+anyhow = "1.0.66"
+derive_builder = "0.11.2"
+log = { version = "0.4.17", features = ["serde", "std"] }
+oci-spec = { version = "0.5.8", features = ["runtime"] }
+serde = { version = "1.0.147", features = ["derive"] }
+serde_json = "1.0.87"
+strum = { version = "0.24.1", features = ["derive"] }
+tokio = { version = "1.21.2", features = ["full"] }
+tonic = "0.8.2"
 
 [dev-dependencies]
 tempfile = "3.3.0"
