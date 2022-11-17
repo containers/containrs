@@ -4,10 +4,17 @@ updates:
   directory: "/"
   schedule:
     interval: daily
+    time: "11:00"
   open-pull-requests-limit: 10
   labels:
-  - kind/dependency-change
-  - release-note-none
+    - "release-note-none"
   allow:
   - dependency-type: direct
   - dependency-type: indirect
+- package-ecosystem: "github-actions"
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  labels:
+    - "release-note-none"

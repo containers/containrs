@@ -108,7 +108,7 @@ pub struct Int64Value {
 /// applied to a sandbox. Note that:
 /// 1) It does not apply to containers in the pods.
 /// 2) It may not be applicable to a PodSandbox which does not contain any running
-///    process.
+///     process.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct LinuxSandboxSecurityContext {
     /// Configurations for the sandbox's namespaces.
@@ -143,7 +143,7 @@ pub struct LinuxSandboxSecurityContext {
     /// * runtime/default: the default profile for the container runtime
     /// * unconfined: unconfined profile, ie, no seccomp sandboxing
     /// * localhost/<full-path-to-profile>: the profile installed on the node.
-    ///   <full-path-to-profile> is the full path of the profile.
+    ///    <full-path-to-profile> is the full path of the profile.
     /// Default: "", which is identical with unconfined.
     #[prost(string, tag = "7")]
     pub seccomp_profile_path: ::prost::alloc::string::String,
@@ -162,8 +162,10 @@ pub struct LinuxPodSandboxConfig {
     pub security_context: ::core::option::Option<LinuxSandboxSecurityContext>,
     /// Sysctls holds linux sysctls config for the sandbox.
     #[prost(map = "string, string", tag = "3")]
-    pub sysctls:
-        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+    pub sysctls: ::std::collections::HashMap<
+        ::prost::alloc::string::String,
+        ::prost::alloc::string::String,
+    >,
 }
 /// PodSandboxMetadata holds all necessary information for building the sandbox name.
 /// The container runtime is encouraged to expose the metadata associated with the
@@ -206,8 +208,8 @@ pub struct PodSandboxConfig {
     /// containers. For example, the files might be newline separated JSON
     /// structured logs, systemd-journald journal files, gRPC trace files, etc.
     /// E.g.,
-    ///     PodSandboxConfig.LogDirectory = `/var/log/pods/<podUID>/`
-    ///     ContainerConfig.LogPath = `containerName/Instance#.log`
+    ///      PodSandboxConfig.LogDirectory = `/var/log/pods/<podUID>/`
+    ///      ContainerConfig.LogPath = `containerName/Instance#.log`
     ///
     /// WARNING: Log management and how kubelet should interface with the
     /// container logs are under active discussion in
@@ -223,8 +225,10 @@ pub struct PodSandboxConfig {
     pub port_mappings: ::prost::alloc::vec::Vec<PortMapping>,
     /// Key-value pairs that may be used to scope and select individual resources.
     #[prost(map = "string, string", tag = "6")]
-    pub labels:
-        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+    pub labels: ::std::collections::HashMap<
+        ::prost::alloc::string::String,
+        ::prost::alloc::string::String,
+    >,
     /// Unstructured key-value map that may be set by the kubelet to store and
     /// retrieve arbitrary metadata. This will include any annotations set on a
     /// pod through the Kubernetes API.
@@ -242,8 +246,10 @@ pub struct PodSandboxConfig {
     /// and the CRI). Whenever possible, however, runtime authors SHOULD
     /// consider proposing new typed fields for any new features instead.
     #[prost(map = "string, string", tag = "7")]
-    pub annotations:
-        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+    pub annotations: ::std::collections::HashMap<
+        ::prost::alloc::string::String,
+        ::prost::alloc::string::String,
+    >,
     /// Optional configurations specific to Linux hosts.
     #[prost(message, optional, tag = "8")]
     pub linux: ::core::option::Option<LinuxPodSandboxConfig>,
@@ -346,15 +352,19 @@ pub struct PodSandboxStatus {
     pub linux: ::core::option::Option<LinuxPodSandboxStatus>,
     /// Labels are key-value pairs that may be used to scope and select individual resources.
     #[prost(map = "string, string", tag = "7")]
-    pub labels:
-        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+    pub labels: ::std::collections::HashMap<
+        ::prost::alloc::string::String,
+        ::prost::alloc::string::String,
+    >,
     /// Unstructured key-value map holding arbitrary metadata.
     /// Annotations MUST NOT be altered by the runtime; the value of this field
     /// MUST be identical to that of the corresponding PodSandboxConfig used to
     /// instantiate the pod sandbox this status represents.
     #[prost(map = "string, string", tag = "8")]
-    pub annotations:
-        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+    pub annotations: ::std::collections::HashMap<
+        ::prost::alloc::string::String,
+        ::prost::alloc::string::String,
+    >,
     /// runtime configuration used for this PodSandbox.
     #[prost(string, tag = "9")]
     pub runtime_handler: ::prost::alloc::string::String,
@@ -369,8 +379,10 @@ pub struct PodSandboxStatusResponse {
     /// debug, e.g. network namespace for linux container based container runtime.
     /// It should only be returned non-empty when Verbose is true.
     #[prost(map = "string, string", tag = "2")]
-    pub info:
-        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+    pub info: ::std::collections::HashMap<
+        ::prost::alloc::string::String,
+        ::prost::alloc::string::String,
+    >,
 }
 /// PodSandboxStateValue is the wrapper of PodSandboxState.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -393,8 +405,10 @@ pub struct PodSandboxFilter {
     /// Only api.MatchLabels is supported for now and the requirements
     /// are ANDed. MatchExpressions is not supported yet.
     #[prost(map = "string, string", tag = "3")]
-    pub label_selector:
-        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+    pub label_selector: ::std::collections::HashMap<
+        ::prost::alloc::string::String,
+        ::prost::alloc::string::String,
+    >,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ListPodSandboxRequest {
@@ -419,15 +433,19 @@ pub struct PodSandbox {
     pub created_at: i64,
     /// Labels of the PodSandbox.
     #[prost(map = "string, string", tag = "5")]
-    pub labels:
-        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+    pub labels: ::std::collections::HashMap<
+        ::prost::alloc::string::String,
+        ::prost::alloc::string::String,
+    >,
     /// Unstructured key-value map holding arbitrary metadata.
     /// Annotations MUST NOT be altered by the runtime; the value of this field
     /// MUST be identical to that of the corresponding PodSandboxConfig used to
     /// instantiate this PodSandbox.
     #[prost(map = "string, string", tag = "6")]
-    pub annotations:
-        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+    pub annotations: ::std::collections::HashMap<
+        ::prost::alloc::string::String,
+        ::prost::alloc::string::String,
+    >,
     /// runtime configuration used for this PodSandbox.
     #[prost(string, tag = "7")]
     pub runtime_handler: ::prost::alloc::string::String,
@@ -448,8 +466,10 @@ pub struct ImageSpec {
     /// ImageSpec Annotations can be used to help the runtime target specific
     /// images in multi-arch images.
     #[prost(map = "string, string", tag = "2")]
-    pub annotations:
-        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+    pub annotations: ::std::collections::HashMap<
+        ::prost::alloc::string::String,
+        ::prost::alloc::string::String,
+    >,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeyValue {
@@ -581,15 +601,15 @@ pub struct LinuxContainerSecurityContext {
     /// * runtime/default: equivalent to not specifying a profile.
     /// * unconfined: no profiles are loaded
     /// * localhost/<profile_name>: profile loaded on the node
-    ///    (localhost) by name. The possible profile names are detailed at
-    ///    <http://wiki.apparmor.net/index.php/AppArmor_Core_Policy_Reference>
+    ///     (localhost) by name. The possible profile names are detailed at
+    ///     <http://wiki.apparmor.net/index.php/AppArmor_Core_Policy_Reference>
     #[prost(string, tag = "9")]
     pub apparmor_profile: ::prost::alloc::string::String,
     /// Seccomp profile for the container, candidate values are:
     /// * runtime/default: the default profile for the container runtime
     /// * unconfined: unconfined profile, ie, no seccomp sandboxing
     /// * localhost/<full-path-to-profile>: the profile installed on the node.
-    ///   <full-path-to-profile> is the full path of the profile.
+    ///    <full-path-to-profile> is the full path of the profile.
     /// Default: "", which is identical with unconfined.
     #[prost(string, tag = "10")]
     pub seccomp_profile_path: ::prost::alloc::string::String,
@@ -720,13 +740,15 @@ pub struct ContainerConfig {
     pub devices: ::prost::alloc::vec::Vec<Device>,
     /// Key-value pairs that may be used to scope and select individual resources.
     /// Label keys are of the form:
-    ///     label-key ::= prefixed-name | name
-    ///     prefixed-name ::= prefix '/' name
-    ///     prefix ::= DNS_SUBDOMAIN
-    ///     name ::= DNS_LABEL
+    ///      label-key ::= prefixed-name | name
+    ///      prefixed-name ::= prefix '/' name
+    ///      prefix ::= DNS_SUBDOMAIN
+    ///      name ::= DNS_LABEL
     #[prost(map = "string, string", tag = "9")]
-    pub labels:
-        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+    pub labels: ::std::collections::HashMap<
+        ::prost::alloc::string::String,
+        ::prost::alloc::string::String,
+    >,
     /// Unstructured key-value map that may be used by the kubelet to store and
     /// retrieve arbitrary metadata.
     ///
@@ -738,13 +760,15 @@ pub struct ContainerConfig {
     /// kubelet and the container runtime, annotations SHOULD NOT influence
     /// runtime behaviour.
     #[prost(map = "string, string", tag = "10")]
-    pub annotations:
-        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+    pub annotations: ::std::collections::HashMap<
+        ::prost::alloc::string::String,
+        ::prost::alloc::string::String,
+    >,
     /// Path relative to PodSandboxConfig.LogDirectory for container to store
     /// the log (STDOUT and STDERR) on the host.
     /// E.g.,
-    ///     PodSandboxConfig.LogDirectory = `/var/log/pods/<podUID>/`
-    ///     ContainerConfig.LogPath = `containerName/Instance#.log`
+    ///      PodSandboxConfig.LogDirectory = `/var/log/pods/<podUID>/`
+    ///      ContainerConfig.LogPath = `containerName/Instance#.log`
     ///
     /// WARNING: Log management and how kubelet should interface with the
     /// container logs are under active discussion in
@@ -842,8 +866,10 @@ pub struct ContainerFilter {
     /// Only api.MatchLabels is supported for now and the requirements
     /// are ANDed. MatchExpressions is not supported yet.
     #[prost(map = "string, string", tag = "4")]
-    pub label_selector:
-        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+    pub label_selector: ::std::collections::HashMap<
+        ::prost::alloc::string::String,
+        ::prost::alloc::string::String,
+    >,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ListContainersRequest {
@@ -879,15 +905,19 @@ pub struct Container {
     pub created_at: i64,
     /// Key-value pairs that may be used to scope and select individual resources.
     #[prost(map = "string, string", tag = "8")]
-    pub labels:
-        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+    pub labels: ::std::collections::HashMap<
+        ::prost::alloc::string::String,
+        ::prost::alloc::string::String,
+    >,
     /// Unstructured key-value map holding arbitrary metadata.
     /// Annotations MUST NOT be altered by the runtime; the value of this field
     /// MUST be identical to that of the corresponding ContainerConfig used to
     /// instantiate this Container.
     #[prost(map = "string, string", tag = "9")]
-    pub annotations:
-        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+    pub annotations: ::std::collections::HashMap<
+        ::prost::alloc::string::String,
+        ::prost::alloc::string::String,
+    >,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ListContainersResponse {
@@ -944,15 +974,19 @@ pub struct ContainerStatus {
     pub message: ::prost::alloc::string::String,
     /// Key-value pairs that may be used to scope and select individual resources.
     #[prost(map = "string, string", tag = "12")]
-    pub labels:
-        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+    pub labels: ::std::collections::HashMap<
+        ::prost::alloc::string::String,
+        ::prost::alloc::string::String,
+    >,
     /// Unstructured key-value map holding arbitrary metadata.
     /// Annotations MUST NOT be altered by the runtime; the value of this field
     /// MUST be identical to that of the corresponding ContainerConfig used to
     /// instantiate the Container this status represents.
     #[prost(map = "string, string", tag = "13")]
-    pub annotations:
-        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+    pub annotations: ::std::collections::HashMap<
+        ::prost::alloc::string::String,
+        ::prost::alloc::string::String,
+    >,
     /// Mounts for the container.
     #[prost(message, repeated, tag = "14")]
     pub mounts: ::prost::alloc::vec::Vec<Mount>,
@@ -970,8 +1004,10 @@ pub struct ContainerStatusResponse {
     /// debug, e.g. pid for linux container based container runtime.
     /// It should only be returned non-empty when Verbose is true.
     #[prost(map = "string, string", tag = "2")]
-    pub info:
-        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+    pub info: ::std::collections::HashMap<
+        ::prost::alloc::string::String,
+        ::prost::alloc::string::String,
+    >,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct UpdateContainerResourcesRequest {
@@ -1152,8 +1188,10 @@ pub struct ImageStatusResponse {
     /// for debug, e.g. image config for oci image based container runtime.
     /// It should only be returned non-empty when Verbose is true.
     #[prost(map = "string, string", tag = "2")]
-    pub info:
-        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+    pub info: ::std::collections::HashMap<
+        ::prost::alloc::string::String,
+        ::prost::alloc::string::String,
+    >,
 }
 /// AuthConfig contains authorization information for connecting to a registry.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -1225,10 +1263,10 @@ pub struct UpdateRuntimeConfigResponse {}
 /// 1. Required conditions: Conditions are required for kubelet to work
 /// properly. If any required condition is unmet, the node will be not ready.
 /// The required conditions include:
-///   * RuntimeReady: RuntimeReady means the runtime is up and ready to accept
-///   basic containers e.g. container only needs host network.
-///   * NetworkReady: NetworkReady means the runtime network is up and ready to
-///   accept containers which require container network.
+///    * RuntimeReady: RuntimeReady means the runtime is up and ready to accept
+///    basic containers e.g. container only needs host network.
+///    * NetworkReady: NetworkReady means the runtime network is up and ready to
+///    accept containers which require container network.
 /// 2. Optional conditions: Conditions are informative to the user, but kubelet
 /// will not rely on. Since condition type is an arbitrary string, all conditions
 /// not required are optional. These conditions will be exposed to users to help
@@ -1271,8 +1309,10 @@ pub struct StatusResponse {
     /// debug, e.g. plugins used by the container runtime.
     /// It should only be returned non-empty when Verbose is true.
     #[prost(map = "string, string", tag = "2")]
-    pub info:
-        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+    pub info: ::std::collections::HashMap<
+        ::prost::alloc::string::String,
+        ::prost::alloc::string::String,
+    >,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ImageFsInfoRequest {}
@@ -1348,8 +1388,10 @@ pub struct ContainerStatsFilter {
     /// Only api.MatchLabels is supported for now and the requirements
     /// are ANDed. MatchExpressions is not supported yet.
     #[prost(map = "string, string", tag = "3")]
-    pub label_selector:
-        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+    pub label_selector: ::std::collections::HashMap<
+        ::prost::alloc::string::String,
+        ::prost::alloc::string::String,
+    >,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ListContainerStatsResponse {
@@ -1368,15 +1410,19 @@ pub struct ContainerAttributes {
     pub metadata: ::core::option::Option<ContainerMetadata>,
     /// Key-value pairs that may be used to scope and select individual resources.
     #[prost(map = "string, string", tag = "3")]
-    pub labels:
-        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+    pub labels: ::std::collections::HashMap<
+        ::prost::alloc::string::String,
+        ::prost::alloc::string::String,
+    >,
     /// Unstructured key-value map holding arbitrary metadata.
     /// Annotations MUST NOT be altered by the runtime; the value of this field
     /// MUST be identical to that of the corresponding ContainerConfig used to
     /// instantiate the Container this status represents.
     #[prost(map = "string, string", tag = "4")]
-    pub annotations:
-        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+    pub annotations: ::std::collections::HashMap<
+        ::prost::alloc::string::String,
+        ::prost::alloc::string::String,
+    >,
 }
 /// ContainerStats provides the resource usage statistics for a container.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -1429,6 +1475,19 @@ pub enum Protocol {
     Udp = 1,
     Sctp = 2,
 }
+impl Protocol {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Protocol::Tcp => "TCP",
+            Protocol::Udp => "UDP",
+            Protocol::Sctp => "SCTP",
+        }
+    }
+}
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum MountPropagation {
@@ -1439,6 +1498,21 @@ pub enum MountPropagation {
     /// Mounts get propagated from the host to the container and from the
     /// container to the host ("rshared" in Linux).
     PropagationBidirectional = 2,
+}
+impl MountPropagation {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            MountPropagation::PropagationPrivate => "PROPAGATION_PRIVATE",
+            MountPropagation::PropagationHostToContainer => {
+                "PROPAGATION_HOST_TO_CONTAINER"
+            }
+            MountPropagation::PropagationBidirectional => "PROPAGATION_BIDIRECTIONAL",
+        }
+    }
 }
 /// A NamespaceMode describes the intended namespace configuration for each
 /// of the namespaces (Network, PID, IPC) in NamespaceOption. Runtimes should
@@ -1466,11 +1540,37 @@ pub enum NamespaceMode {
     /// all of the processes that container target_id can view.
     Target = 3,
 }
+impl NamespaceMode {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            NamespaceMode::Pod => "POD",
+            NamespaceMode::Container => "CONTAINER",
+            NamespaceMode::Node => "NODE",
+            NamespaceMode::Target => "TARGET",
+        }
+    }
+}
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum PodSandboxState {
     SandboxReady = 0,
     SandboxNotready = 1,
+}
+impl PodSandboxState {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            PodSandboxState::SandboxReady => "SANDBOX_READY",
+            PodSandboxState::SandboxNotready => "SANDBOX_NOTREADY",
+        }
+    }
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
@@ -1480,17 +1580,32 @@ pub enum ContainerState {
     ContainerExited = 2,
     ContainerUnknown = 3,
 }
-#[doc = r" Generated client implementations."]
+impl ContainerState {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            ContainerState::ContainerCreated => "CONTAINER_CREATED",
+            ContainerState::ContainerRunning => "CONTAINER_RUNNING",
+            ContainerState::ContainerExited => "CONTAINER_EXITED",
+            ContainerState::ContainerUnknown => "CONTAINER_UNKNOWN",
+        }
+    }
+}
+/// Generated client implementations.
 pub mod runtime_service_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    #[doc = " Runtime service defines the public APIs for remote container runtimes"]
+    use tonic::codegen::http::Uri;
+    /// Runtime service defines the public APIs for remote container runtimes
     #[derive(Debug, Clone)]
     pub struct RuntimeServiceClient<T> {
         inner: tonic::client::Grpc<T>,
     }
     impl RuntimeServiceClient<tonic::transport::Channel> {
-        #[doc = r" Attempt to create a new client by connecting to a given endpoint."]
+        /// Attempt to create a new client by connecting to a given endpoint.
         pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
         where
             D: std::convert::TryInto<tonic::transport::Endpoint>,
@@ -1503,12 +1618,16 @@ pub mod runtime_service_client {
     impl<T> RuntimeServiceClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
-        T::ResponseBody: Body + Send + 'static,
         T::Error: Into<StdError>,
+        T::ResponseBody: Body<Data = Bytes> + Send + 'static,
         <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
+            Self { inner }
+        }
+        pub fn with_origin(inner: T, origin: Uri) -> Self {
+            let inner = tonic::client::Grpc::with_origin(inner, origin);
             Self { inner }
         }
         pub fn with_interceptor<F>(
@@ -1517,438 +1636,516 @@ pub mod runtime_service_client {
         ) -> RuntimeServiceClient<InterceptedService<T, F>>
         where
             F: tonic::service::Interceptor,
+            T::ResponseBody: Default,
             T: tonic::codegen::Service<
                 http::Request<tonic::body::BoxBody>,
                 Response = http::Response<
                     <T as tonic::client::GrpcService<tonic::body::BoxBody>>::ResponseBody,
                 >,
             >,
-            <T as tonic::codegen::Service<http::Request<tonic::body::BoxBody>>>::Error:
-                Into<StdError> + Send + Sync,
+            <T as tonic::codegen::Service<
+                http::Request<tonic::body::BoxBody>,
+            >>::Error: Into<StdError> + Send + Sync,
         {
             RuntimeServiceClient::new(InterceptedService::new(inner, interceptor))
         }
-        #[doc = r" Compress requests with `gzip`."]
-        #[doc = r""]
-        #[doc = r" This requires the server to support it otherwise it might respond with an"]
-        #[doc = r" error."]
-        pub fn send_gzip(mut self) -> Self {
-            self.inner = self.inner.send_gzip();
+        /// Compress requests with the given encoding.
+        ///
+        /// This requires the server to support it otherwise it might respond with an
+        /// error.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.send_compressed(encoding);
             self
         }
-        #[doc = r" Enable decompressing responses with `gzip`."]
-        pub fn accept_gzip(mut self) -> Self {
-            self.inner = self.inner.accept_gzip();
+        /// Enable decompressing responses.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.accept_compressed(encoding);
             self
         }
-        #[doc = " Version returns the runtime name, runtime version, and runtime API version."]
+        /// Version returns the runtime name, runtime version, and runtime API version.
         pub async fn version(
             &mut self,
             request: impl tonic::IntoRequest<super::VersionRequest>,
         ) -> Result<tonic::Response<super::VersionResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path =
-                http::uri::PathAndQuery::from_static("/runtime.v1alpha2.RuntimeService/Version");
+            let path = http::uri::PathAndQuery::from_static(
+                "/runtime.v1alpha2.RuntimeService/Version",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
-        #[doc = " RunPodSandbox creates and starts a pod-level sandbox. Runtimes must ensure"]
-        #[doc = " the sandbox is in the ready state on success."]
+        /// RunPodSandbox creates and starts a pod-level sandbox. Runtimes must ensure
+        /// the sandbox is in the ready state on success.
         pub async fn run_pod_sandbox(
             &mut self,
             request: impl tonic::IntoRequest<super::RunPodSandboxRequest>,
         ) -> Result<tonic::Response<super::RunPodSandboxResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/runtime.v1alpha2.RuntimeService/RunPodSandbox",
             );
             self.inner.unary(request.into_request(), path, codec).await
         }
-        #[doc = " StopPodSandbox stops any running process that is part of the sandbox and"]
-        #[doc = " reclaims network resources (e.g., IP addresses) allocated to the sandbox."]
-        #[doc = " If there are any running containers in the sandbox, they must be forcibly"]
-        #[doc = " terminated."]
-        #[doc = " This call is idempotent, and must not return an error if all relevant"]
-        #[doc = " resources have already been reclaimed. kubelet will call StopPodSandbox"]
-        #[doc = " at least once before calling RemovePodSandbox. It will also attempt to"]
-        #[doc = " reclaim resources eagerly, as soon as a sandbox is not needed. Hence,"]
-        #[doc = " multiple StopPodSandbox calls are expected."]
+        /// StopPodSandbox stops any running process that is part of the sandbox and
+        /// reclaims network resources (e.g., IP addresses) allocated to the sandbox.
+        /// If there are any running containers in the sandbox, they must be forcibly
+        /// terminated.
+        /// This call is idempotent, and must not return an error if all relevant
+        /// resources have already been reclaimed. kubelet will call StopPodSandbox
+        /// at least once before calling RemovePodSandbox. It will also attempt to
+        /// reclaim resources eagerly, as soon as a sandbox is not needed. Hence,
+        /// multiple StopPodSandbox calls are expected.
         pub async fn stop_pod_sandbox(
             &mut self,
             request: impl tonic::IntoRequest<super::StopPodSandboxRequest>,
         ) -> Result<tonic::Response<super::StopPodSandboxResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/runtime.v1alpha2.RuntimeService/StopPodSandbox",
             );
             self.inner.unary(request.into_request(), path, codec).await
         }
-        #[doc = " RemovePodSandbox removes the sandbox. If there are any running containers"]
-        #[doc = " in the sandbox, they must be forcibly terminated and removed."]
-        #[doc = " This call is idempotent, and must not return an error if the sandbox has"]
-        #[doc = " already been removed."]
+        /// RemovePodSandbox removes the sandbox. If there are any running containers
+        /// in the sandbox, they must be forcibly terminated and removed.
+        /// This call is idempotent, and must not return an error if the sandbox has
+        /// already been removed.
         pub async fn remove_pod_sandbox(
             &mut self,
             request: impl tonic::IntoRequest<super::RemovePodSandboxRequest>,
         ) -> Result<tonic::Response<super::RemovePodSandboxResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/runtime.v1alpha2.RuntimeService/RemovePodSandbox",
             );
             self.inner.unary(request.into_request(), path, codec).await
         }
-        #[doc = " PodSandboxStatus returns the status of the PodSandbox. If the PodSandbox is not"]
-        #[doc = " present, returns an error."]
+        /// PodSandboxStatus returns the status of the PodSandbox. If the PodSandbox is not
+        /// present, returns an error.
         pub async fn pod_sandbox_status(
             &mut self,
             request: impl tonic::IntoRequest<super::PodSandboxStatusRequest>,
         ) -> Result<tonic::Response<super::PodSandboxStatusResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/runtime.v1alpha2.RuntimeService/PodSandboxStatus",
             );
             self.inner.unary(request.into_request(), path, codec).await
         }
-        #[doc = " ListPodSandbox returns a list of PodSandboxes."]
+        /// ListPodSandbox returns a list of PodSandboxes.
         pub async fn list_pod_sandbox(
             &mut self,
             request: impl tonic::IntoRequest<super::ListPodSandboxRequest>,
         ) -> Result<tonic::Response<super::ListPodSandboxResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/runtime.v1alpha2.RuntimeService/ListPodSandbox",
             );
             self.inner.unary(request.into_request(), path, codec).await
         }
-        #[doc = " CreateContainer creates a new container in specified PodSandbox"]
+        /// CreateContainer creates a new container in specified PodSandbox
         pub async fn create_container(
             &mut self,
             request: impl tonic::IntoRequest<super::CreateContainerRequest>,
         ) -> Result<tonic::Response<super::CreateContainerResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/runtime.v1alpha2.RuntimeService/CreateContainer",
             );
             self.inner.unary(request.into_request(), path, codec).await
         }
-        #[doc = " StartContainer starts the container."]
+        /// StartContainer starts the container.
         pub async fn start_container(
             &mut self,
             request: impl tonic::IntoRequest<super::StartContainerRequest>,
         ) -> Result<tonic::Response<super::StartContainerResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/runtime.v1alpha2.RuntimeService/StartContainer",
             );
             self.inner.unary(request.into_request(), path, codec).await
         }
-        #[doc = " StopContainer stops a running container with a grace period (i.e., timeout)."]
-        #[doc = " This call is idempotent, and must not return an error if the container has"]
-        #[doc = " already been stopped."]
-        #[doc = " TODO: what must the runtime do after the grace period is reached?"]
+        /// StopContainer stops a running container with a grace period (i.e., timeout).
+        /// This call is idempotent, and must not return an error if the container has
+        /// already been stopped.
+        /// TODO: what must the runtime do after the grace period is reached?
         pub async fn stop_container(
             &mut self,
             request: impl tonic::IntoRequest<super::StopContainerRequest>,
         ) -> Result<tonic::Response<super::StopContainerResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/runtime.v1alpha2.RuntimeService/StopContainer",
             );
             self.inner.unary(request.into_request(), path, codec).await
         }
-        #[doc = " RemoveContainer removes the container. If the container is running, the"]
-        #[doc = " container must be forcibly removed."]
-        #[doc = " This call is idempotent, and must not return an error if the container has"]
-        #[doc = " already been removed."]
+        /// RemoveContainer removes the container. If the container is running, the
+        /// container must be forcibly removed.
+        /// This call is idempotent, and must not return an error if the container has
+        /// already been removed.
         pub async fn remove_container(
             &mut self,
             request: impl tonic::IntoRequest<super::RemoveContainerRequest>,
         ) -> Result<tonic::Response<super::RemoveContainerResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/runtime.v1alpha2.RuntimeService/RemoveContainer",
             );
             self.inner.unary(request.into_request(), path, codec).await
         }
-        #[doc = " ListContainers lists all containers by filters."]
+        /// ListContainers lists all containers by filters.
         pub async fn list_containers(
             &mut self,
             request: impl tonic::IntoRequest<super::ListContainersRequest>,
         ) -> Result<tonic::Response<super::ListContainersResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/runtime.v1alpha2.RuntimeService/ListContainers",
             );
             self.inner.unary(request.into_request(), path, codec).await
         }
-        #[doc = " ContainerStatus returns status of the container. If the container is not"]
-        #[doc = " present, returns an error."]
+        /// ContainerStatus returns status of the container. If the container is not
+        /// present, returns an error.
         pub async fn container_status(
             &mut self,
             request: impl tonic::IntoRequest<super::ContainerStatusRequest>,
         ) -> Result<tonic::Response<super::ContainerStatusResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/runtime.v1alpha2.RuntimeService/ContainerStatus",
             );
             self.inner.unary(request.into_request(), path, codec).await
         }
-        #[doc = " UpdateContainerResources updates ContainerConfig of the container."]
+        /// UpdateContainerResources updates ContainerConfig of the container.
         pub async fn update_container_resources(
             &mut self,
             request: impl tonic::IntoRequest<super::UpdateContainerResourcesRequest>,
-        ) -> Result<tonic::Response<super::UpdateContainerResourcesResponse>, tonic::Status>
-        {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+        ) -> Result<
+            tonic::Response<super::UpdateContainerResourcesResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/runtime.v1alpha2.RuntimeService/UpdateContainerResources",
             );
             self.inner.unary(request.into_request(), path, codec).await
         }
-        #[doc = " ReopenContainerLog asks runtime to reopen the stdout/stderr log file"]
-        #[doc = " for the container. This is often called after the log file has been"]
-        #[doc = " rotated. If the container is not running, container runtime can choose"]
-        #[doc = " to either create a new log file and return nil, or return an error."]
-        #[doc = " Once it returns error, new container log file MUST NOT be created."]
+        /// ReopenContainerLog asks runtime to reopen the stdout/stderr log file
+        /// for the container. This is often called after the log file has been
+        /// rotated. If the container is not running, container runtime can choose
+        /// to either create a new log file and return nil, or return an error.
+        /// Once it returns error, new container log file MUST NOT be created.
         pub async fn reopen_container_log(
             &mut self,
             request: impl tonic::IntoRequest<super::ReopenContainerLogRequest>,
         ) -> Result<tonic::Response<super::ReopenContainerLogResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/runtime.v1alpha2.RuntimeService/ReopenContainerLog",
             );
             self.inner.unary(request.into_request(), path, codec).await
         }
-        #[doc = " ExecSync runs a command in a container synchronously."]
+        /// ExecSync runs a command in a container synchronously.
         pub async fn exec_sync(
             &mut self,
             request: impl tonic::IntoRequest<super::ExecSyncRequest>,
         ) -> Result<tonic::Response<super::ExecSyncResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path =
-                http::uri::PathAndQuery::from_static("/runtime.v1alpha2.RuntimeService/ExecSync");
+            let path = http::uri::PathAndQuery::from_static(
+                "/runtime.v1alpha2.RuntimeService/ExecSync",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
-        #[doc = " Exec prepares a streaming endpoint to execute a command in the container."]
+        /// Exec prepares a streaming endpoint to execute a command in the container.
         pub async fn exec(
             &mut self,
             request: impl tonic::IntoRequest<super::ExecRequest>,
         ) -> Result<tonic::Response<super::ExecResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path =
-                http::uri::PathAndQuery::from_static("/runtime.v1alpha2.RuntimeService/Exec");
+            let path = http::uri::PathAndQuery::from_static(
+                "/runtime.v1alpha2.RuntimeService/Exec",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
-        #[doc = " Attach prepares a streaming endpoint to attach to a running container."]
+        /// Attach prepares a streaming endpoint to attach to a running container.
         pub async fn attach(
             &mut self,
             request: impl tonic::IntoRequest<super::AttachRequest>,
         ) -> Result<tonic::Response<super::AttachResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path =
-                http::uri::PathAndQuery::from_static("/runtime.v1alpha2.RuntimeService/Attach");
+            let path = http::uri::PathAndQuery::from_static(
+                "/runtime.v1alpha2.RuntimeService/Attach",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
-        #[doc = " PortForward prepares a streaming endpoint to forward ports from a PodSandbox."]
+        /// PortForward prepares a streaming endpoint to forward ports from a PodSandbox.
         pub async fn port_forward(
             &mut self,
             request: impl tonic::IntoRequest<super::PortForwardRequest>,
         ) -> Result<tonic::Response<super::PortForwardResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/runtime.v1alpha2.RuntimeService/PortForward",
             );
             self.inner.unary(request.into_request(), path, codec).await
         }
-        #[doc = " ContainerStats returns stats of the container. If the container does not"]
-        #[doc = " exist, the call returns an error."]
+        /// ContainerStats returns stats of the container. If the container does not
+        /// exist, the call returns an error.
         pub async fn container_stats(
             &mut self,
             request: impl tonic::IntoRequest<super::ContainerStatsRequest>,
         ) -> Result<tonic::Response<super::ContainerStatsResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/runtime.v1alpha2.RuntimeService/ContainerStats",
             );
             self.inner.unary(request.into_request(), path, codec).await
         }
-        #[doc = " ListContainerStats returns stats of all running containers."]
+        /// ListContainerStats returns stats of all running containers.
         pub async fn list_container_stats(
             &mut self,
             request: impl tonic::IntoRequest<super::ListContainerStatsRequest>,
         ) -> Result<tonic::Response<super::ListContainerStatsResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/runtime.v1alpha2.RuntimeService/ListContainerStats",
             );
             self.inner.unary(request.into_request(), path, codec).await
         }
-        #[doc = " UpdateRuntimeConfig updates the runtime configuration based on the given request."]
+        /// UpdateRuntimeConfig updates the runtime configuration based on the given request.
         pub async fn update_runtime_config(
             &mut self,
             request: impl tonic::IntoRequest<super::UpdateRuntimeConfigRequest>,
         ) -> Result<tonic::Response<super::UpdateRuntimeConfigResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/runtime.v1alpha2.RuntimeService/UpdateRuntimeConfig",
             );
             self.inner.unary(request.into_request(), path, codec).await
         }
-        #[doc = " Status returns the status of the runtime."]
+        /// Status returns the status of the runtime.
         pub async fn status(
             &mut self,
             request: impl tonic::IntoRequest<super::StatusRequest>,
         ) -> Result<tonic::Response<super::StatusResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path =
-                http::uri::PathAndQuery::from_static("/runtime.v1alpha2.RuntimeService/Status");
+            let path = http::uri::PathAndQuery::from_static(
+                "/runtime.v1alpha2.RuntimeService/Status",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
     }
 }
-#[doc = r" Generated client implementations."]
+/// Generated client implementations.
 pub mod image_service_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    #[doc = " ImageService defines the public APIs for managing images."]
+    use tonic::codegen::http::Uri;
+    /// ImageService defines the public APIs for managing images.
     #[derive(Debug, Clone)]
     pub struct ImageServiceClient<T> {
         inner: tonic::client::Grpc<T>,
     }
     impl ImageServiceClient<tonic::transport::Channel> {
-        #[doc = r" Attempt to create a new client by connecting to a given endpoint."]
+        /// Attempt to create a new client by connecting to a given endpoint.
         pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
         where
             D: std::convert::TryInto<tonic::transport::Endpoint>,
@@ -1961,12 +2158,16 @@ pub mod image_service_client {
     impl<T> ImageServiceClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
-        T::ResponseBody: Body + Send + 'static,
         T::Error: Into<StdError>,
+        T::ResponseBody: Body<Data = Bytes> + Send + 'static,
         <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
+            Self { inner }
+        }
+        pub fn with_origin(inner: T, origin: Uri) -> Self {
+            let inner = tonic::client::Grpc::with_origin(inner, origin);
             Self { inner }
         }
         pub fn with_interceptor<F>(
@@ -1975,270 +2176,299 @@ pub mod image_service_client {
         ) -> ImageServiceClient<InterceptedService<T, F>>
         where
             F: tonic::service::Interceptor,
+            T::ResponseBody: Default,
             T: tonic::codegen::Service<
                 http::Request<tonic::body::BoxBody>,
                 Response = http::Response<
                     <T as tonic::client::GrpcService<tonic::body::BoxBody>>::ResponseBody,
                 >,
             >,
-            <T as tonic::codegen::Service<http::Request<tonic::body::BoxBody>>>::Error:
-                Into<StdError> + Send + Sync,
+            <T as tonic::codegen::Service<
+                http::Request<tonic::body::BoxBody>,
+            >>::Error: Into<StdError> + Send + Sync,
         {
             ImageServiceClient::new(InterceptedService::new(inner, interceptor))
         }
-        #[doc = r" Compress requests with `gzip`."]
-        #[doc = r""]
-        #[doc = r" This requires the server to support it otherwise it might respond with an"]
-        #[doc = r" error."]
-        pub fn send_gzip(mut self) -> Self {
-            self.inner = self.inner.send_gzip();
+        /// Compress requests with the given encoding.
+        ///
+        /// This requires the server to support it otherwise it might respond with an
+        /// error.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.send_compressed(encoding);
             self
         }
-        #[doc = r" Enable decompressing responses with `gzip`."]
-        pub fn accept_gzip(mut self) -> Self {
-            self.inner = self.inner.accept_gzip();
+        /// Enable decompressing responses.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.accept_compressed(encoding);
             self
         }
-        #[doc = " ListImages lists existing images."]
+        /// ListImages lists existing images.
         pub async fn list_images(
             &mut self,
             request: impl tonic::IntoRequest<super::ListImagesRequest>,
         ) -> Result<tonic::Response<super::ListImagesResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path =
-                http::uri::PathAndQuery::from_static("/runtime.v1alpha2.ImageService/ListImages");
+            let path = http::uri::PathAndQuery::from_static(
+                "/runtime.v1alpha2.ImageService/ListImages",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
-        #[doc = " ImageStatus returns the status of the image. If the image is not"]
-        #[doc = " present, returns a response with ImageStatusResponse.Image set to"]
-        #[doc = " nil."]
+        /// ImageStatus returns the status of the image. If the image is not
+        /// present, returns a response with ImageStatusResponse.Image set to
+        /// nil.
         pub async fn image_status(
             &mut self,
             request: impl tonic::IntoRequest<super::ImageStatusRequest>,
         ) -> Result<tonic::Response<super::ImageStatusResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path =
-                http::uri::PathAndQuery::from_static("/runtime.v1alpha2.ImageService/ImageStatus");
+            let path = http::uri::PathAndQuery::from_static(
+                "/runtime.v1alpha2.ImageService/ImageStatus",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
-        #[doc = " PullImage pulls an image with authentication config."]
+        /// PullImage pulls an image with authentication config.
         pub async fn pull_image(
             &mut self,
             request: impl tonic::IntoRequest<super::PullImageRequest>,
         ) -> Result<tonic::Response<super::PullImageResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path =
-                http::uri::PathAndQuery::from_static("/runtime.v1alpha2.ImageService/PullImage");
+            let path = http::uri::PathAndQuery::from_static(
+                "/runtime.v1alpha2.ImageService/PullImage",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
-        #[doc = " RemoveImage removes the image."]
-        #[doc = " This call is idempotent, and must not return an error if the image has"]
-        #[doc = " already been removed."]
+        /// RemoveImage removes the image.
+        /// This call is idempotent, and must not return an error if the image has
+        /// already been removed.
         pub async fn remove_image(
             &mut self,
             request: impl tonic::IntoRequest<super::RemoveImageRequest>,
         ) -> Result<tonic::Response<super::RemoveImageResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path =
-                http::uri::PathAndQuery::from_static("/runtime.v1alpha2.ImageService/RemoveImage");
+            let path = http::uri::PathAndQuery::from_static(
+                "/runtime.v1alpha2.ImageService/RemoveImage",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
-        #[doc = " ImageFSInfo returns information of the filesystem that is used to store images."]
+        /// ImageFSInfo returns information of the filesystem that is used to store images.
         pub async fn image_fs_info(
             &mut self,
             request: impl tonic::IntoRequest<super::ImageFsInfoRequest>,
         ) -> Result<tonic::Response<super::ImageFsInfoResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path =
-                http::uri::PathAndQuery::from_static("/runtime.v1alpha2.ImageService/ImageFsInfo");
+            let path = http::uri::PathAndQuery::from_static(
+                "/runtime.v1alpha2.ImageService/ImageFsInfo",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
     }
 }
-#[doc = r" Generated server implementations."]
+/// Generated server implementations.
 pub mod runtime_service_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    #[doc = "Generated trait containing gRPC methods that should be implemented for use with RuntimeServiceServer."]
+    ///Generated trait containing gRPC methods that should be implemented for use with RuntimeServiceServer.
     #[async_trait]
     pub trait RuntimeService: Send + Sync + 'static {
-        #[doc = " Version returns the runtime name, runtime version, and runtime API version."]
+        /// Version returns the runtime name, runtime version, and runtime API version.
         async fn version(
             &self,
             request: tonic::Request<super::VersionRequest>,
         ) -> Result<tonic::Response<super::VersionResponse>, tonic::Status>;
-        #[doc = " RunPodSandbox creates and starts a pod-level sandbox. Runtimes must ensure"]
-        #[doc = " the sandbox is in the ready state on success."]
+        /// RunPodSandbox creates and starts a pod-level sandbox. Runtimes must ensure
+        /// the sandbox is in the ready state on success.
         async fn run_pod_sandbox(
             &self,
             request: tonic::Request<super::RunPodSandboxRequest>,
         ) -> Result<tonic::Response<super::RunPodSandboxResponse>, tonic::Status>;
-        #[doc = " StopPodSandbox stops any running process that is part of the sandbox and"]
-        #[doc = " reclaims network resources (e.g., IP addresses) allocated to the sandbox."]
-        #[doc = " If there are any running containers in the sandbox, they must be forcibly"]
-        #[doc = " terminated."]
-        #[doc = " This call is idempotent, and must not return an error if all relevant"]
-        #[doc = " resources have already been reclaimed. kubelet will call StopPodSandbox"]
-        #[doc = " at least once before calling RemovePodSandbox. It will also attempt to"]
-        #[doc = " reclaim resources eagerly, as soon as a sandbox is not needed. Hence,"]
-        #[doc = " multiple StopPodSandbox calls are expected."]
+        /// StopPodSandbox stops any running process that is part of the sandbox and
+        /// reclaims network resources (e.g., IP addresses) allocated to the sandbox.
+        /// If there are any running containers in the sandbox, they must be forcibly
+        /// terminated.
+        /// This call is idempotent, and must not return an error if all relevant
+        /// resources have already been reclaimed. kubelet will call StopPodSandbox
+        /// at least once before calling RemovePodSandbox. It will also attempt to
+        /// reclaim resources eagerly, as soon as a sandbox is not needed. Hence,
+        /// multiple StopPodSandbox calls are expected.
         async fn stop_pod_sandbox(
             &self,
             request: tonic::Request<super::StopPodSandboxRequest>,
         ) -> Result<tonic::Response<super::StopPodSandboxResponse>, tonic::Status>;
-        #[doc = " RemovePodSandbox removes the sandbox. If there are any running containers"]
-        #[doc = " in the sandbox, they must be forcibly terminated and removed."]
-        #[doc = " This call is idempotent, and must not return an error if the sandbox has"]
-        #[doc = " already been removed."]
+        /// RemovePodSandbox removes the sandbox. If there are any running containers
+        /// in the sandbox, they must be forcibly terminated and removed.
+        /// This call is idempotent, and must not return an error if the sandbox has
+        /// already been removed.
         async fn remove_pod_sandbox(
             &self,
             request: tonic::Request<super::RemovePodSandboxRequest>,
         ) -> Result<tonic::Response<super::RemovePodSandboxResponse>, tonic::Status>;
-        #[doc = " PodSandboxStatus returns the status of the PodSandbox. If the PodSandbox is not"]
-        #[doc = " present, returns an error."]
+        /// PodSandboxStatus returns the status of the PodSandbox. If the PodSandbox is not
+        /// present, returns an error.
         async fn pod_sandbox_status(
             &self,
             request: tonic::Request<super::PodSandboxStatusRequest>,
         ) -> Result<tonic::Response<super::PodSandboxStatusResponse>, tonic::Status>;
-        #[doc = " ListPodSandbox returns a list of PodSandboxes."]
+        /// ListPodSandbox returns a list of PodSandboxes.
         async fn list_pod_sandbox(
             &self,
             request: tonic::Request<super::ListPodSandboxRequest>,
         ) -> Result<tonic::Response<super::ListPodSandboxResponse>, tonic::Status>;
-        #[doc = " CreateContainer creates a new container in specified PodSandbox"]
+        /// CreateContainer creates a new container in specified PodSandbox
         async fn create_container(
             &self,
             request: tonic::Request<super::CreateContainerRequest>,
         ) -> Result<tonic::Response<super::CreateContainerResponse>, tonic::Status>;
-        #[doc = " StartContainer starts the container."]
+        /// StartContainer starts the container.
         async fn start_container(
             &self,
             request: tonic::Request<super::StartContainerRequest>,
         ) -> Result<tonic::Response<super::StartContainerResponse>, tonic::Status>;
-        #[doc = " StopContainer stops a running container with a grace period (i.e., timeout)."]
-        #[doc = " This call is idempotent, and must not return an error if the container has"]
-        #[doc = " already been stopped."]
-        #[doc = " TODO: what must the runtime do after the grace period is reached?"]
+        /// StopContainer stops a running container with a grace period (i.e., timeout).
+        /// This call is idempotent, and must not return an error if the container has
+        /// already been stopped.
+        /// TODO: what must the runtime do after the grace period is reached?
         async fn stop_container(
             &self,
             request: tonic::Request<super::StopContainerRequest>,
         ) -> Result<tonic::Response<super::StopContainerResponse>, tonic::Status>;
-        #[doc = " RemoveContainer removes the container. If the container is running, the"]
-        #[doc = " container must be forcibly removed."]
-        #[doc = " This call is idempotent, and must not return an error if the container has"]
-        #[doc = " already been removed."]
+        /// RemoveContainer removes the container. If the container is running, the
+        /// container must be forcibly removed.
+        /// This call is idempotent, and must not return an error if the container has
+        /// already been removed.
         async fn remove_container(
             &self,
             request: tonic::Request<super::RemoveContainerRequest>,
         ) -> Result<tonic::Response<super::RemoveContainerResponse>, tonic::Status>;
-        #[doc = " ListContainers lists all containers by filters."]
+        /// ListContainers lists all containers by filters.
         async fn list_containers(
             &self,
             request: tonic::Request<super::ListContainersRequest>,
         ) -> Result<tonic::Response<super::ListContainersResponse>, tonic::Status>;
-        #[doc = " ContainerStatus returns status of the container. If the container is not"]
-        #[doc = " present, returns an error."]
+        /// ContainerStatus returns status of the container. If the container is not
+        /// present, returns an error.
         async fn container_status(
             &self,
             request: tonic::Request<super::ContainerStatusRequest>,
         ) -> Result<tonic::Response<super::ContainerStatusResponse>, tonic::Status>;
-        #[doc = " UpdateContainerResources updates ContainerConfig of the container."]
+        /// UpdateContainerResources updates ContainerConfig of the container.
         async fn update_container_resources(
             &self,
             request: tonic::Request<super::UpdateContainerResourcesRequest>,
-        ) -> Result<tonic::Response<super::UpdateContainerResourcesResponse>, tonic::Status>;
-        #[doc = " ReopenContainerLog asks runtime to reopen the stdout/stderr log file"]
-        #[doc = " for the container. This is often called after the log file has been"]
-        #[doc = " rotated. If the container is not running, container runtime can choose"]
-        #[doc = " to either create a new log file and return nil, or return an error."]
-        #[doc = " Once it returns error, new container log file MUST NOT be created."]
+        ) -> Result<
+            tonic::Response<super::UpdateContainerResourcesResponse>,
+            tonic::Status,
+        >;
+        /// ReopenContainerLog asks runtime to reopen the stdout/stderr log file
+        /// for the container. This is often called after the log file has been
+        /// rotated. If the container is not running, container runtime can choose
+        /// to either create a new log file and return nil, or return an error.
+        /// Once it returns error, new container log file MUST NOT be created.
         async fn reopen_container_log(
             &self,
             request: tonic::Request<super::ReopenContainerLogRequest>,
         ) -> Result<tonic::Response<super::ReopenContainerLogResponse>, tonic::Status>;
-        #[doc = " ExecSync runs a command in a container synchronously."]
+        /// ExecSync runs a command in a container synchronously.
         async fn exec_sync(
             &self,
             request: tonic::Request<super::ExecSyncRequest>,
         ) -> Result<tonic::Response<super::ExecSyncResponse>, tonic::Status>;
-        #[doc = " Exec prepares a streaming endpoint to execute a command in the container."]
+        /// Exec prepares a streaming endpoint to execute a command in the container.
         async fn exec(
             &self,
             request: tonic::Request<super::ExecRequest>,
         ) -> Result<tonic::Response<super::ExecResponse>, tonic::Status>;
-        #[doc = " Attach prepares a streaming endpoint to attach to a running container."]
+        /// Attach prepares a streaming endpoint to attach to a running container.
         async fn attach(
             &self,
             request: tonic::Request<super::AttachRequest>,
         ) -> Result<tonic::Response<super::AttachResponse>, tonic::Status>;
-        #[doc = " PortForward prepares a streaming endpoint to forward ports from a PodSandbox."]
+        /// PortForward prepares a streaming endpoint to forward ports from a PodSandbox.
         async fn port_forward(
             &self,
             request: tonic::Request<super::PortForwardRequest>,
         ) -> Result<tonic::Response<super::PortForwardResponse>, tonic::Status>;
-        #[doc = " ContainerStats returns stats of the container. If the container does not"]
-        #[doc = " exist, the call returns an error."]
+        /// ContainerStats returns stats of the container. If the container does not
+        /// exist, the call returns an error.
         async fn container_stats(
             &self,
             request: tonic::Request<super::ContainerStatsRequest>,
         ) -> Result<tonic::Response<super::ContainerStatsResponse>, tonic::Status>;
-        #[doc = " ListContainerStats returns stats of all running containers."]
+        /// ListContainerStats returns stats of all running containers.
         async fn list_container_stats(
             &self,
             request: tonic::Request<super::ListContainerStatsRequest>,
         ) -> Result<tonic::Response<super::ListContainerStatsResponse>, tonic::Status>;
-        #[doc = " UpdateRuntimeConfig updates the runtime configuration based on the given request."]
+        /// UpdateRuntimeConfig updates the runtime configuration based on the given request.
         async fn update_runtime_config(
             &self,
             request: tonic::Request<super::UpdateRuntimeConfigRequest>,
         ) -> Result<tonic::Response<super::UpdateRuntimeConfigResponse>, tonic::Status>;
-        #[doc = " Status returns the status of the runtime."]
+        /// Status returns the status of the runtime.
         async fn status(
             &self,
             request: tonic::Request<super::StatusRequest>,
         ) -> Result<tonic::Response<super::StatusResponse>, tonic::Status>;
     }
-    #[doc = " Runtime service defines the public APIs for remote container runtimes"]
+    /// Runtime service defines the public APIs for remote container runtimes
     #[derive(Debug)]
     pub struct RuntimeServiceServer<T: RuntimeService> {
         inner: _Inner<T>,
-        accept_compression_encodings: (),
-        send_compression_encodings: (),
+        accept_compression_encodings: EnabledCompressionEncodings,
+        send_compression_encodings: EnabledCompressionEncodings,
     }
     struct _Inner<T>(Arc<T>);
     impl<T: RuntimeService> RuntimeServiceServer<T> {
         pub fn new(inner: T) -> Self {
-            let inner = Arc::new(inner);
+            Self::from_arc(Arc::new(inner))
+        }
+        pub fn from_arc(inner: Arc<T>) -> Self {
             let inner = _Inner(inner);
             Self {
                 inner,
@@ -2246,11 +2476,26 @@ pub mod runtime_service_server {
                 send_compression_encodings: Default::default(),
             }
         }
-        pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> InterceptedService<Self, F>
         where
             F: tonic::service::Interceptor,
         {
             InterceptedService::new(Self::new(inner), interceptor)
+        }
+        /// Enable decompressing requests with the given encoding.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.accept_compression_encodings.enable(encoding);
+            self
+        }
+        /// Compress responses with the given encoding, if the client supports it.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.send_compression_encodings.enable(encoding);
+            self
         }
     }
     impl<T, B> tonic::codegen::Service<http::Request<B>> for RuntimeServiceServer<T>
@@ -2260,9 +2505,12 @@ pub mod runtime_service_server {
         B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::BoxBody>;
-        type Error = Never;
+        type Error = std::convert::Infallible;
         type Future = BoxFuture<Self::Response, Self::Error>;
-        fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
+        fn poll_ready(
+            &mut self,
+            _cx: &mut Context<'_>,
+        ) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
@@ -2271,9 +2519,15 @@ pub mod runtime_service_server {
                 "/runtime.v1alpha2.RuntimeService/Version" => {
                     #[allow(non_camel_case_types)]
                     struct VersionSvc<T: RuntimeService>(pub Arc<T>);
-                    impl<T: RuntimeService> tonic::server::UnaryService<super::VersionRequest> for VersionSvc<T> {
+                    impl<
+                        T: RuntimeService,
+                    > tonic::server::UnaryService<super::VersionRequest>
+                    for VersionSvc<T> {
                         type Response = super::VersionResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::VersionRequest>,
@@ -2290,10 +2544,11 @@ pub mod runtime_service_server {
                         let inner = inner.0;
                         let method = VersionSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2302,17 +2557,23 @@ pub mod runtime_service_server {
                 "/runtime.v1alpha2.RuntimeService/RunPodSandbox" => {
                     #[allow(non_camel_case_types)]
                     struct RunPodSandboxSvc<T: RuntimeService>(pub Arc<T>);
-                    impl<T: RuntimeService> tonic::server::UnaryService<super::RunPodSandboxRequest>
-                        for RunPodSandboxSvc<T>
-                    {
+                    impl<
+                        T: RuntimeService,
+                    > tonic::server::UnaryService<super::RunPodSandboxRequest>
+                    for RunPodSandboxSvc<T> {
                         type Response = super::RunPodSandboxResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::RunPodSandboxRequest>,
                         ) -> Self::Future {
                             let inner = self.0.clone();
-                            let fut = async move { (*inner).run_pod_sandbox(request).await };
+                            let fut = async move {
+                                (*inner).run_pod_sandbox(request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -2323,10 +2584,11 @@ pub mod runtime_service_server {
                         let inner = inner.0;
                         let method = RunPodSandboxSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2335,18 +2597,23 @@ pub mod runtime_service_server {
                 "/runtime.v1alpha2.RuntimeService/StopPodSandbox" => {
                     #[allow(non_camel_case_types)]
                     struct StopPodSandboxSvc<T: RuntimeService>(pub Arc<T>);
-                    impl<T: RuntimeService>
-                        tonic::server::UnaryService<super::StopPodSandboxRequest>
-                        for StopPodSandboxSvc<T>
-                    {
+                    impl<
+                        T: RuntimeService,
+                    > tonic::server::UnaryService<super::StopPodSandboxRequest>
+                    for StopPodSandboxSvc<T> {
                         type Response = super::StopPodSandboxResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::StopPodSandboxRequest>,
                         ) -> Self::Future {
                             let inner = self.0.clone();
-                            let fut = async move { (*inner).stop_pod_sandbox(request).await };
+                            let fut = async move {
+                                (*inner).stop_pod_sandbox(request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -2357,10 +2624,11 @@ pub mod runtime_service_server {
                         let inner = inner.0;
                         let method = StopPodSandboxSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2369,18 +2637,23 @@ pub mod runtime_service_server {
                 "/runtime.v1alpha2.RuntimeService/RemovePodSandbox" => {
                     #[allow(non_camel_case_types)]
                     struct RemovePodSandboxSvc<T: RuntimeService>(pub Arc<T>);
-                    impl<T: RuntimeService>
-                        tonic::server::UnaryService<super::RemovePodSandboxRequest>
-                        for RemovePodSandboxSvc<T>
-                    {
+                    impl<
+                        T: RuntimeService,
+                    > tonic::server::UnaryService<super::RemovePodSandboxRequest>
+                    for RemovePodSandboxSvc<T> {
                         type Response = super::RemovePodSandboxResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::RemovePodSandboxRequest>,
                         ) -> Self::Future {
                             let inner = self.0.clone();
-                            let fut = async move { (*inner).remove_pod_sandbox(request).await };
+                            let fut = async move {
+                                (*inner).remove_pod_sandbox(request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -2391,10 +2664,11 @@ pub mod runtime_service_server {
                         let inner = inner.0;
                         let method = RemovePodSandboxSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2403,18 +2677,23 @@ pub mod runtime_service_server {
                 "/runtime.v1alpha2.RuntimeService/PodSandboxStatus" => {
                     #[allow(non_camel_case_types)]
                     struct PodSandboxStatusSvc<T: RuntimeService>(pub Arc<T>);
-                    impl<T: RuntimeService>
-                        tonic::server::UnaryService<super::PodSandboxStatusRequest>
-                        for PodSandboxStatusSvc<T>
-                    {
+                    impl<
+                        T: RuntimeService,
+                    > tonic::server::UnaryService<super::PodSandboxStatusRequest>
+                    for PodSandboxStatusSvc<T> {
                         type Response = super::PodSandboxStatusResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::PodSandboxStatusRequest>,
                         ) -> Self::Future {
                             let inner = self.0.clone();
-                            let fut = async move { (*inner).pod_sandbox_status(request).await };
+                            let fut = async move {
+                                (*inner).pod_sandbox_status(request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -2425,10 +2704,11 @@ pub mod runtime_service_server {
                         let inner = inner.0;
                         let method = PodSandboxStatusSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2437,18 +2717,23 @@ pub mod runtime_service_server {
                 "/runtime.v1alpha2.RuntimeService/ListPodSandbox" => {
                     #[allow(non_camel_case_types)]
                     struct ListPodSandboxSvc<T: RuntimeService>(pub Arc<T>);
-                    impl<T: RuntimeService>
-                        tonic::server::UnaryService<super::ListPodSandboxRequest>
-                        for ListPodSandboxSvc<T>
-                    {
+                    impl<
+                        T: RuntimeService,
+                    > tonic::server::UnaryService<super::ListPodSandboxRequest>
+                    for ListPodSandboxSvc<T> {
                         type Response = super::ListPodSandboxResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::ListPodSandboxRequest>,
                         ) -> Self::Future {
                             let inner = self.0.clone();
-                            let fut = async move { (*inner).list_pod_sandbox(request).await };
+                            let fut = async move {
+                                (*inner).list_pod_sandbox(request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -2459,10 +2744,11 @@ pub mod runtime_service_server {
                         let inner = inner.0;
                         let method = ListPodSandboxSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2471,18 +2757,23 @@ pub mod runtime_service_server {
                 "/runtime.v1alpha2.RuntimeService/CreateContainer" => {
                     #[allow(non_camel_case_types)]
                     struct CreateContainerSvc<T: RuntimeService>(pub Arc<T>);
-                    impl<T: RuntimeService>
-                        tonic::server::UnaryService<super::CreateContainerRequest>
-                        for CreateContainerSvc<T>
-                    {
+                    impl<
+                        T: RuntimeService,
+                    > tonic::server::UnaryService<super::CreateContainerRequest>
+                    for CreateContainerSvc<T> {
                         type Response = super::CreateContainerResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::CreateContainerRequest>,
                         ) -> Self::Future {
                             let inner = self.0.clone();
-                            let fut = async move { (*inner).create_container(request).await };
+                            let fut = async move {
+                                (*inner).create_container(request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -2493,10 +2784,11 @@ pub mod runtime_service_server {
                         let inner = inner.0;
                         let method = CreateContainerSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2505,18 +2797,23 @@ pub mod runtime_service_server {
                 "/runtime.v1alpha2.RuntimeService/StartContainer" => {
                     #[allow(non_camel_case_types)]
                     struct StartContainerSvc<T: RuntimeService>(pub Arc<T>);
-                    impl<T: RuntimeService>
-                        tonic::server::UnaryService<super::StartContainerRequest>
-                        for StartContainerSvc<T>
-                    {
+                    impl<
+                        T: RuntimeService,
+                    > tonic::server::UnaryService<super::StartContainerRequest>
+                    for StartContainerSvc<T> {
                         type Response = super::StartContainerResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::StartContainerRequest>,
                         ) -> Self::Future {
                             let inner = self.0.clone();
-                            let fut = async move { (*inner).start_container(request).await };
+                            let fut = async move {
+                                (*inner).start_container(request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -2527,10 +2824,11 @@ pub mod runtime_service_server {
                         let inner = inner.0;
                         let method = StartContainerSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2539,17 +2837,23 @@ pub mod runtime_service_server {
                 "/runtime.v1alpha2.RuntimeService/StopContainer" => {
                     #[allow(non_camel_case_types)]
                     struct StopContainerSvc<T: RuntimeService>(pub Arc<T>);
-                    impl<T: RuntimeService> tonic::server::UnaryService<super::StopContainerRequest>
-                        for StopContainerSvc<T>
-                    {
+                    impl<
+                        T: RuntimeService,
+                    > tonic::server::UnaryService<super::StopContainerRequest>
+                    for StopContainerSvc<T> {
                         type Response = super::StopContainerResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::StopContainerRequest>,
                         ) -> Self::Future {
                             let inner = self.0.clone();
-                            let fut = async move { (*inner).stop_container(request).await };
+                            let fut = async move {
+                                (*inner).stop_container(request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -2560,10 +2864,11 @@ pub mod runtime_service_server {
                         let inner = inner.0;
                         let method = StopContainerSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2572,18 +2877,23 @@ pub mod runtime_service_server {
                 "/runtime.v1alpha2.RuntimeService/RemoveContainer" => {
                     #[allow(non_camel_case_types)]
                     struct RemoveContainerSvc<T: RuntimeService>(pub Arc<T>);
-                    impl<T: RuntimeService>
-                        tonic::server::UnaryService<super::RemoveContainerRequest>
-                        for RemoveContainerSvc<T>
-                    {
+                    impl<
+                        T: RuntimeService,
+                    > tonic::server::UnaryService<super::RemoveContainerRequest>
+                    for RemoveContainerSvc<T> {
                         type Response = super::RemoveContainerResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::RemoveContainerRequest>,
                         ) -> Self::Future {
                             let inner = self.0.clone();
-                            let fut = async move { (*inner).remove_container(request).await };
+                            let fut = async move {
+                                (*inner).remove_container(request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -2594,10 +2904,11 @@ pub mod runtime_service_server {
                         let inner = inner.0;
                         let method = RemoveContainerSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2606,18 +2917,23 @@ pub mod runtime_service_server {
                 "/runtime.v1alpha2.RuntimeService/ListContainers" => {
                     #[allow(non_camel_case_types)]
                     struct ListContainersSvc<T: RuntimeService>(pub Arc<T>);
-                    impl<T: RuntimeService>
-                        tonic::server::UnaryService<super::ListContainersRequest>
-                        for ListContainersSvc<T>
-                    {
+                    impl<
+                        T: RuntimeService,
+                    > tonic::server::UnaryService<super::ListContainersRequest>
+                    for ListContainersSvc<T> {
                         type Response = super::ListContainersResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::ListContainersRequest>,
                         ) -> Self::Future {
                             let inner = self.0.clone();
-                            let fut = async move { (*inner).list_containers(request).await };
+                            let fut = async move {
+                                (*inner).list_containers(request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -2628,10 +2944,11 @@ pub mod runtime_service_server {
                         let inner = inner.0;
                         let method = ListContainersSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2640,18 +2957,23 @@ pub mod runtime_service_server {
                 "/runtime.v1alpha2.RuntimeService/ContainerStatus" => {
                     #[allow(non_camel_case_types)]
                     struct ContainerStatusSvc<T: RuntimeService>(pub Arc<T>);
-                    impl<T: RuntimeService>
-                        tonic::server::UnaryService<super::ContainerStatusRequest>
-                        for ContainerStatusSvc<T>
-                    {
+                    impl<
+                        T: RuntimeService,
+                    > tonic::server::UnaryService<super::ContainerStatusRequest>
+                    for ContainerStatusSvc<T> {
                         type Response = super::ContainerStatusResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::ContainerStatusRequest>,
                         ) -> Self::Future {
                             let inner = self.0.clone();
-                            let fut = async move { (*inner).container_status(request).await };
+                            let fut = async move {
+                                (*inner).container_status(request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -2662,10 +2984,11 @@ pub mod runtime_service_server {
                         let inner = inner.0;
                         let method = ContainerStatusSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2674,19 +2997,25 @@ pub mod runtime_service_server {
                 "/runtime.v1alpha2.RuntimeService/UpdateContainerResources" => {
                     #[allow(non_camel_case_types)]
                     struct UpdateContainerResourcesSvc<T: RuntimeService>(pub Arc<T>);
-                    impl<T: RuntimeService>
-                        tonic::server::UnaryService<super::UpdateContainerResourcesRequest>
-                        for UpdateContainerResourcesSvc<T>
-                    {
+                    impl<
+                        T: RuntimeService,
+                    > tonic::server::UnaryService<super::UpdateContainerResourcesRequest>
+                    for UpdateContainerResourcesSvc<T> {
                         type Response = super::UpdateContainerResourcesResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
-                            request: tonic::Request<super::UpdateContainerResourcesRequest>,
+                            request: tonic::Request<
+                                super::UpdateContainerResourcesRequest,
+                            >,
                         ) -> Self::Future {
                             let inner = self.0.clone();
-                            let fut =
-                                async move { (*inner).update_container_resources(request).await };
+                            let fut = async move {
+                                (*inner).update_container_resources(request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -2697,10 +3026,11 @@ pub mod runtime_service_server {
                         let inner = inner.0;
                         let method = UpdateContainerResourcesSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2709,18 +3039,23 @@ pub mod runtime_service_server {
                 "/runtime.v1alpha2.RuntimeService/ReopenContainerLog" => {
                     #[allow(non_camel_case_types)]
                     struct ReopenContainerLogSvc<T: RuntimeService>(pub Arc<T>);
-                    impl<T: RuntimeService>
-                        tonic::server::UnaryService<super::ReopenContainerLogRequest>
-                        for ReopenContainerLogSvc<T>
-                    {
+                    impl<
+                        T: RuntimeService,
+                    > tonic::server::UnaryService<super::ReopenContainerLogRequest>
+                    for ReopenContainerLogSvc<T> {
                         type Response = super::ReopenContainerLogResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::ReopenContainerLogRequest>,
                         ) -> Self::Future {
                             let inner = self.0.clone();
-                            let fut = async move { (*inner).reopen_container_log(request).await };
+                            let fut = async move {
+                                (*inner).reopen_container_log(request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -2731,10 +3066,11 @@ pub mod runtime_service_server {
                         let inner = inner.0;
                         let method = ReopenContainerLogSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2743,9 +3079,15 @@ pub mod runtime_service_server {
                 "/runtime.v1alpha2.RuntimeService/ExecSync" => {
                     #[allow(non_camel_case_types)]
                     struct ExecSyncSvc<T: RuntimeService>(pub Arc<T>);
-                    impl<T: RuntimeService> tonic::server::UnaryService<super::ExecSyncRequest> for ExecSyncSvc<T> {
+                    impl<
+                        T: RuntimeService,
+                    > tonic::server::UnaryService<super::ExecSyncRequest>
+                    for ExecSyncSvc<T> {
                         type Response = super::ExecSyncResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::ExecSyncRequest>,
@@ -2762,10 +3104,11 @@ pub mod runtime_service_server {
                         let inner = inner.0;
                         let method = ExecSyncSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2774,9 +3117,14 @@ pub mod runtime_service_server {
                 "/runtime.v1alpha2.RuntimeService/Exec" => {
                     #[allow(non_camel_case_types)]
                     struct ExecSvc<T: RuntimeService>(pub Arc<T>);
-                    impl<T: RuntimeService> tonic::server::UnaryService<super::ExecRequest> for ExecSvc<T> {
+                    impl<
+                        T: RuntimeService,
+                    > tonic::server::UnaryService<super::ExecRequest> for ExecSvc<T> {
                         type Response = super::ExecResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::ExecRequest>,
@@ -2793,10 +3141,11 @@ pub mod runtime_service_server {
                         let inner = inner.0;
                         let method = ExecSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2805,9 +3154,15 @@ pub mod runtime_service_server {
                 "/runtime.v1alpha2.RuntimeService/Attach" => {
                     #[allow(non_camel_case_types)]
                     struct AttachSvc<T: RuntimeService>(pub Arc<T>);
-                    impl<T: RuntimeService> tonic::server::UnaryService<super::AttachRequest> for AttachSvc<T> {
+                    impl<
+                        T: RuntimeService,
+                    > tonic::server::UnaryService<super::AttachRequest>
+                    for AttachSvc<T> {
                         type Response = super::AttachResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::AttachRequest>,
@@ -2824,10 +3179,11 @@ pub mod runtime_service_server {
                         let inner = inner.0;
                         let method = AttachSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2836,17 +3192,23 @@ pub mod runtime_service_server {
                 "/runtime.v1alpha2.RuntimeService/PortForward" => {
                     #[allow(non_camel_case_types)]
                     struct PortForwardSvc<T: RuntimeService>(pub Arc<T>);
-                    impl<T: RuntimeService> tonic::server::UnaryService<super::PortForwardRequest>
-                        for PortForwardSvc<T>
-                    {
+                    impl<
+                        T: RuntimeService,
+                    > tonic::server::UnaryService<super::PortForwardRequest>
+                    for PortForwardSvc<T> {
                         type Response = super::PortForwardResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::PortForwardRequest>,
                         ) -> Self::Future {
                             let inner = self.0.clone();
-                            let fut = async move { (*inner).port_forward(request).await };
+                            let fut = async move {
+                                (*inner).port_forward(request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -2857,10 +3219,11 @@ pub mod runtime_service_server {
                         let inner = inner.0;
                         let method = PortForwardSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2869,18 +3232,23 @@ pub mod runtime_service_server {
                 "/runtime.v1alpha2.RuntimeService/ContainerStats" => {
                     #[allow(non_camel_case_types)]
                     struct ContainerStatsSvc<T: RuntimeService>(pub Arc<T>);
-                    impl<T: RuntimeService>
-                        tonic::server::UnaryService<super::ContainerStatsRequest>
-                        for ContainerStatsSvc<T>
-                    {
+                    impl<
+                        T: RuntimeService,
+                    > tonic::server::UnaryService<super::ContainerStatsRequest>
+                    for ContainerStatsSvc<T> {
                         type Response = super::ContainerStatsResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::ContainerStatsRequest>,
                         ) -> Self::Future {
                             let inner = self.0.clone();
-                            let fut = async move { (*inner).container_stats(request).await };
+                            let fut = async move {
+                                (*inner).container_stats(request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -2891,10 +3259,11 @@ pub mod runtime_service_server {
                         let inner = inner.0;
                         let method = ContainerStatsSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2903,18 +3272,23 @@ pub mod runtime_service_server {
                 "/runtime.v1alpha2.RuntimeService/ListContainerStats" => {
                     #[allow(non_camel_case_types)]
                     struct ListContainerStatsSvc<T: RuntimeService>(pub Arc<T>);
-                    impl<T: RuntimeService>
-                        tonic::server::UnaryService<super::ListContainerStatsRequest>
-                        for ListContainerStatsSvc<T>
-                    {
+                    impl<
+                        T: RuntimeService,
+                    > tonic::server::UnaryService<super::ListContainerStatsRequest>
+                    for ListContainerStatsSvc<T> {
                         type Response = super::ListContainerStatsResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::ListContainerStatsRequest>,
                         ) -> Self::Future {
                             let inner = self.0.clone();
-                            let fut = async move { (*inner).list_container_stats(request).await };
+                            let fut = async move {
+                                (*inner).list_container_stats(request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -2925,10 +3299,11 @@ pub mod runtime_service_server {
                         let inner = inner.0;
                         let method = ListContainerStatsSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2937,18 +3312,23 @@ pub mod runtime_service_server {
                 "/runtime.v1alpha2.RuntimeService/UpdateRuntimeConfig" => {
                     #[allow(non_camel_case_types)]
                     struct UpdateRuntimeConfigSvc<T: RuntimeService>(pub Arc<T>);
-                    impl<T: RuntimeService>
-                        tonic::server::UnaryService<super::UpdateRuntimeConfigRequest>
-                        for UpdateRuntimeConfigSvc<T>
-                    {
+                    impl<
+                        T: RuntimeService,
+                    > tonic::server::UnaryService<super::UpdateRuntimeConfigRequest>
+                    for UpdateRuntimeConfigSvc<T> {
                         type Response = super::UpdateRuntimeConfigResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::UpdateRuntimeConfigRequest>,
                         ) -> Self::Future {
                             let inner = self.0.clone();
-                            let fut = async move { (*inner).update_runtime_config(request).await };
+                            let fut = async move {
+                                (*inner).update_runtime_config(request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -2959,10 +3339,11 @@ pub mod runtime_service_server {
                         let inner = inner.0;
                         let method = UpdateRuntimeConfigSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2971,9 +3352,15 @@ pub mod runtime_service_server {
                 "/runtime.v1alpha2.RuntimeService/Status" => {
                     #[allow(non_camel_case_types)]
                     struct StatusSvc<T: RuntimeService>(pub Arc<T>);
-                    impl<T: RuntimeService> tonic::server::UnaryService<super::StatusRequest> for StatusSvc<T> {
+                    impl<
+                        T: RuntimeService,
+                    > tonic::server::UnaryService<super::StatusRequest>
+                    for StatusSvc<T> {
                         type Response = super::StatusResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::StatusRequest>,
@@ -2990,23 +3377,28 @@ pub mod runtime_service_server {
                         let inner = inner.0;
                         let method = StatusSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
                     Box::pin(fut)
                 }
-                _ => Box::pin(async move {
-                    Ok(http::Response::builder()
-                        .status(200)
-                        .header("grpc-status", "12")
-                        .header("content-type", "application/grpc")
-                        .body(empty_body())
-                        .unwrap())
-                }),
+                _ => {
+                    Box::pin(async move {
+                        Ok(
+                            http::Response::builder()
+                                .status(200)
+                                .header("grpc-status", "12")
+                                .header("content-type", "application/grpc")
+                                .body(empty_body())
+                                .unwrap(),
+                        )
+                    })
+                }
             }
         }
     }
@@ -3030,58 +3422,60 @@ pub mod runtime_service_server {
             write!(f, "{:?}", self.0)
         }
     }
-    impl<T: RuntimeService> tonic::transport::NamedService for RuntimeServiceServer<T> {
+    impl<T: RuntimeService> tonic::server::NamedService for RuntimeServiceServer<T> {
         const NAME: &'static str = "runtime.v1alpha2.RuntimeService";
     }
 }
-#[doc = r" Generated server implementations."]
+/// Generated server implementations.
 pub mod image_service_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    #[doc = "Generated trait containing gRPC methods that should be implemented for use with ImageServiceServer."]
+    ///Generated trait containing gRPC methods that should be implemented for use with ImageServiceServer.
     #[async_trait]
     pub trait ImageService: Send + Sync + 'static {
-        #[doc = " ListImages lists existing images."]
+        /// ListImages lists existing images.
         async fn list_images(
             &self,
             request: tonic::Request<super::ListImagesRequest>,
         ) -> Result<tonic::Response<super::ListImagesResponse>, tonic::Status>;
-        #[doc = " ImageStatus returns the status of the image. If the image is not"]
-        #[doc = " present, returns a response with ImageStatusResponse.Image set to"]
-        #[doc = " nil."]
+        /// ImageStatus returns the status of the image. If the image is not
+        /// present, returns a response with ImageStatusResponse.Image set to
+        /// nil.
         async fn image_status(
             &self,
             request: tonic::Request<super::ImageStatusRequest>,
         ) -> Result<tonic::Response<super::ImageStatusResponse>, tonic::Status>;
-        #[doc = " PullImage pulls an image with authentication config."]
+        /// PullImage pulls an image with authentication config.
         async fn pull_image(
             &self,
             request: tonic::Request<super::PullImageRequest>,
         ) -> Result<tonic::Response<super::PullImageResponse>, tonic::Status>;
-        #[doc = " RemoveImage removes the image."]
-        #[doc = " This call is idempotent, and must not return an error if the image has"]
-        #[doc = " already been removed."]
+        /// RemoveImage removes the image.
+        /// This call is idempotent, and must not return an error if the image has
+        /// already been removed.
         async fn remove_image(
             &self,
             request: tonic::Request<super::RemoveImageRequest>,
         ) -> Result<tonic::Response<super::RemoveImageResponse>, tonic::Status>;
-        #[doc = " ImageFSInfo returns information of the filesystem that is used to store images."]
+        /// ImageFSInfo returns information of the filesystem that is used to store images.
         async fn image_fs_info(
             &self,
             request: tonic::Request<super::ImageFsInfoRequest>,
         ) -> Result<tonic::Response<super::ImageFsInfoResponse>, tonic::Status>;
     }
-    #[doc = " ImageService defines the public APIs for managing images."]
+    /// ImageService defines the public APIs for managing images.
     #[derive(Debug)]
     pub struct ImageServiceServer<T: ImageService> {
         inner: _Inner<T>,
-        accept_compression_encodings: (),
-        send_compression_encodings: (),
+        accept_compression_encodings: EnabledCompressionEncodings,
+        send_compression_encodings: EnabledCompressionEncodings,
     }
     struct _Inner<T>(Arc<T>);
     impl<T: ImageService> ImageServiceServer<T> {
         pub fn new(inner: T) -> Self {
-            let inner = Arc::new(inner);
+            Self::from_arc(Arc::new(inner))
+        }
+        pub fn from_arc(inner: Arc<T>) -> Self {
             let inner = _Inner(inner);
             Self {
                 inner,
@@ -3089,11 +3483,26 @@ pub mod image_service_server {
                 send_compression_encodings: Default::default(),
             }
         }
-        pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> InterceptedService<Self, F>
         where
             F: tonic::service::Interceptor,
         {
             InterceptedService::new(Self::new(inner), interceptor)
+        }
+        /// Enable decompressing requests with the given encoding.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.accept_compression_encodings.enable(encoding);
+            self
+        }
+        /// Compress responses with the given encoding, if the client supports it.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.send_compression_encodings.enable(encoding);
+            self
         }
     }
     impl<T, B> tonic::codegen::Service<http::Request<B>> for ImageServiceServer<T>
@@ -3103,9 +3512,12 @@ pub mod image_service_server {
         B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::BoxBody>;
-        type Error = Never;
+        type Error = std::convert::Infallible;
         type Future = BoxFuture<Self::Response, Self::Error>;
-        fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
+        fn poll_ready(
+            &mut self,
+            _cx: &mut Context<'_>,
+        ) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
@@ -3114,9 +3526,15 @@ pub mod image_service_server {
                 "/runtime.v1alpha2.ImageService/ListImages" => {
                     #[allow(non_camel_case_types)]
                     struct ListImagesSvc<T: ImageService>(pub Arc<T>);
-                    impl<T: ImageService> tonic::server::UnaryService<super::ListImagesRequest> for ListImagesSvc<T> {
+                    impl<
+                        T: ImageService,
+                    > tonic::server::UnaryService<super::ListImagesRequest>
+                    for ListImagesSvc<T> {
                         type Response = super::ListImagesResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::ListImagesRequest>,
@@ -3133,10 +3551,11 @@ pub mod image_service_server {
                         let inner = inner.0;
                         let method = ListImagesSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -3145,15 +3564,23 @@ pub mod image_service_server {
                 "/runtime.v1alpha2.ImageService/ImageStatus" => {
                     #[allow(non_camel_case_types)]
                     struct ImageStatusSvc<T: ImageService>(pub Arc<T>);
-                    impl<T: ImageService> tonic::server::UnaryService<super::ImageStatusRequest> for ImageStatusSvc<T> {
+                    impl<
+                        T: ImageService,
+                    > tonic::server::UnaryService<super::ImageStatusRequest>
+                    for ImageStatusSvc<T> {
                         type Response = super::ImageStatusResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::ImageStatusRequest>,
                         ) -> Self::Future {
                             let inner = self.0.clone();
-                            let fut = async move { (*inner).image_status(request).await };
+                            let fut = async move {
+                                (*inner).image_status(request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -3164,10 +3591,11 @@ pub mod image_service_server {
                         let inner = inner.0;
                         let method = ImageStatusSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -3176,9 +3604,15 @@ pub mod image_service_server {
                 "/runtime.v1alpha2.ImageService/PullImage" => {
                     #[allow(non_camel_case_types)]
                     struct PullImageSvc<T: ImageService>(pub Arc<T>);
-                    impl<T: ImageService> tonic::server::UnaryService<super::PullImageRequest> for PullImageSvc<T> {
+                    impl<
+                        T: ImageService,
+                    > tonic::server::UnaryService<super::PullImageRequest>
+                    for PullImageSvc<T> {
                         type Response = super::PullImageResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::PullImageRequest>,
@@ -3195,10 +3629,11 @@ pub mod image_service_server {
                         let inner = inner.0;
                         let method = PullImageSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -3207,15 +3642,23 @@ pub mod image_service_server {
                 "/runtime.v1alpha2.ImageService/RemoveImage" => {
                     #[allow(non_camel_case_types)]
                     struct RemoveImageSvc<T: ImageService>(pub Arc<T>);
-                    impl<T: ImageService> tonic::server::UnaryService<super::RemoveImageRequest> for RemoveImageSvc<T> {
+                    impl<
+                        T: ImageService,
+                    > tonic::server::UnaryService<super::RemoveImageRequest>
+                    for RemoveImageSvc<T> {
                         type Response = super::RemoveImageResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::RemoveImageRequest>,
                         ) -> Self::Future {
                             let inner = self.0.clone();
-                            let fut = async move { (*inner).remove_image(request).await };
+                            let fut = async move {
+                                (*inner).remove_image(request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -3226,10 +3669,11 @@ pub mod image_service_server {
                         let inner = inner.0;
                         let method = RemoveImageSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -3238,15 +3682,23 @@ pub mod image_service_server {
                 "/runtime.v1alpha2.ImageService/ImageFsInfo" => {
                     #[allow(non_camel_case_types)]
                     struct ImageFsInfoSvc<T: ImageService>(pub Arc<T>);
-                    impl<T: ImageService> tonic::server::UnaryService<super::ImageFsInfoRequest> for ImageFsInfoSvc<T> {
+                    impl<
+                        T: ImageService,
+                    > tonic::server::UnaryService<super::ImageFsInfoRequest>
+                    for ImageFsInfoSvc<T> {
                         type Response = super::ImageFsInfoResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::ImageFsInfoRequest>,
                         ) -> Self::Future {
                             let inner = self.0.clone();
-                            let fut = async move { (*inner).image_fs_info(request).await };
+                            let fut = async move {
+                                (*inner).image_fs_info(request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -3257,23 +3709,28 @@ pub mod image_service_server {
                         let inner = inner.0;
                         let method = ImageFsInfoSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
                     Box::pin(fut)
                 }
-                _ => Box::pin(async move {
-                    Ok(http::Response::builder()
-                        .status(200)
-                        .header("grpc-status", "12")
-                        .header("content-type", "application/grpc")
-                        .body(empty_body())
-                        .unwrap())
-                }),
+                _ => {
+                    Box::pin(async move {
+                        Ok(
+                            http::Response::builder()
+                                .status(200)
+                                .header("grpc-status", "12")
+                                .header("content-type", "application/grpc")
+                                .body(empty_body())
+                                .unwrap(),
+                        )
+                    })
+                }
             }
         }
     }
@@ -3297,7 +3754,7 @@ pub mod image_service_server {
             write!(f, "{:?}", self.0)
         }
     }
-    impl<T: ImageService> tonic::transport::NamedService for ImageServiceServer<T> {
+    impl<T: ImageService> tonic::server::NamedService for ImageServiceServer<T> {
         const NAME: &'static str = "runtime.v1alpha2.ImageService";
     }
 }

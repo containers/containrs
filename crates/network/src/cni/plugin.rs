@@ -83,16 +83,15 @@ impl Plugin {
         interface_name: &str,
         raw_cni_config: &[u8],
     ) -> Result<CNIResult> {
-        Ok(self
-            .cmd(
-                Command::Add,
-                container_id,
-                network_namespace_path,
-                interface_name,
-                raw_cni_config,
-            )
-            .await?
-            .context("no CNI result")?)
+        self.cmd(
+            Command::Add,
+            container_id,
+            network_namespace_path,
+            interface_name,
+            raw_cni_config,
+        )
+        .await?
+        .context("no CNI result")
     }
 
     /// Delete a network via the plugin.

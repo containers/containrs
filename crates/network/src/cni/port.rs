@@ -452,7 +452,7 @@ mod tests {
             .build()?];
         assert_eq!(
             &PortManager::hash("id", &port_mapping),
-            "DN-CRI-id-3cc34f23f5021df2"
+            "DN-CRI-id-e1cbf52e9433492e"
         );
         Ok(())
     }

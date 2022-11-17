@@ -1,0 +1,14 @@
+[build]
+pre-build = ["apt-get update && apt-get install -y protobuf-compiler"]
+
+[target.i686-unknown-linux-gnu]
+pre-build = ["dpkg --add-architecture i386 && apt-get update && apt-get install -y protobuf-compiler"]
+
+[target.aarch64-unknown-linux-gnu]
+pre-build = ["dpkg --add-architecture arm64 && apt-get update && apt-get install -y protobuf-compiler"]
+
+[target.powerpc64le-unknown-linux-gnu]
+pre-build = ["dpkg --add-architecture ppc64el && apt-get update && apt-get install -y protobuf-compiler"]
+
+[target.s390x-unknown-linux-gnu]
+pre-build = ["dpkg --add-architecture s390x && apt-get update && apt-get install -y protobuf-compiler"]

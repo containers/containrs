@@ -489,9 +489,9 @@ impl CNI {
                 .context("no CNI plugin executor set")?
                 .clone(),
         );
-        Ok(plugin
+        plugin
             .find_binary(self.plugin_paths())
-            .context("find plugin binary")?)
+            .context("find plugin binary")
     }
 
     /// Get an `eth` prefixed interface name for the provided index.

@@ -102,7 +102,7 @@ impl Netlink for DefaultNetlink {
                 .handle()
                 .link()
                 .get()
-                .set_name_filter(name.into())
+                .match_name(name.into())
                 .execute()
                 .try_next()
                 .await

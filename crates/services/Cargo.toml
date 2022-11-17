@@ -16,34 +16,34 @@ keywords = ["runtime", "kubernetes", "cri", "container", "pod"]
 categories = ["network-programming", "api-bindings"]
 
 [dependencies]
-anyhow = "1.0.56"
+anyhow = "1.0.66"
 async-stream = "0.3.3"
 container = { path = "../container" }
-derive_builder = "0.11.1"
-log = { version = "0.4.16", features = ["serde", "std"] }
-oci-spec = { version = "0.5.5", features = ["runtime"] }
-prost = "0.9.0"
+derive_builder = "0.11.2"
+log = { version = "0.4.17", features = ["serde", "std"] }
+oci-spec = { version = "0.5.8", features = ["runtime"] }
+prost = "0.11.2"
 sandbox = { path = "../sandbox" }
 storage = { path = "../storage" }
-thiserror = "1.0.30"
-tonic = "0.6.2"
+thiserror = "1.0.37"
+tonic = "0.8.2"
 # TODO: these dependencies are only needed for the server
 # should be moved to the server crate
 lazy_static = "1.4.0"
-tokio = { version = "1.15.0", features = ["full"] }
-serde = { version = "1.0.136", features = ["derive"] }
+tokio = { version = "1.21.2", features = ["full"] }
+serde = { version = "1.0.147", features = ["derive"] }
 network = { path = "../network" }
-nix = "0.23.1"
-clap = { git = "https://github.com/clap-rs/clap", features = ["wrap_help"] }
+nix = "0.25.0"
+clap = { version = "4.0.26", features = ["cargo", "derive", "env", "wrap_help"] }
 getset = "0.1.2"
-strum = { version = "0.24.0", features = ["derive"] }
-futures = "0.3.21"
-env_logger = "0.9.0"
+strum = { version = "0.24.1", features = ["derive"] }
+futures = "0.3.25"
+env_logger = "0.9.3"
 common = { path="../common" }
 
 [build-dependencies]
-anyhow = "1.0.56"
-tonic-build = "0.6.2"
+anyhow = "1.0.66"
+tonic-build = "0.8.2"
 
 [dev-dependencies]
 tempfile = "3.3.0"

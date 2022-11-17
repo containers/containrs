@@ -368,7 +368,6 @@ impl DefaultIptables {
             match (line.strip_prefix("-P"), line.strip_prefix("-N")) {
                 (Some(chain), _) | (_, Some(chain)) => chains.push(
                     chain
-                        .trim()
                         .split_whitespace()
                         .next()
                         .with_context(|| format!("invalid chain output format: {}", line))?
@@ -402,7 +401,7 @@ impl DefaultIptables {
 
         let output = self
             .exec_command()
-            .output(Command::new(&binary).arg("--wait").args(args))
+            .output(Command::new(binary).arg("--wait").args(args))
             .await
             .context("run iptables")?;
 
