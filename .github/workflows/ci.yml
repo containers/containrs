@@ -62,7 +62,7 @@ jobs:
         run: docker pull ghcr.io/cross-rs/${{matrix.target}}:main
       - name: Build for ${{matrix.target}}
         run: cross build -v --target ${{matrix.target}}
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: lib
           path: lib-*.tar.gz
@@ -76,7 +76,7 @@ jobs:
         run: |
           sudo make build-bin-release-static
           sudo chown -R $(id -u):$(id -g) ~/.cargo target
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: server
           path: target/x86_64-unknown-linux-musl/release/server
