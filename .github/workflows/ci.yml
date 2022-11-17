@@ -18,7 +18,7 @@ jobs:
           toolchain: stable
           override: true
       - name: Setup Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.cargo/registry
@@ -47,7 +47,7 @@ jobs:
           target: ${{ matrix.target }}
           override: true
       - name: Setup Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.cargo/registry
@@ -92,7 +92,7 @@ jobs:
           toolchain: stable
           override: true
       - name: Setup Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.cargo/registry
@@ -113,7 +113,7 @@ jobs:
           toolchain: stable
           override: true
       - name: Setup Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.cargo/registry
@@ -178,7 +178,7 @@ jobs:
           toolchain: stable
           override: true
       - name: Setup Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.cargo/registry
@@ -209,7 +209,7 @@ jobs:
         env:
           VERSION: v1.0.1
       - name: Setup Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.cargo/registry
@@ -238,7 +238,7 @@ jobs:
           toolchain: stable
           override: true
       - name: Setup Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.cargo/registry
