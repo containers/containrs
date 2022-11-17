@@ -165,7 +165,7 @@ jobs:
         with:
           config: .github/grcov.yml
       - name: Upload Results
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
 
   test-unit:
     runs-on: ubuntu-latest
