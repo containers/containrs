@@ -30,7 +30,7 @@ tonic = "0.8.2"
 # TODO: these dependencies are only needed for the server
 # should be moved to the server crate
 lazy_static = "1.4.0"
-tokio = { version = "1.21.2", features = ["full"] }
+tokio = { version = "1.22.0", features = ["full"] }
 serde = { version = "1.0.147", features = ["derive"] }
 network = { path = "../network" }
 nix = "0.25.0"
