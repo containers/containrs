@@ -38,7 +38,7 @@ clap = { version = "4.0.26", features = ["cargo", "derive", "env", "wrap_help"] 
 getset = "0.1.2"
 strum = { version = "0.24.1", features = ["derive"] }
 futures = "0.3.25"
-env_logger = "0.9.3"
+env_logger = "0.10.0"
 common = { path="../common" }
 
 [build-dependencies]

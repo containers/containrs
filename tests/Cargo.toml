@@ -19,7 +19,7 @@ categories = ["network-programming", "api-bindings"]
 anyhow = "1.0.66"
 ctor = "0.1.26"
 getset = "0.1.2"
-env_logger = "0.9.3"
+env_logger = "0.10.0"
 ipnetwork = "0.20.0"
 log = { version = "0.4.17", features = ["serde", "std"] }
 network = { path = "../crates/network" }
