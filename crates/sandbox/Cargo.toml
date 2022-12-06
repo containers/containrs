@@ -23,13 +23,13 @@ common = { path= "../common" }
 derive_builder = "0.11.2"
 dyn-clone = "1.0.9"
 getset = "0.1.2"
-tokio = { version = "1.21.2", features = ["process"] }
+tokio = { version = "1.23.0", features = ["process"] }
 strum = { version = "0.24.1", features = ["derive"] }
 uuid = { version = "1.2.2", features = ["v4"] }
 which = "4.3.0"
 
 [dev-dependencies]
 anyhow = "1.0.66"
-tokio = { version = "1.21.2", features = ["macros"] }
+tokio = { version = "1.23.0", features = ["macros"] }
 tempfile = "3.3.0"
 nix = "0.25.0"
